@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Solidity极简入门: 10. 控制流，用solidity实现插入排序这一讲，我们将介绍solidity中的控制流，然后讲如何用solidity实现插入排序（InsertionSort），一个看起来简单，但实际上很容易写出bug的程序。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大帅哥">
+<meta property="og:url" content="http://example.com/2024/04/24/solidity%E5%9F%BA%E7%A1%8010-12/index.html">
+<meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="Solidity极简入门: 10. 控制流，用solidity实现插入排序这一讲，我们将介绍solidity中的控制流，然后讲如何用solidity实现插入排序（InsertionSort），一个看起来简单，但实际上很容易写出bug的程序。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/92b034385c440e08bc8551c97df0a2e3.gif">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/10-1-e9590da7aad6c176501b7fc5abe3372f.jpg">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/S-i6rwCMeXoi8eNJ0fRdB.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/nVwXsOVmrYu8rqvKKPMpg.jpg">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/11-1-158ba3a195f7ecc313538aae20c45658.jpg">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/11-2-4127c92edede8fbe048358b699b57589.jpg">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/11-3-c6c793034d8354ecf203513b644321df.jpg">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/12-3-06b5d454b3752b96000f8a9477fa31de.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/12-1-21d3090d03ff4dbb241e5810f2177fe8.jpg">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/12-2-4faa09c9994dc41555b86c1f023b4c38.jpg">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/gx6_wDMYEl8_Gc_JkTIKn.png">
+<meta property="article:published_time" content="2024-04-24T13:53:06.068Z">
+<meta property="article:modified_time" content="2024-04-24T13:52:53.082Z">
+<meta property="article:author" content="陈永辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8010-12/92b034385c440e08bc8551c97df0a2e3.gif">
+
+<link rel="canonical" href="http://example.com/2024/04/24/solidity%E5%9F%BA%E7%A1%8010-12/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 大帅哥</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大帅哥</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/24/solidity%E5%9F%BA%E7%A1%8010-12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-04-24 21:53:06 / 修改时间：21:52:53" itemprop="dateCreated datePublished" datetime="2024-04-24T21:53:06+08:00">2024-04-24</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Solidity极简入门-10-控制流，用solidity实现插入排序"><a href="#Solidity极简入门-10-控制流，用solidity实现插入排序" class="headerlink" title="Solidity极简入门: 10. 控制流，用solidity实现插入排序"></a>Solidity极简入门: 10. 控制流，用solidity实现插入排序</h1><p>这一讲，我们将介绍<code>solidity</code>中的控制流，然后讲如何用<code>solidity</code>实现插入排序（<code>InsertionSort</code>），一个看起来简单，但实际上很容易写出<code>bug</code>的程序。</p>
+<span id="more"></span>
+
+<h2 id="控制流"><a href="#控制流" class="headerlink" title="控制流"></a>控制流</h2><p><code>Solidity</code>的控制流与其他语言类似，主要包含以下几种：</p>
+<ol>
+<li><code>if-else</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function ifElseTest(uint256 _number) public pure returns(bool)&#123;</span><br><span class="line">    if(_number == 0)&#123;</span><br><span class="line">    return(true);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">    return(false);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><code>for循环</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function forLoopTest() public pure returns(uint256)&#123;</span><br><span class="line">    uint sum = 0;</span><br><span class="line">    for(uint i = 0; i &lt; 10; i++)&#123;</span><br><span class="line">    sum += i;</span><br><span class="line">    &#125;</span><br><span class="line">    return(sum);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><code>while循环</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">function whileTest() public pure returns(uint256)&#123;</span><br><span class="line">    uint sum = 0;</span><br><span class="line">    uint i = 0;</span><br><span class="line">    while(i &lt; 10)&#123;</span><br><span class="line">    sum += i;</span><br><span class="line">    i++;</span><br><span class="line">    &#125;</span><br><span class="line">    return(sum);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><code>do-while循环</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">function doWhileTest() public pure returns(uint256)&#123;</span><br><span class="line">    uint sum = 0;</span><br><span class="line">    uint i = 0;</span><br><span class="line">    do&#123;</span><br><span class="line">    sum += i;</span><br><span class="line">    i++;</span><br><span class="line">    &#125;while(i &lt; 10);</span><br><span class="line">    return(sum);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><code>三元运算符</code> 三元运算符是<code>solidity</code>中唯一一个接受三个操作数的运算符，规则<code>条件? 条件为真的表达式:条件为假的表达式</code>。 此运算符经常用作 if 语句的快捷方式。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 三元运算符 ternary/conditional operator</span><br><span class="line">function ternaryTest(uint256 x, uint256 y) public pure returns(uint256)&#123;</span><br><span class="line">    // return the max of x and y</span><br><span class="line">    return x &gt;= y ? x: y; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>另外还有<code>continue</code>（立即进入下一个循环）和<code>break</code>（跳出当前循环）关键字可以使用。</p>
+<h2 id="用solidity实现插入排序"><a href="#用solidity实现插入排序" class="headerlink" title="用solidity实现插入排序"></a>用<code>solidity</code>实现插入排序</h2><h3 id="写在前面：90-以上的人用solidity写插入算法都会出错。"><a href="#写在前面：90-以上的人用solidity写插入算法都会出错。" class="headerlink" title="写在前面：90%以上的人用solidity写插入算法都会出错。"></a>写在前面：90%以上的人用<code>solidity</code>写插入算法都会出错。</h3><h3 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h3><p>排序算法解决的问题是将无序的一组数字，例如<code>[2, 5, 3, 1]</code>，从小到大依次排列好。插入排序（<code>InsertionSort</code>）是最简单的一种排序算法，也是很多人学习的第一个算法。它的思路很简单，从前往后，依次将每一个数和排在他前面的数字比大小，如果比前面的数字小，就互换位置。示意图：</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/92b034385c440e08bc8551c97df0a2e3.gif" alt="插入排序"></p>
+<h3 id="python代码"><a href="#python代码" class="headerlink" title="python代码"></a><code>python</code>代码</h3><p>我们可以先看一下插入排序的python代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Python program for implementation of Insertion Sort</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">insertionSort</span>(<span class="params">arr</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="built_in">len</span>(arr)):</span><br><span class="line">        key = arr[i]</span><br><span class="line">        j = i-<span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> j &gt;=<span class="number">0</span> <span class="keyword">and</span> key &lt; arr[j] :</span><br><span class="line">                arr[j+<span class="number">1</span>] = arr[j]</span><br><span class="line">                j -= <span class="number">1</span></span><br><span class="line">        arr[j+<span class="number">1</span>] = key</span><br><span class="line">    <span class="keyword">return</span> arr</span><br></pre></td></tr></table></figure>
+
+<h3 id="改写成solidity后有BUG！"><a href="#改写成solidity后有BUG！" class="headerlink" title="改写成solidity后有BUG！"></a>改写成<code>solidity</code>后有<code>BUG</code>！</h3><p>一共8行<code>python</code>代码就可以完成插入排序，非常简单。那么我们将它改写成<code>solidity</code>代码，将函数，变量，循环等等都做了相应的转换，只需要9行代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 插入排序 错误版</span><br><span class="line">function insertionSortWrong(uint[] memory a) public pure returns(uint[] memory) &#123;</span><br><span class="line">    </span><br><span class="line">    for (uint i = 1;i &lt; a.length;i++)&#123;</span><br><span class="line">        uint temp = a[i];</span><br><span class="line">        uint j=i-1;</span><br><span class="line">        while( (j &gt;= 0) &amp;&amp; (temp &lt; a[j]))&#123;</span><br><span class="line">            a[j+1] = a[j];</span><br><span class="line">            j--;</span><br><span class="line">        &#125;</span><br><span class="line">        a[j+1] = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    return(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那我们把改好的放到<code>remix</code>上去跑，输入<code>[2, 5, 3, 1]</code>。BOOM！有<code>bug</code>！改了半天，没找到<code>bug</code>在哪。我又去<code>google</code>搜”solidity insertion sort”，然后发现网上用<code>solidity</code>写的插入算法教程都是错的，比如：<a target="_blank" rel="noopener" href="https://medium.com/coinmonks/sorting-in-solidity-without-comparison-4eb47e04ff0d">Sorting in Solidity without Comparison</a></p>
+<p>Remix decoded output 出现错误内容</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/10-1-e9590da7aad6c176501b7fc5abe3372f.jpg" alt="10-1"></p>
+<h3 id="正确的solidity插入排序"><a href="#正确的solidity插入排序" class="headerlink" title="正确的solidity插入排序"></a>正确的solidity插入排序</h3><p>花了几个小时，在<code>Dapp-Learning</code>社群一个朋友的帮助下，终于找到了<code>bug</code>所在。<code>solidity</code>中最常用的变量类型是<code>uint</code>，也就是正整数，取到负值的话，会报<code>underflow</code>错误。而在插入算法中，变量<code>j</code>有可能会取到<code>-1</code>，引起报错。</p>
+<p>这里，我们需要把<code>j</code>加1，让它无法取到负值。正确代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 插入排序 正确版</span><br><span class="line">function insertionSort(uint[] memory a) public pure returns(uint[] memory) &#123;</span><br><span class="line">    // note that uint can not take negative value</span><br><span class="line">    for (uint i = 1;i &lt; a.length;i++)&#123;</span><br><span class="line">        uint temp = a[i];</span><br><span class="line">        uint j=i;</span><br><span class="line">        while( (j &gt;= 1) &amp;&amp; (temp &lt; a[j-1]))&#123;</span><br><span class="line">            a[j] = a[j-1];</span><br><span class="line">            j--;</span><br><span class="line">        &#125;</span><br><span class="line">        a[j] = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    return(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行后的结果：</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/S-i6rwCMeXoi8eNJ0fRdB.png" alt="&quot;输入[2,5,3,1] 输出[1,2,3,5] &quot;"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们介绍了<code>solidity</code>中控制流，并且用<code>solidity</code>写了插入排序。看起来很简单，但实际很难。这就是<code>solidity</code>，坑很多，每个月都有项目因为这些小<code>bug</code>损失几千万甚至上亿美元。掌握好基础，不断练习，才能写出更好的<code>solidity</code>代码。</p>
+<h1 id="Solidity极简入门-11-构造函数和修饰器"><a href="#Solidity极简入门-11-构造函数和修饰器" class="headerlink" title="Solidity极简入门: 11. 构造函数和修饰器"></a>Solidity极简入门: 11. 构造函数和修饰器</h1><p>这一讲，我们将用合约权限控制（<code>Ownable</code>）的例子介绍<code>solidity</code>语言中构造函数（<code>constructor</code>）和独有的修饰器（<code>modifier</code>）。</p>
+<h2 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h2><p>构造函数（<code>constructor</code>）是一种特殊的函数，每个合约可以定义一个，并在部署合约的时候自动运行一次。它可以用来初始化合约的一些参数，例如初始化合约的<code>owner</code>地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">address owner; // 定义owner变量</span><br><span class="line"></span><br><span class="line">// 构造函数</span><br><span class="line">constructor() &#123;</span><br><span class="line">   owner = msg.sender; // 在部署合约的时候，将owner设置为部署者的地址</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>⚠️：构造函数在不同的solidity版本中的语法并不一致，在Solidity 0.4.22之前，构造函数不使用 <code>constructor</code> 而是使用与合约名同名的函数作为构造函数而使用，由于这种旧写法容易使开发者在书写时发生疏漏（例如合约名叫 <code>Parents</code>，构造函数名写成 <code>parents</code>），使得构造函数变成普通函数，引发漏洞，所以0.4.22版本及之后，采用了全新的 <code>constructor</code> 写法。</p>
+<p>构造函数的旧写法代码示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pragma solidity =0.4.21;</span><br><span class="line">contract Parents &#123;</span><br><span class="line">    // 与合约名Parents同名的函数就是构造函数</span><br><span class="line">    function Parents () public &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="修饰器"><a href="#修饰器" class="headerlink" title="修饰器"></a>修饰器</h2><p>修饰器（<code>modifier</code>）是<code>solidity</code>特有的语法，类似于面向对象编程中的<code>decorator</code>，声明函数拥有的特性，并减少代码冗余。它就像钢铁侠的智能盔甲，穿上它的函数会带有某些特定的行为。<code>modifier</code>的主要使用场景是运行函数前的检查，例如地址，变量，余额等。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/nVwXsOVmrYu8rqvKKPMpg.jpg" alt="钢铁侠的modifier"></p>
+<p>我们来定义一个叫做onlyOwner的modifier：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 定义modifier</span><br><span class="line">modifier onlyOwner &#123;</span><br><span class="line">   require(msg.sender == owner); // 检查调用者是否为owner地址</span><br><span class="line">   _; // 如果是的话，继续运行函数主体；否则报错并revert交易</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>带有<code>onlyOwner</code>修饰符的函数只能被<code>owner</code>地址调用，比如下面这个例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function changeOwner(address _newOwner) external onlyOwner&#123;</span><br><span class="line">   owner = _newOwner; // 只有owner地址运行这个函数，并改变owner</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们定义了一个<code>changeOwner</code>函数，运行他可以改变合约的<code>owner</code>，但是由于<code>onlyOwner</code>修饰符的存在，只有原先的<code>owner</code>可以调用，别人调用就会报错。这也是最常用的控制智能合约权限的方法。</p>
+<h3 id="OppenZepplin的Ownable标准实现："><a href="#OppenZepplin的Ownable标准实现：" class="headerlink" title="OppenZepplin的Ownable标准实现："></a>OppenZepplin的Ownable标准实现：</h3><p><code>OppenZepplin</code>是一个维护<code>solidity</code>标准化代码库的组织，他的<code>Ownable</code>标准实现如下： <a target="_blank" rel="noopener" href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol">https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol</a></p>
+<h2 id="Remix-演示示例"><a href="#Remix-演示示例" class="headerlink" title="Remix 演示示例"></a>Remix 演示示例</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// SPDX-License-Identifier: MIT</span><br><span class="line">pragma solidity ^0.8.0;</span><br><span class="line"></span><br><span class="line">contract Owner &#123;</span><br><span class="line">    address public owner;</span><br><span class="line">    constructor ()&#123;</span><br><span class="line">      owner = msg.sender;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    modifier onlyOwner&#123;</span><br><span class="line">        require(owner==msg.sender);</span><br><span class="line">        _;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function changeOwner(address _newOwner) external onlyOwner&#123;</span><br><span class="line">        owner = _newOwner;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以 <code>Owner.sol</code> 为例。</p>
+<ol>
+<li><p>在 Remix 上编译部署代码。</p>
+</li>
+<li><p>点击owner</p>
+<p>按钮查看当前 owner 变量。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/11-1-158ba3a195f7ecc313538aae20c45658.jpg" alt="img"></p>
+</li>
+<li><p>以 owner 地址的用户身份，调用changeOwner函数，交易成功。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/11-2-4127c92edede8fbe048358b699b57589.jpg" alt="img"></p>
+</li>
+<li><p>以非 owner 地址的用户身份，调用changeOwner函数，交易失败，因为modifier onlyOwner 的检查语句不满足。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/11-3-c6c793034d8354ecf203513b644321df.jpg" alt="img"></p>
+</li>
+</ol>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们介绍了<code>solidity</code>中的构造函数和修饰符，并举了一个控制合约权限的<code>Ownable</code>合约。</p>
+<h1 id="Solidity极简入门-12-事件"><a href="#Solidity极简入门-12-事件" class="headerlink" title="Solidity极简入门: 12. 事件"></a>Solidity极简入门: 12. 事件</h1><p>这一讲，我们用转账ERC20代币为例来介绍<code>solidity</code>中的事件（<code>event</code>）。</p>
+<h2 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h2><p><code>Solidity</code>中的事件（<code>event</code>）是<code>EVM</code>上日志的抽象，它具有两个特点：</p>
+<ul>
+<li>响应：应用程序（<a target="_blank" rel="noopener" href="https://learnblockchain.cn/docs/ethers.js/api-contract.html#id18"><code>ethers.js</code></a>）可以通过<code>RPC</code>接口订阅和监听这些事件，并在前端做响应。</li>
+<li>经济：事件是<code>EVM</code>上比较经济的存储数据的方式，每个大概消耗2,000 <code>gas</code>；相比之下，链上存储一个新变量至少需要20,000 <code>gas</code>。</li>
+</ul>
+<h3 id="声明事件"><a href="#声明事件" class="headerlink" title="声明事件"></a>声明事件</h3><p>事件的声明由<code>event</code>关键字开头，接着是事件名称，括号里面写好事件需要记录的变量类型和变量名。以<code>ERC20</code>代币合约的<code>Transfer</code>事件为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">event Transfer(address indexed from, address indexed to, uint256 value);</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，<code>Transfer</code>事件共记录了3个变量<code>from</code>，<code>to</code>和<code>value</code>，分别对应代币的转账地址，接收地址和转账数量，其中<code>from</code>和<code>to</code>前面带有<code>indexed</code>关键字，他们会保存在以太坊虚拟机日志的<code>topics</code>中，方便之后检索。</p>
+<p>&#x3D;&#x3D;在Solidity中，<code>indexed</code> 关键字用于声明事件的参数，允许这些参数在区块链的日志中被索引，这有助于外部的监听器高效地筛选这些事件。然而，并非所有类型的变量都可以使用<code>indexed</code>修饰。<code>indexed</code>关键字只能用于数据类型为<code>address</code>、<code>uint</code>、<code>int</code>、<code>bool</code>以及固定长度的<code>bytes</code>类型。对于更复杂的数据类型，如字符串（<code>string</code>）和动态数组（如<code>bytes</code>），不可以使用<code>indexed</code>修饰，因为这些类型的数据通常需要更多的存储空间，而且它们的日志存储方式与简单类型不同。&#x3D;&#x3D;</p>
+<h3 id="释放事件"><a href="#释放事件" class="headerlink" title="释放事件"></a>释放事件</h3><p>我们可以在函数里释放事件。在下面的例子中，每次用<code>_transfer()</code>函数进行转账操作的时候，都会释放<code>Transfer</code>事件，并记录相应的变量。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// 定义_transfer函数，执行转账逻辑</span><br><span class="line">function _transfer(</span><br><span class="line">    address from,</span><br><span class="line">    address to,</span><br><span class="line">    uint256 amount</span><br><span class="line">) external &#123;</span><br><span class="line"></span><br><span class="line">    _balances[from] = 10000000; // 给转账地址一些初始代币</span><br><span class="line"></span><br><span class="line">    _balances[from] -=  amount; // from地址减去转账数量</span><br><span class="line">    _balances[to] += amount; // to地址加上转账数量</span><br><span class="line"></span><br><span class="line">    // 释放事件</span><br><span class="line">    emit Transfer(from, to, amount);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="EVM日志-Log"><a href="#EVM日志-Log" class="headerlink" title="EVM日志 Log"></a>EVM日志 <code>Log</code></h2><p>以太坊虚拟机（EVM）用日志<code>Log</code>来存储<code>Solidity</code>事件，每条日志记录都包含主题<code>topics</code>和数据<code>data</code>两部分。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/12-3-06b5d454b3752b96000f8a9477fa31de.png" alt="img"></p>
+<h3 id="主题-Topics"><a href="#主题-Topics" class="headerlink" title="主题 Topics"></a>主题 <code>Topics</code></h3><p>日志的第一部分是主题数组，用于描述事件，长度不能超过<code>4</code>。它的第一个元素是事件的签名（哈希）。对于上面的<code>Transfer</code>事件，它的签名就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">keccak256(&quot;Transfer(addrses,address,uint256)&quot;)</span><br><span class="line"></span><br><span class="line">//0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef</span><br></pre></td></tr></table></figure>
+
+<p>&#x3D;&#x3D;产生事件的哈希和这个合约的发起者不是一个东西&#x3D;&#x3D;</p>
+<p>除了事件签名，主题还可以包含至多<code>3</code>个<code>indexed</code>参数，也就是<code>Transfer</code>事件中的<code>from</code>和<code>to</code>。</p>
+<p><code>indexed</code>标记的参数可以理解为检索事件的索引“键”，方便之后搜索。每个 <code>indexed</code> 参数的大小为固定的256比特，如果参数太大了（比如字符串），就会自动计算哈希存储在主题中。</p>
+<h3 id="数据-Data"><a href="#数据-Data" class="headerlink" title="数据 Data"></a>数据 <code>Data</code></h3><p>事件中不带 <code>indexed</code>的参数会被存储在 <code>data</code> 部分中，可以理解为事件的“值”。<code>data</code> 部分的变量不能被直接检索，但可以存储任意大小的数据。因此一般 <code>data</code> 部分可以用来存储复杂的数据结构，例如数组和字符串等等，因为这些数据超过了256比特，即使存储在事件的 <code>topic</code> 部分中，也是以哈希的方式存储。另外，<code>data</code> 部分的变量在存储上消耗的gas相比于 <code>topic</code> 更少。</p>
+<h2 id="Remix演示"><a href="#Remix演示" class="headerlink" title="Remix演示"></a><code>Remix</code>演示</h2><p>以 <code>Event.sol</code> 合约为例，编译部署。</p>
+<p>然后调用 <code>_transfer</code> 函数。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/12-1-21d3090d03ff4dbb241e5810f2177fe8.jpg" alt="img"></p>
+<p>点击右侧的交易查看详情，可以看到日志的具体内容。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/12-2-4faa09c9994dc41555b86c1f023b4c38.jpg" alt="img"></p>
+<h3 id="在etherscan上查询事件"><a href="#在etherscan上查询事件" class="headerlink" title="在etherscan上查询事件"></a>在etherscan上查询事件</h3><p>我们尝试用<code>_transfer()</code>函数在<code>Rinkeby</code>测试网络上转账100代币，可以在<code>etherscan</code>上查询到相应的<code>tx</code>：<a target="_blank" rel="noopener" href="https://rinkeby.etherscan.io/tx/0x8cf87215b23055896d93004112bbd8ab754f081b4491cb48c37592ca8f8a36c7">网址</a>。</p>
+<p>点击<code>Logs</code>按钮，就能看到事件明细：</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8010-12/gx6_wDMYEl8_Gc_JkTIKn.png" alt="Event明细"></p>
+<p><code>Topics</code>里面有三个元素，<code>[0]</code>是这个事件的哈希，<code>[1]</code>和<code>[2]</code>是我们定义的两个<code>indexed</code>变量的信息，即转账的转出地址和接收地址。<code>Data</code>里面是剩下的不带<code>indexed</code>的变量，也就是转账数量。</p>
+<h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们介绍了如何使用和查询<code>solidity</code>中的事件。很多链上分析工具包括<code>Nansen</code>和<code>Dune Analysis</code>都是基于事件工作的。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/04/24/solidity%E5%9F%BA%E7%A1%8010-12/" title="">http://example.com/2024/04/24/solidity基础10-12/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/" rel="prev" title="solidity基础4-6">
+      <i class="fa fa-chevron-left"></i> solidity基础4-6
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solidity%E6%9E%81%E7%AE%80%E5%85%A5%E9%97%A8-10-%E6%8E%A7%E5%88%B6%E6%B5%81%EF%BC%8C%E7%94%A8solidity%E5%AE%9E%E7%8E%B0%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">Solidity极简入门: 10. 控制流，用solidity实现插入排序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-number">1.1.</span> <span class="nav-text">控制流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8solidity%E5%AE%9E%E7%8E%B0%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F"><span class="nav-number">1.2.</span> <span class="nav-text">用solidity实现插入排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2%EF%BC%9A90-%E4%BB%A5%E4%B8%8A%E7%9A%84%E4%BA%BA%E7%94%A8solidity%E5%86%99%E6%8F%92%E5%85%A5%E7%AE%97%E6%B3%95%E9%83%BD%E4%BC%9A%E5%87%BA%E9%94%99%E3%80%82"><span class="nav-number">1.2.1.</span> <span class="nav-text">写在前面：90%以上的人用solidity写插入算法都会出错。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">插入排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python%E4%BB%A3%E7%A0%81"><span class="nav-number">1.2.3.</span> <span class="nav-text">python代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E6%88%90solidity%E5%90%8E%E6%9C%89BUG%EF%BC%81"><span class="nav-number">1.2.4.</span> <span class="nav-text">改写成solidity后有BUG！</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E7%A1%AE%E7%9A%84solidity%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F"><span class="nav-number">1.2.5.</span> <span class="nav-text">正确的solidity插入排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Solidity%E6%9E%81%E7%AE%80%E5%85%A5%E9%97%A8-11-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%92%8C%E4%BF%AE%E9%A5%B0%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">Solidity极简入门: 11. 构造函数和修饰器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">构造函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E9%A5%B0%E5%99%A8"><span class="nav-number">2.2.</span> <span class="nav-text">修饰器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OppenZepplin%E7%9A%84Ownable%E6%A0%87%E5%87%86%E5%AE%9E%E7%8E%B0%EF%BC%9A"><span class="nav-number">2.2.1.</span> <span class="nav-text">OppenZepplin的Ownable标准实现：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Remix-%E6%BC%94%E7%A4%BA%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.3.</span> <span class="nav-text">Remix 演示示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">2.4.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Solidity%E6%9E%81%E7%AE%80%E5%85%A5%E9%97%A8-12-%E4%BA%8B%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">Solidity极简入门: 12. 事件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6"><span class="nav-number">3.1.</span> <span class="nav-text">事件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E%E4%BA%8B%E4%BB%B6"><span class="nav-number">3.1.1.</span> <span class="nav-text">声明事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8A%E6%94%BE%E4%BA%8B%E4%BB%B6"><span class="nav-number">3.1.2.</span> <span class="nav-text">释放事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EVM%E6%97%A5%E5%BF%97-Log"><span class="nav-number">3.2.</span> <span class="nav-text">EVM日志 Log</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%A2%98-Topics"><span class="nav-number">3.2.1.</span> <span class="nav-text">主题 Topics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE-Data"><span class="nav-number">3.2.2.</span> <span class="nav-text">数据 Data</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Remix%E6%BC%94%E7%A4%BA"><span class="nav-number">3.3.</span> <span class="nav-text">Remix演示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8etherscan%E4%B8%8A%E6%9F%A5%E8%AF%A2%E4%BA%8B%E4%BB%B6"><span class="nav-number">3.3.1.</span> <span class="nav-text">在etherscan上查询事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-2"><span class="nav-number">3.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="陈永辉"
+      src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+  <p class="site-author-name" itemprop="name">陈永辉</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cyhzuishuai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cyhzuishuai" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2426230801@qq.com" title="E-Mail → 2426230801@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/chenyonghuizui" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;chenyonghuizui" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈永辉</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共11.8k字</span>
+</div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
