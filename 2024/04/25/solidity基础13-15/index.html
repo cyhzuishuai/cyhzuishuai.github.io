@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Solidity极简入门: 13. 继承这一讲，我们介绍solidity中的继承（inheritance），包括简单继承，多重继承，以及修饰器（modifier）和构造函数（constructor）的继承。 继承继承是面向对象编程很重要的组成部分，可以显著减少重复代码。如果把合约看作是对象的话，solidity也是面向对象的编程，也支持继承。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大帅哥">
+<meta property="og:url" content="http://example.com/2024/04/25/solidity%E5%9F%BA%E7%A1%8013-15/index.html">
+<meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="Solidity极简入门: 13. 继承这一讲，我们介绍solidity中的继承（inheritance），包括简单继承，多重继承，以及修饰器（modifier）和构造函数（constructor）的继承。 继承继承是面向对象编程很重要的组成部分，可以显著减少重复代码。如果把合约看作是对象的话，solidity也是面向对象的编程，也支持继承。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-1-42f0a6c7cc188762c41239403eb84e8b.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-2-9c0be37c4fab16f90c39580cbbead5ed.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-3-7fb3ed386135bd918b84cd92949884a4.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-4-c578cff17c65f768d1505da77c3cac0c.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-5-58a3d5a358dbda0ffb40afb626801005.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-6-099cd67439dcb0194684557cc1e29289.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-7-2c772dcd6711e67afd51118ae7ded35e.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-8-dcc83777980c789aec12ff8467b8d51f.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-9-49f35bff8cf0343cbbce2dd8fe9d3c59.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-10-3e690c6705a19b1e5b7d43a0570f5d0e.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/14-1-044a8470458eea92577e72cdbdd8dd24.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/14-2-f9d96ce31ea1e53ff8631a02022a2929.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/15-1-108068d779547bb5f2bbe63c4e350fab.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/15-2-5cd86c90ad4a466946c842c346a5ee18.png">
+<meta property="og:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/15-3-390b3562e3410dd9f6256b66e8d2610f.png">
+<meta property="article:published_time" content="2024-04-25T11:12:58.984Z">
+<meta property="article:modified_time" content="2024-04-25T11:10:37.982Z">
+<meta property="article:author" content="陈永辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-1-42f0a6c7cc188762c41239403eb84e8b.png">
+
+<link rel="canonical" href="http://example.com/2024/04/25/solidity%E5%9F%BA%E7%A1%8013-15/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 大帅哥</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大帅哥</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/25/solidity%E5%9F%BA%E7%A1%8013-15/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-04-25 19:12:58 / 修改时间：19:10:37" itemprop="dateCreated datePublished" datetime="2024-04-25T19:12:58+08:00">2024-04-25</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Solidity极简入门-13-继承"><a href="#Solidity极简入门-13-继承" class="headerlink" title="Solidity极简入门: 13. 继承"></a>Solidity极简入门: 13. 继承</h1><p>这一讲，我们介绍<code>solidity</code>中的继承（<code>inheritance</code>），包括简单继承，多重继承，以及修饰器（<code>modifier</code>）和构造函数（<code>constructor</code>）的继承。</p>
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><p>继承是面向对象编程很重要的组成部分，可以显著减少重复代码。如果把合约看作是对象的话，<code>solidity</code>也是面向对象的编程，也支持继承。</p>
+<span id="more"></span>
+
+<h3 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h3><ul>
+<li><code>virtual</code>: 父合约中的函数，如果希望子合约重写，需要加上<code>virtual</code>关键字。</li>
+<li><code>override</code>：子合约重写了父合约中的函数，需要加上<code>override</code>关键字。</li>
+</ul>
+<p><strong>注意</strong>：用<code>override</code>修饰<code>public</code>变量，会重写与变量同名的<code>getter</code>函数，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapping(address =&gt; uint256) public override balanceOf;</span><br></pre></td></tr></table></figure>
+
+<h3 id="简单继承"><a href="#简单继承" class="headerlink" title="简单继承"></a>简单继承</h3><p>我们先写一个简单的爷爷合约<code>Yeye</code>，里面包含1个<code>Log</code>事件和3个<code>function</code>: <code>hip()</code>, <code>pop()</code>, <code>yeye()</code>，输出都是”Yeye”。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">contract Yeye &#123;</span><br><span class="line">    event Log(string msg);</span><br><span class="line"></span><br><span class="line">    // 定义3个function: hip(), pop(), man()，Log值为Yeye。</span><br><span class="line">    function hip() public virtual&#123;</span><br><span class="line">        emit Log(&quot;Yeye&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function pop() public virtual&#123;</span><br><span class="line">        emit Log(&quot;Yeye&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function yeye() public virtual &#123;</span><br><span class="line">        emit Log(&quot;Yeye&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们再定义一个爸爸合约<code>Baba</code>，让他继承<code>Yeye</code>合约，语法就是<code>contract Baba is Yeye</code>，非常直观。在<code>Baba</code>合约里，我们重写一下<code>hip()</code>和<code>pop()</code>这两个函数，加上<code>override</code>关键字，并将他们的输出改为<code>”Baba”</code>；并且加一个新的函数<code>baba</code>，输出也是<code>”Baba”</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">contract Baba is Yeye&#123;</span><br><span class="line">    // 继承两个function: hip()和pop()，输出改为Baba。</span><br><span class="line">    function hip() public virtual override&#123;</span><br><span class="line">        emit Log(&quot;Baba&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function pop() public virtual override&#123;</span><br><span class="line">        emit Log(&quot;Baba&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function baba() public virtual&#123;</span><br><span class="line">        emit Log(&quot;Baba&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们部署合约，可以看到<code>Baba</code>合约里有4个函数，其中<code>hip()</code>和<code>pop()</code>的输出被成功改写成<code>”Baba”</code>，而继承来的<code>yeye()</code>的输出仍然是<code>”Yeye”</code>。</p>
+<h3 id="多重继承"><a href="#多重继承" class="headerlink" title="多重继承"></a>多重继承</h3><p><code>solidity</code>的合约可以继承多个合约。规则：</p>
+<ol>
+<li>继承时要按辈分最高到最低的顺序排。比如我们写一个<code>Erzi</code>合约，继承<code>Yeye</code>合约和<code>Baba</code>合约，那么就要写成<code>contract Erzi is Yeye, Baba</code>，而不能写成<code>contract Erzi is Baba, Yeye</code>，不然就会报错。</li>
+<li>&#x3D;&#x3D;如果某一个函数在多个继承的合约里都存在，比如例子中的<code>hip()</code>和<code>pop()</code>，在子合约里必须重写，不然会报错。&#x3D;&#x3D;</li>
+<li>重写在多个父合约中都重名的函数时，&#x3D;&#x3D;<code>override</code>关键字后面要加上所有父合约名字，例如<code>override(Yeye, Baba)</code>。&#x3D;&#x3D;</li>
+</ol>
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">contract Erzi is Yeye, Baba&#123;</span><br><span class="line">    // 继承两个function: hip()和pop()，输出值为Erzi。</span><br><span class="line">    function hip() public virtual override(Yeye, Baba)&#123;</span><br><span class="line">        emit Log(&quot;Erzi&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function pop() public virtual override(Yeye, Baba) &#123;</span><br><span class="line">        emit Log(&quot;Erzi&quot;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，<code>Erzi</code>合约里面重写了<code>hip()</code>和<code>pop()</code>两个函数，将输出改为<code>”Erzi”</code>，并且还分别从<code>Yeye</code>和<code>Baba</code>合约继承了<code>yeye()</code>和<code>baba()</code>两个函数。</p>
+<h3 id="修饰器的继承"><a href="#修饰器的继承" class="headerlink" title="修饰器的继承"></a>修饰器的继承</h3><p><code>Solidity</code>中的修饰器（<code>Modifier</code>）同样可以继承，用法与函数继承类似，在相应的地方加<code>virtual</code>和<code>override</code>关键字即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">contract Base1 &#123;</span><br><span class="line">    modifier exactDividedBy2And3(uint _a) virtual &#123;</span><br><span class="line">        require(_a % 2 == 0 &amp;&amp; _a % 3 == 0);</span><br><span class="line">        _;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">contract Identifier is Base1 &#123;</span><br><span class="line"></span><br><span class="line">    //计算一个数分别被2除和被3除的值，但是传入的参数必须是2和3的倍数</span><br><span class="line">    function getExactDividedBy2And3(uint _dividend) public exactDividedBy2And3(_dividend) pure returns(uint, uint) &#123;</span><br><span class="line">        return getExactDividedBy2And3WithoutModifier(_dividend);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //计算一个数分别被2除和被3除的值</span><br><span class="line">    function getExactDividedBy2And3WithoutModifier(uint _dividend) public pure returns(uint, uint)&#123;</span><br><span class="line">        uint div2 = _dividend / 2;</span><br><span class="line">        uint div3 = _dividend / 3;</span><br><span class="line">        return (div2, div3);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Identifier</code>合约可以直接在代码中使用父合约中的<code>exactDividedBy2And3</code>修饰器，也可以利用<code>override</code>关键字重写修饰器：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">modifier exactDividedBy2And3(uint _a) override &#123;</span><br><span class="line">    _;</span><br><span class="line">    require(_a % 2 == 0 &amp;&amp; _a % 3 == 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="构造函数的继承"><a href="#构造函数的继承" class="headerlink" title="构造函数的继承"></a>构造函数的继承</h3><p>子合约有两种方法继承父合约的构造函数。举个简单的例子，父合约<code>A</code>里面有一个状态变量<code>a</code>，并由构造函数的参数来确定：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 构造函数的继承</span><br><span class="line">abstract contract A &#123;</span><br><span class="line">    uint public a;</span><br><span class="line"></span><br><span class="line">    constructor(uint _a) &#123;</span><br><span class="line">        a = _a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>在继承时声明父构造函数的参数，例如：<code>contract B is A(1)</code></li>
+<li>在子合约的构造函数中声明构造函数的参数，例如：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">contract C is A &#123;</span><br><span class="line">    constructor(uint _c) A(_c * _c) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="调用父合约的函数"><a href="#调用父合约的函数" class="headerlink" title="调用父合约的函数"></a>调用父合约的函数</h3><p>子合约有两种方式调用父合约的函数，直接调用和利用<code>super</code>关键字。</p>
+<ol>
+<li>直接调用：子合约可以直接用<code>父合约名.函数名()</code>的方式来调用父合约函数，例如<code>Yeye.pop()</code>。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function callParent() public&#123;</span><br><span class="line">    Yeye.pop();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><code>super</code>关键字：子合约可以利用<code>super.函数名()</code>来调用最近的父合约函数。<code>solidity</code>继承关系按声明时从右到左的顺序是：<code>contract Erzi is Yeye, Baba</code>，那么<code>Baba</code>是最近的父合约，<code>super.pop()</code>将调用<code>Baba.pop()</code>而不是<code>Yeye.pop()</code>：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function callParentSuper() public&#123;</span><br><span class="line">    // 将调用最近的父合约函数，Baba.pop()</span><br><span class="line">    super.pop();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="钻石继承"><a href="#钻石继承" class="headerlink" title="钻石继承"></a>钻石继承</h3><p>在面向对象编程中，钻石继承（菱形继承）指一个派生类同时有两个或两个以上的基类。</p>
+<p>&#x3D;&#x3D;在多重+菱形继承链条上使用<code>super</code>关键字时，需要注意的是使用<code>super</code>会调用继承链条上的每一个合约的相关函数，而不是只调用最近的父合约。&#x3D;&#x3D;</p>
+<p>我们先写一个合约<code>God</code>，再写<code>Adam</code>和<code>Eve</code>两个合约继承<code>God</code>合约，最后让创建合约<code>people</code>继承自<code>Adam</code>和<code>Eve</code>，每个合约都有<code>foo</code>和<code>bar</code>两个函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">// SPDX-License-Identifier: MIT</span><br><span class="line">pragma solidity ^0.8.13;</span><br><span class="line"></span><br><span class="line">/* 继承树：</span><br><span class="line">  God</span><br><span class="line"> /  \</span><br><span class="line">Adam Eve</span><br><span class="line"> \  /</span><br><span class="line">people</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">contract God &#123;</span><br><span class="line">    event Log(string message);</span><br><span class="line"></span><br><span class="line">    function foo() public virtual &#123;</span><br><span class="line">        emit Log(&quot;God.foo called&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function bar() public virtual &#123;</span><br><span class="line">        emit Log(&quot;God.bar called&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">contract Adam is God &#123;</span><br><span class="line">    function foo() public virtual override &#123;</span><br><span class="line">        emit Log(&quot;Adam.foo called&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function bar() public virtual override &#123;</span><br><span class="line">        emit Log(&quot;Adam.bar called&quot;);</span><br><span class="line">        super.bar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">contract Eve is God &#123;</span><br><span class="line">    function foo() public virtual override &#123;</span><br><span class="line">        emit Log(&quot;Eve.foo called&quot;);</span><br><span class="line">        super.foo();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function bar() public virtual override &#123;</span><br><span class="line">        emit Log(&quot;Eve.bar called&quot;);</span><br><span class="line">        super.bar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">contract people is Adam, Eve &#123;</span><br><span class="line">    function foo() public override(Adam, Eve) &#123;</span><br><span class="line">        super.foo();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function bar() public override(Adam, Eve) &#123;</span><br><span class="line">        super.bar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，调用合约<code>people</code>中的<code>super.bar()</code>会依次调用<code>Eve</code>、<code>Adam</code>，最后是<code>God</code>合约。</p>
+<p>虽然<code>Eve</code>、<code>Adam</code>都是<code>God</code>的子合约，但整个过程中<code>God</code>合约只会被调用一次。原因是Solidity借鉴了Python的方式，强制一个由基类构成的DAG（有向无环图）使其保证一个特定的顺序。更多细节你可以查阅<a target="_blank" rel="noopener" href="https://solidity-cn.readthedocs.io/zh/develop/contracts.html?highlight=%E7%BB%A7%E6%89%BF#index-16">Solidity的官方文档</a>。</p>
+<h2 id="在Remix上验证"><a href="#在Remix上验证" class="headerlink" title="在Remix上验证"></a>在Remix上验证</h2><ul>
+<li><p>合约简单继承示例, 可以观察到Baba合约多了Yeye的函数</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-1-42f0a6c7cc188762c41239403eb84e8b.png" alt="13-1"></p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-2-9c0be37c4fab16f90c39580cbbead5ed.png" alt="13-2"></p>
+</li>
+<li><p>合约多重继承可以参考简单继承的操作步骤来增加部署Erzi合约，然后观察暴露的函数以及尝试调用来查看日志</p>
+</li>
+<li><p>修饰器继承示例</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-3-7fb3ed386135bd918b84cd92949884a4.png" alt="13-3"></p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-4-c578cff17c65f768d1505da77c3cac0c.png" alt="13-4"></p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-5-58a3d5a358dbda0ffb40afb626801005.png" alt="13-5"></p>
+</li>
+<li><p>构造函数继承示例</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-6-099cd67439dcb0194684557cc1e29289.png" alt="13-6"></p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-7-2c772dcd6711e67afd51118ae7ded35e.png" alt="13-7"></p>
+</li>
+<li><p>调用父合约示例</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-8-dcc83777980c789aec12ff8467b8d51f.png" alt="13-8"></p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-9-49f35bff8cf0343cbbce2dd8fe9d3c59.png" alt="13-9"></p>
+</li>
+<li><p>菱形继承示例</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/13-10-3e690c6705a19b1e5b7d43a0570f5d0e.png" alt="13-10"></p>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们介绍了<code>solidity</code>继承的基本用法，包括简单继承，多重继承，修饰器和构造函数的继承、调用父合约中的函数，以及多重继承中的菱形继承问题。</p>
+<h1 id="Solidity极简入门-14-抽象合约和接口"><a href="#Solidity极简入门-14-抽象合约和接口" class="headerlink" title="Solidity极简入门: 14. 抽象合约和接口"></a>Solidity极简入门: 14. 抽象合约和接口</h1><p>这一讲，我们用<code>ERC721</code>的接口合约为例介绍<code>solidity</code>中的抽象合约（<code>abstract</code>）和接口（<code>interface</code>），帮助大家更好的理解<code>ERC721</code>标准。</p>
+<h2 id="抽象合约"><a href="#抽象合约" class="headerlink" title="抽象合约"></a>抽象合约</h2><p>如果一个智能合约里至少有一个未实现的函数，即某个函数缺少主体<code>&#123;&#125;</code>中的内容，则必须将该合约标为<code>abstract</code>，不然编译会报错；另外，未实现的函数需要加<code>virtual</code>，以便子合约重写。拿我们之前的<a target="_blank" rel="noopener" href="https://github.com/AmazingAng/WTFSolidity/tree/main/07_InsertionSort">插入排序合约</a>为例，如果我们还没想好具体怎么实现插入排序函数，那么可以把合约标为<code>abstract</code>，之后让别人补写上。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">abstract contract InsertionSort&#123;</span><br><span class="line">    function insertionSort(uint[] memory a) public pure virtual returns(uint[] memory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><p>接口类似于抽象合约，但它不实现任何功能。接口的规则：</p>
+<ol>
+<li>不能包含状态变量</li>
+<li>不能包含构造函数</li>
+<li>不能继承除接口外的其他合约</li>
+<li>所有函数都必须是external且不能有函数体</li>
+<li>继承接口的合约必须实现接口定义的所有功能</li>
+</ol>
+<p>虽然接口不实现任何功能，但它非常重要。接口是智能合约的骨架，定义了合约的功能以及如何触发它们：如果智能合约实现了某种接口（比如<code>ERC20</code>或<code>ERC721</code>），其他Dapps和智能合约就知道如何与它交互。因为接口提供了两个重要的信息：</p>
+<ol>
+<li>合约里每个函数的<code>bytes4</code>选择器，以及函数签名<code>函数名(每个参数类型）</code>。</li>
+<li>接口id（更多信息见<a target="_blank" rel="noopener" href="https://eips.ethereum.org/EIPS/eip-165">EIP165</a>）</li>
+</ol>
+<p>另外，接口与合约<code>ABI</code>（Application Binary Interface）等价，可以相互转换：编译接口可以得到合约的<code>ABI</code>，利用<a target="_blank" rel="noopener" href="https://gnidan.github.io/abi-to-sol/">abi-to-sol工具</a>也可以将<code>ABI json</code>文件转换为<code>接口sol</code>文件。</p>
+<p>我们以<code>ERC721</code>接口合约<code>IERC721</code>为例，它定义了3个<code>event</code>和9个<code>function</code>，所有<code>ERC721</code>标准的NFT都实现了这些函数。我们可以看到，接口和常规合约的区别在于每个函数都以<code>;</code>代替函数体<code>&#123; &#125;</code>结尾。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">interface IERC721 is IERC165 &#123;</span><br><span class="line">    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);</span><br><span class="line">    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);</span><br><span class="line">    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);</span><br><span class="line">    </span><br><span class="line">    function balanceOf(address owner) external view returns (uint256 balance);</span><br><span class="line"></span><br><span class="line">    function ownerOf(uint256 tokenId) external view returns (address owner);</span><br><span class="line"></span><br><span class="line">    function safeTransferFrom(address from, address to, uint256 tokenId) external;</span><br><span class="line"></span><br><span class="line">    function transferFrom(address from, address to, uint256 tokenId) external;</span><br><span class="line"></span><br><span class="line">    function approve(address to, uint256 tokenId) external;</span><br><span class="line"></span><br><span class="line">    function getApproved(uint256 tokenId) external view returns (address operator);</span><br><span class="line"></span><br><span class="line">    function setApprovalForAll(address operator, bool _approved) external;</span><br><span class="line"></span><br><span class="line">    function isApprovedForAll(address owner, address operator) external view returns (bool);</span><br><span class="line"></span><br><span class="line">    function safeTransferFrom( address from, address to, uint256 tokenId, bytes calldata data) external;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="IERC721事件"><a href="#IERC721事件" class="headerlink" title="IERC721事件"></a>IERC721事件</h3><p><code>IERC721</code>包含3个事件，其中<code>Transfer</code>和<code>Approval</code>事件在<code>ERC20</code>中也有。</p>
+<ul>
+<li><code>Transfer</code>事件：在转账时被释放，记录代币的发出地址<code>from</code>，接收地址<code>to</code>和<code>tokenid</code>。</li>
+<li><code>Approval</code>事件：在授权时释放，记录授权地址<code>owner</code>，被授权地址<code>approved</code>和<code>tokenid</code>。</li>
+<li><code>ApprovalForAll</code>事件：在批量授权时释放，记录批量授权的发出地址<code>owner</code>，被授权地址<code>operator</code>和授权与否的<code>approved</code>。</li>
+</ul>
+<h3 id="IERC721函数"><a href="#IERC721函数" class="headerlink" title="IERC721函数"></a>IERC721函数</h3><ul>
+<li><code>balanceOf</code>：返回某地址的NFT持有量<code>balance</code>。</li>
+<li><code>ownerOf</code>：返回某<code>tokenId</code>的主人<code>owner</code>。</li>
+<li><code>transferFrom</code>：普通转账，参数为转出地址<code>from</code>，接收地址<code>to</code>和<code>tokenId</code>。</li>
+<li><code>safeTransferFrom</code>：安全转账（如果接收方是合约地址，会要求实现<code>ERC721Receiver</code>接口）。参数为转出地址<code>from</code>，接收地址<code>to</code>和<code>tokenId</code>。</li>
+<li><code>approve</code>：授权另一个地址使用你的NFT。参数为被授权地址<code>approve</code>和<code>tokenId</code>。</li>
+<li><code>getApproved</code>：查询<code>tokenId</code>被批准给了哪个地址。</li>
+<li><code>setApprovalForAll</code>：将自己持有的该系列NFT批量授权给某个地址<code>operator</code>。</li>
+<li><code>isApprovedForAll</code>：查询某地址的NFT是否批量授权给了另一个<code>operator</code>地址。</li>
+<li><code>safeTransferFrom</code>：安全转账的重载函数，参数里面包含了<code>data</code>。</li>
+</ul>
+<h3 id="什么时候使用接口？"><a href="#什么时候使用接口？" class="headerlink" title="什么时候使用接口？"></a>什么时候使用接口？</h3><p>如果我们知道一个合约实现了<code>IERC721</code>接口，我们不需要知道它具体代码实现，就可以与它交互。</p>
+<p>无聊猿<code>BAYC</code>属于<code>ERC721</code>代币，实现了<code>IERC721</code>接口的功能。我们不需要知道它的源代码，只需知道它的合约地址，用<code>IERC721</code>接口就可以与它交互，比如用<code>balanceOf()</code>来查询某个地址的<code>BAYC</code>余额，用<code>safeTransferFrom()</code>来转账<code>BAYC</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">contract interactBAYC &#123;</span><br><span class="line">    // 利用BAYC地址创建接口合约变量（ETH主网）</span><br><span class="line">    IERC721 BAYC = IERC721(0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D);</span><br><span class="line"></span><br><span class="line">    // 通过接口调用BAYC的balanceOf()查询持仓量</span><br><span class="line">    function balanceOfBAYC(address owner) external view returns (uint256 balance)&#123;</span><br><span class="line">        return BAYC.balanceOf(owner);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 通过接口调用BAYC的safeTransferFrom()安全转账</span><br><span class="line">    function safeTransferFromBAYC(address from, address to, uint256 tokenId) external&#123;</span><br><span class="line">        BAYC.safeTransferFrom(from, to, tokenId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="在Remix上验证-1"><a href="#在Remix上验证-1" class="headerlink" title="在Remix上验证"></a>在Remix上验证</h2><ul>
+<li><p>抽象合约示例（简单的演示代码如图所示）</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/14-1-044a8470458eea92577e72cdbdd8dd24.png" alt="14-1"></p>
+</li>
+<li><p>接口示例（简单的演示代码如图所示）</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/14-2-f9d96ce31ea1e53ff8631a02022a2929.png" alt="14-2"></p>
+</li>
+</ul>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我介绍了<code>solidity</code>中的抽象合约（<code>abstract</code>）和接口（<code>interface</code>），他们都可以写模版并且减少代码冗余。我们还讲了<code>ERC721</code>接口合约<code>IERC721</code>，以及如何利用它与无聊猿<code>BAYC</code>合约进行交互</p>
+<h1 id="Solidity极简入门-15-异常"><a href="#Solidity极简入门-15-异常" class="headerlink" title="Solidity极简入门: 15. 异常"></a>Solidity极简入门: 15. 异常</h1><p>这一讲，我们介绍<code>solidity</code>三种抛出异常的方法：<code>error</code>，<code>require</code>和<code>assert</code>，并比较三种方法的<code>gas</code>消耗。</p>
+<h2 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h2><p>写智能合约经常会出<code>bug</code>，<code>solidity</code>中的异常命令帮助我们<code>debug</code>。</p>
+<h3 id="Error"><a href="#Error" class="headerlink" title="Error"></a>Error</h3><p><code>error</code>是<code>solidity 0.8.4版本</code>新加的内容，方便且高效（省<code>gas</code>）地向用户解释操作失败的原因，同时还可以在抛出异常的同时携带参数，帮助开发者更好地调试。人们可以在<code>contract</code>之外定义异常。下面，我们定义一个<code>TransferNotOwner</code>异常，当用户不是代币<code>owner</code>的时候尝试转账，会抛出错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">error TransferNotOwner(); // 自定义error</span><br></pre></td></tr></table></figure>
+
+<p>我们也可以定义一个携带参数的异常，来提示尝试转账的账户地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">error TransferNotOwner(address sender); // 自定义的带参数的error</span><br></pre></td></tr></table></figure>
+
+<p>在执行当中，<code>error</code>必须搭配<code>revert</code>（回退）命令使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function transferOwner1(uint256 tokenId, address newOwner) public &#123;</span><br><span class="line">    if(_owners[tokenId] != msg.sender)&#123;</span><br><span class="line">        revert TransferNotOwner();</span><br><span class="line">        // revert TransferNotOwner(msg.sender);</span><br><span class="line">    &#125;</span><br><span class="line">    _owners[tokenId] = newOwner;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们定义了一个<code>transferOwner1()</code>函数，它会检查代币的<code>owner</code>是不是发起人，如果不是，就会抛出<code>TransferNotOwner</code>异常；如果是的话，就会转账。</p>
+<h3 id="Require"><a href="#Require" class="headerlink" title="Require"></a>Require</h3><p><code>require</code>命令是<code>solidity 0.8版本</code>之前抛出异常的常用方法，目前很多主流合约仍然还在使用它。它很好用，唯一的缺点就是<code>gas</code>随着描述异常的字符串长度增加，比<code>error</code>命令要高。使用方法：<code>require(检查条件，&quot;异常的描述&quot;)</code>，当检查条件不成立的时候，就会抛出异常。</p>
+<p>我们用<code>require</code>命令重写一下上面的<code>transferOwner</code>函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function transferOwner2(uint256 tokenId, address newOwner) public &#123;</span><br><span class="line">    require(_owners[tokenId] == msg.sender, &quot;Transfer Not Owner&quot;);</span><br><span class="line">    _owners[tokenId] = newOwner;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Assert"><a href="#Assert" class="headerlink" title="Assert"></a>Assert</h3><p><code>assert</code>命令一般用于程序员写程序<code>debug</code>，因为它不能解释抛出异常的原因（比<code>require</code>少个字符串）。它的用法很简单，<code>assert(检查条件）</code>，当检查条件不成立的时候，就会抛出异常。</p>
+<p>我们用<code>assert</code>命令重写一下上面的<code>transferOwner</code>函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function transferOwner3(uint256 tokenId, address newOwner) public &#123;</span><br><span class="line">    assert(_owners[tokenId] == msg.sender);</span><br><span class="line">    _owners[tokenId] = newOwner;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="在remix上验证"><a href="#在remix上验证" class="headerlink" title="在remix上验证"></a>在remix上验证</h2><ol>
+<li><p>输入任意</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uint256</span><br></pre></td></tr></table></figure>
+
+<p>数字和非0地址，调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transferOwner1</span><br></pre></td></tr></table></figure>
+
+<p>，也就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">error</span><br></pre></td></tr></table></figure>
+
+<p>方法，控制台抛出了异常并显示我们自定义的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TransferNotOwner</span><br></pre></td></tr></table></figure>
+
+<p>。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/15-1-108068d779547bb5f2bbe63c4e350fab.png" alt="15 1.png"></p>
+</li>
+<li><p>输入任意</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uint256</span><br></pre></td></tr></table></figure>
+
+<p>数字和非0地址，调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transferOwner2</span><br></pre></td></tr></table></figure>
+
+<p>，也就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">require</span><br></pre></td></tr></table></figure>
+
+<p>方法，控制台抛出了异常并打印出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">require</span><br></pre></td></tr></table></figure>
+
+<p>中的字符串。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/15-2-5cd86c90ad4a466946c842c346a5ee18.png" alt="15 2.png"></p>
+</li>
+<li><p>输入任意</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uint256</span><br></pre></td></tr></table></figure>
+
+<p>数字和非0地址，调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transferOwner3</span><br></pre></td></tr></table></figure>
+
+<p>，也就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">assert</span><br></pre></td></tr></table></figure>
+
+<p>方法，控制台只抛出了异常。</p>
+<p><img src="/../../source/images/solidity%E5%9F%BA%E7%A1%8013-15/15-3-390b3562e3410dd9f6256b66e8d2610f.png" alt="15 3.png"></p>
+</li>
+</ol>
+<h2 id="三种方法的gas比较"><a href="#三种方法的gas比较" class="headerlink" title="三种方法的gas比较"></a>三种方法的gas比较</h2><p>我们比较一下三种抛出异常的<code>gas</code>消耗，通过remix控制台的Debug按钮，能查到每次函数调用的<code>gas</code>消耗分别如下： （使用0.8.17版本编译）</p>
+<ol>
+<li><strong><code>error</code>方法<code>gas</code>消耗</strong>：24457 (<strong>加入参数后<code>gas</code>消耗</strong>：24660)</li>
+<li><strong><code>require</code>方法<code>gas</code>消耗</strong>：24755</li>
+<li><strong><code>assert</code>方法<code>gas</code>消耗</strong>：24473</li>
+</ol>
+<p>我们可以看到，<code>error</code>方法<code>gas</code>最少，其次是<code>assert</code>，<code>require</code>方法消耗<code>gas</code>最多！因此，<code>error</code>既可以告知用户抛出异常的原因，又能省<code>gas</code>，大家要多用！（注意，由于部署测试时间的不同，每个函数的<code>gas</code>消耗会有所不同，但是比较结果会是一致的。）</p>
+<p><strong>备注:</strong> Solidity 0.8.0之前的版本，<code>assert</code>抛出的是一个 <code>panic exception</code>，会把剩余的 <code>gas</code> 全部消耗，不会返还。更多细节见<a target="_blank" rel="noopener" href="https://docs.soliditylang.org/en/v0.8.17/control-structures.html">官方文档</a>。</p>
+<h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们介绍<code>solidity</code>三种抛出异常的方法：<code>error</code>，<code>require</code>和<code>assert</code>，并比较了三种方法的<code>gas</code>消耗。结论：<code>error</code>既可以告知用户抛出异常的原因，又能省<code>gas</code>。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/04/25/solidity%E5%9F%BA%E7%A1%8013-15/" title="">http://example.com/2024/04/25/solidity基础13-15/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%801-3/" rel="prev" title="solidity基础1-3">
+      <i class="fa fa-chevron-left"></i> solidity基础1-3
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solidity%E6%9E%81%E7%AE%80%E5%85%A5%E9%97%A8-13-%E7%BB%A7%E6%89%BF"><span class="nav-number">1.</span> <span class="nav-text">Solidity极简入门: 13. 继承</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF"><span class="nav-number">1.1.</span> <span class="nav-text">继承</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%84%E5%88%99"><span class="nav-number">1.1.1.</span> <span class="nav-text">规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%BB%A7%E6%89%BF"><span class="nav-number">1.1.2.</span> <span class="nav-text">简单继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF"><span class="nav-number">1.1.3.</span> <span class="nav-text">多重继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E9%A5%B0%E5%99%A8%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="nav-number">1.1.4.</span> <span class="nav-text">修饰器的继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="nav-number">1.1.5.</span> <span class="nav-text">构造函数的继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E7%88%B6%E5%90%88%E7%BA%A6%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.6.</span> <span class="nav-text">调用父合约的函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%BB%E7%9F%B3%E7%BB%A7%E6%89%BF"><span class="nav-number">1.1.7.</span> <span class="nav-text">钻石继承</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8Remix%E4%B8%8A%E9%AA%8C%E8%AF%81"><span class="nav-number">1.2.</span> <span class="nav-text">在Remix上验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Solidity%E6%9E%81%E7%AE%80%E5%85%A5%E9%97%A8-14-%E6%8A%BD%E8%B1%A1%E5%90%88%E7%BA%A6%E5%92%8C%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.</span> <span class="nav-text">Solidity极简入门: 14. 抽象合约和接口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%BD%E8%B1%A1%E5%90%88%E7%BA%A6"><span class="nav-number">2.1.</span> <span class="nav-text">抽象合约</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.2.</span> <span class="nav-text">接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IERC721%E4%BA%8B%E4%BB%B6"><span class="nav-number">2.2.1.</span> <span class="nav-text">IERC721事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IERC721%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.2.</span> <span class="nav-text">IERC721函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E6%8E%A5%E5%8F%A3%EF%BC%9F"><span class="nav-number">2.2.3.</span> <span class="nav-text">什么时候使用接口？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8Remix%E4%B8%8A%E9%AA%8C%E8%AF%81-1"><span class="nav-number">2.3.</span> <span class="nav-text">在Remix上验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">2.4.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Solidity%E6%9E%81%E7%AE%80%E5%85%A5%E9%97%A8-15-%E5%BC%82%E5%B8%B8"><span class="nav-number">3.</span> <span class="nav-text">Solidity极简入门: 15. 异常</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8"><span class="nav-number">3.1.</span> <span class="nav-text">异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Error"><span class="nav-number">3.1.1.</span> <span class="nav-text">Error</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Require"><span class="nav-number">3.1.2.</span> <span class="nav-text">Require</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Assert"><span class="nav-number">3.1.3.</span> <span class="nav-text">Assert</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8remix%E4%B8%8A%E9%AA%8C%E8%AF%81"><span class="nav-number">3.2.</span> <span class="nav-text">在remix上验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%E7%9A%84gas%E6%AF%94%E8%BE%83"><span class="nav-number">3.3.</span> <span class="nav-text">三种方法的gas比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-2"><span class="nav-number">3.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="陈永辉"
+      src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+  <p class="site-author-name" itemprop="name">陈永辉</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cyhzuishuai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cyhzuishuai" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2426230801@qq.com" title="E-Mail → 2426230801@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/chenyonghuizui" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;chenyonghuizui" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈永辉</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共15.7k字</span>
+</div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
