@@ -20,28 +20,38 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="大帅哥">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="函数重载重载solidity中允许函数进行重载（overloading），即名字相同但输入参数类型不同的函数可以同时存在，他们被视为不同的函数。注意，solidity不允许修饰器（modifier）重载。 函数重载举个例子，我们可以定义两个都叫saySomething()的函数，一个没有任何参数，输出&quot;Nothing&quot;；另一个接收一个string参数，输出这个string。 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="solidity基础16-18">
+<meta property="og:url" content="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/index.html">
 <meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="函数重载重载solidity中允许函数进行重载（overloading），即名字相同但输入参数类型不同的函数可以同时存在，他们被视为不同的函数。注意，solidity不允许修饰器（modifier）重载。 函数重载举个例子，我们可以定义两个都叫saySomething()的函数，一个没有任何参数，输出&quot;Nothing&quot;；另一个接收一个string参数，输出这个string。 1">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/16-1-02e5e7643e93251800ec337e341a58a4.jpg">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/HJC0UjkALdrL8a2BmAE2J.jpeg">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/bzB_JDC9f5VWHRjsjQyQa.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/18-1-be3039b3dda4b85f9a3197fbe6102abb.png">
+<meta property="article:published_time" content="2023-08-25T10:03:07.000Z">
+<meta property="article:modified_time" content="2024-05-09T03:25:23.730Z">
 <meta property="article:author" content="陈永辉">
+<meta property="article:tag" content="solidity基础">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/16-1-02e5e7643e93251800ec337e341a58a4.jpg">
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>大帅哥</title>
+  <title>solidity基础16-18 | 大帅哥</title>
   
 
 
@@ -182,427 +192,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%801-3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
-      <meta itemprop="name" content="陈永辉">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大帅哥">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%801-3/" class="post-title-link" itemprop="url">solidity基础1-3</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-08-25 18:03:07" itemprop="dateCreated datePublished" datetime="2023-08-25T18:03:07+08:00">2023-08-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-21 21:26:55" itemprop="dateModified" datetime="2024-04-21T21:26:55+08:00">2024-04-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/solidity/" itemprop="url" rel="index"><span itemprop="name">solidity</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
 
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Solidity-简介"><a href="#Solidity-简介" class="headerlink" title="Solidity 简介"></a>Solidity 简介</h2><p><code>Solidity</code> 是一种用于编写以太坊虚拟机（<code>EVM</code>）智能合约的编程语言。我认为掌握 <code>Solidity</code> 是参与链上项目的必备技能：区块链项目大部分是开源的，如果你能读懂代码，就可以规避很多亏钱项目。</p>
-<p><code>Solidity</code> 具有两个特点：</p>
-<ol>
-<li>“基于对象”：学会 <code>Solidity</code> 之后，可以助你在区块链领域找到好工作，挣钱找对象。</li>
-<li>“高级”：不会 <code>Solidity</code>，在币圈会显得很 low。</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/08/25/solidity%E5%9F%BA%E7%A1%801-3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8010-12/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
-      <meta itemprop="name" content="陈永辉">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大帅哥">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%8010-12/" class="post-title-link" itemprop="url">solidity基础10-12</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-08-25 18:03:07" itemprop="dateCreated datePublished" datetime="2023-08-25T18:03:07+08:00">2023-08-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 19:12:24" itemprop="dateModified" datetime="2024-04-25T19:12:24+08:00">2024-04-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/solidity/" itemprop="url" rel="index"><span itemprop="name">solidity</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Solidity极简入门-10-控制流，用solidity实现插入排序"><a href="#Solidity极简入门-10-控制流，用solidity实现插入排序" class="headerlink" title="Solidity极简入门: 10. 控制流，用solidity实现插入排序"></a>Solidity极简入门: 10. 控制流，用solidity实现插入排序</h1><p>这一讲，我们将介绍<code>solidity</code>中的控制流，然后讲如何用<code>solidity</code>实现插入排序（<code>InsertionSort</code>），一个看起来简单，但实际上很容易写出<code>bug</code>的程序。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/08/25/solidity%E5%9F%BA%E7%A1%8010-12/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
-      <meta itemprop="name" content="陈永辉">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大帅哥">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/" class="post-title-link" itemprop="url">solidity基础4-6</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-08-25 18:03:07" itemprop="dateCreated datePublished" datetime="2023-08-25T18:03:07+08:00">2023-08-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-21 21:28:13" itemprop="dateModified" datetime="2024-04-21T21:28:13+08:00">2024-04-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/solidity/" itemprop="url" rel="index"><span itemprop="name">solidity</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Solidity极简入门-4-函数输出-return"><a href="#Solidity极简入门-4-函数输出-return" class="headerlink" title="Solidity极简入门: 4. 函数输出 return"></a>Solidity极简入门: 4. 函数输出 return</h1><p>这一讲，我们将介绍<code>Solidity</code>函数输出，包括：返回多种变量，命名式返回，以及利用解构式赋值读取全部和部分返回值。</p>
-<h2 id="返回值-return和returns"><a href="#返回值-return和returns" class="headerlink" title="返回值 return和returns"></a>返回值 return和returns</h2><p><code>Solidity</code>有两个关键字与函数输出相关：<code>return</code>和<code>returns</code>，他们的区别在于：</p>
-<ul>
-<li><p><code>returns</code>加在函数名后面，用于声明返回的变量类型及变量名；</p>
-</li>
-<li><p><code>return</code>用于函数主体中，返回指定的变量。</p></li></ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8013-15/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
-      <meta itemprop="name" content="陈永辉">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大帅哥">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%8013-15/" class="post-title-link" itemprop="url">solidity基础13-15</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-08-25 18:03:07" itemprop="dateCreated datePublished" datetime="2023-08-25T18:03:07+08:00">2023-08-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:24:14" itemprop="dateModified" datetime="2024-04-25T20:24:14+08:00">2024-04-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/solidity/" itemprop="url" rel="index"><span itemprop="name">solidity</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Solidity极简入门-13-继承"><a href="#Solidity极简入门-13-继承" class="headerlink" title="Solidity极简入门: 13. 继承"></a>Solidity极简入门: 13. 继承</h1><p>这一讲，我们介绍<code>solidity</code>中的继承（<code>inheritance</code>），包括简单继承，多重继承，以及修饰器（<code>modifier</code>）和构造函数（<code>constructor</code>）的继承。</p>
-<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><p>继承是面向对象编程很重要的组成部分，可以显著减少重复代码。如果把合约看作是对象的话，<code>solidity</code>也是面向对象的编程，也支持继承。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/08/25/solidity%E5%9F%BA%E7%A1%8013-15/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%807-9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
-      <meta itemprop="name" content="陈永辉">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大帅哥">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%807-9/" class="post-title-link" itemprop="url">solidity基础7-9</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-08-25 18:03:07" itemprop="dateCreated datePublished" datetime="2023-08-25T18:03:07+08:00">2023-08-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-22 20:22:32" itemprop="dateModified" datetime="2024-04-22T20:22:32+08:00">2024-04-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/solidity/" itemprop="url" rel="index"><span itemprop="name">solidity</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Solidity极简入门-7-映射类型-mapping"><a href="#Solidity极简入门-7-映射类型-mapping" class="headerlink" title="Solidity极简入门: 7. 映射类型 mapping"></a>Solidity极简入门: 7. 映射类型 mapping</h1><h2 id="映射Mapping"><a href="#映射Mapping" class="headerlink" title="映射Mapping"></a>映射Mapping</h2><p>在映射中，人们可以通过键（<code>Key</code>）来查询对应的值（<code>Value</code>），比如：通过一个人的<code>id</code>来查询他的钱包地址。</p>
-<p>声明映射的格式为<code>mapping(_KeyType =&gt; _ValueType)</code>，其中<code>_KeyType</code>和<code>_ValueType</code>分别是<code>Key</code>和<code>Value</code>的变量类型。例子：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mapping(uint =&gt; address) public idToAddress; // id映射到地址</span><br><span class="line">mapping(address =&gt; address) public swapPair; // 币对的映射，地址到地址</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/08/25/solidity%E5%9F%BA%E7%A1%807-9/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -618,10 +211,9 @@
       <meta itemprop="name" content="大帅哥">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/" class="post-title-link" itemprop="url">solidity基础16-18</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          solidity基础16-18
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -650,6 +242,13 @@
             </span>
 
           
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
 
         </div>
       </header>
@@ -660,7 +259,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h1><h2 id="重载"><a href="#重载" class="headerlink" title="重载"></a>重载</h2><p><code>solidity</code>中允许函数进行重载（<code>overloading</code>），即名字相同但输入参数类型不同的函数可以同时存在，他们被视为不同的函数。注意，<code>solidity</code>不允许修饰器（<code>modifier</code>）重载。</p>
+        <h1 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h1><h2 id="重载"><a href="#重载" class="headerlink" title="重载"></a>重载</h2><p><code>solidity</code>中允许函数进行重载（<code>overloading</code>），即名字相同但输入参数类型不同的函数可以同时存在，他们被视为不同的函数。注意，<code>solidity</code>不允许修饰器（<code>modifier</code>）重载。</p>
 <h3 id="函数重载-1"><a href="#函数重载-1" class="headerlink" title="函数重载"></a>函数重载</h3><p>举个例子，我们可以定义两个都叫<code>saySomething()</code>的函数，一个没有任何参数，输出<code>&quot;Nothing&quot;</code>；另一个接收一个<code>string</code>参数，输出这个<code>string</code>。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function saySomething() public pure returns(string memory)&#123;</span><br><span class="line">    return(&quot;Nothing&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function saySomething(string memory something) public pure returns(string memory)&#123;</span><br><span class="line">    return(something);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -811,21 +410,50 @@
 <p>当你想要在Solidity中单独导入被导入文件中的全局符号（如合约、接口、库、函数、结构体等）时，这些符号应该与合约并列在文件结构中，而不是被包含在另一个合约的内部。这样，每个全局符号都被视为独立的定义，可以通过<code>import</code>语句单独导入到其他合约或文件中。</p>
 <p>这种组织方式有助于提高代码的模块化和可重用性，允许开发者仅导入他们需要的部分，而不是整个文件。例如，如果你有一个定义了多个合约、库或其他全局符号的Solidity文件，你可以选择性地只导入需要的那部分符号到你的合约中，这样做可以减少编译后代码的大小，提高合约的效率。</p>
 
-      
     </div>
 
     
     
     
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/" title="solidity基础16-18">http://example.com/2023/08/25/solidity基础16-18/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
+          <div class="post-tags">
+              <a href="/tags/solidity%E5%9F%BA%E7%A1%80/" rel="tag"># solidity基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%807-9/" rel="next" title="solidity基础7-9">
+      solidity基础7-9 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
       </footer>
+    
   </article>
   
   
-  
-
-
   
 
 
@@ -878,6 +506,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD"><span class="nav-number">1.</span> <span class="nav-text">函数重载</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E8%BD%BD"><span class="nav-number">1.1.</span> <span class="nav-text">重载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD-1"><span class="nav-number">1.1.1.</span> <span class="nav-text">函数重载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E5%8F%82%E5%8C%B9%E9%85%8D%EF%BC%88Argument-Matching%EF%BC%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">实参匹配（Argument Matching）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD%E6%9C%89%E4%BB%80%E4%B9%88%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">函数重载有什么用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E9%AB%98%E4%BB%A3%E7%A0%81%E7%9A%84%E5%8F%AF%E8%AF%BB%E6%80%A7%E5%92%8C%E6%98%93%E7%94%A8%E6%80%A7"><span class="nav-number">1.3.1.</span> <span class="nav-text">提高代码的可读性和易用性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%A4%9A%E6%80%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">实现多态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8C%96%E5%87%BD%E6%95%B0%E5%91%BD%E5%90%8D"><span class="nav-number">1.3.3.</span> <span class="nav-text">简化函数命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%BB%84%E7%BB%87"><span class="nav-number">1.3.4.</span> <span class="nav-text">代码组织</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.3.5.</span> <span class="nav-text">示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B%EF%BC%88Object-Oriented-Programming-OOP%EF%BC%89%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E7%82%B9%E6%98%AF%EF%BC%9A"><span class="nav-number">1.4.</span> <span class="nav-text">面向对象编程（Object-Oriented Programming, OOP）的三大特点是：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%93%E5%90%88%E7%BA%A6"><span class="nav-number">2.</span> <span class="nav-text">库合约</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%93%E5%87%BD%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">库函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Strings%E5%BA%93%E5%90%88%E7%BA%A6"><span class="nav-number">2.2.</span> <span class="nav-text">Strings库合约</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%BA%93%E5%90%88%E7%BA%A6"><span class="nav-number">2.2.1.</span> <span class="nav-text">如何使用库合约</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">2.3.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%94%A8"><span class="nav-number">2.3.1.</span> <span class="nav-text">1. 代码复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BC%98%E5%8C%96%E5%AD%98%E5%82%A8%E8%AE%BF%E9%97%AE"><span class="nav-number">2.3.2.</span> <span class="nav-text">2. 优化存储访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%87%8F%E5%B0%91%E9%83%A8%E7%BD%B2%E6%88%90%E6%9C%AC"><span class="nav-number">2.3.3.</span> <span class="nav-text">3. 减少部署成本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%AE%80%E5%8C%96%E5%90%88%E7%BA%A6%E4%BB%A3%E7%A0%81"><span class="nav-number">2.3.4.</span> <span class="nav-text">4. 简化合约代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Import"><span class="nav-number">3.</span> <span class="nav-text">Import</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#import%E7%94%A8%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">import用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenZeppelin-%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9%E5%8C%85%E6%8B%AC%EF%BC%9A"><span class="nav-number">3.1.1.</span> <span class="nav-text">OpenZeppelin 主要特点包括：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E7%A4%BA%E4%BE%8B%EF%BC%9A"><span class="nav-number">3.1.2.</span> <span class="nav-text">使用场景示例：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%AF%BC%E5%85%A5%E7%BB%93%E6%9E%9C"><span class="nav-number">3.2.</span> <span class="nav-text">测试导入结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-2"><span class="nav-number">3.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
