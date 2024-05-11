@@ -355,7 +355,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
@@ -369,7 +369,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/" class="post-title-link" itemprop="url">solidity基础4-6</a>
+            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/" class="post-title-link" itemprop="url">solidity基础16-18</a>
         </h2>
 
         <div class="post-meta">
@@ -386,7 +386,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-21 21:28:13" itemprop="dateModified" datetime="2024-04-21T21:28:13+08:00">2024-04-21</time>
+                <time title="修改时间：2024-05-11 09:39:12" itemprop="dateModified" datetime="2024-05-11T09:39:12+08:00">2024-05-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -409,15 +409,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="Solidity极简入门-4-函数输出-return"><a href="#Solidity极简入门-4-函数输出-return" class="headerlink" title="Solidity极简入门: 4. 函数输出 return"></a>Solidity极简入门: 4. 函数输出 return</h1><p>这一讲，我们将介绍<code>Solidity</code>函数输出，包括：返回多种变量，命名式返回，以及利用解构式赋值读取全部和部分返回值。</p>
-<h2 id="返回值-return和returns"><a href="#返回值-return和returns" class="headerlink" title="返回值 return和returns"></a>返回值 return和returns</h2><p><code>Solidity</code>有两个关键字与函数输出相关：<code>return</code>和<code>returns</code>，他们的区别在于：</p>
-<ul>
-<li><p><code>returns</code>加在函数名后面，用于声明返回的变量类型及变量名；</p>
-</li>
-<li><p><code>return</code>用于函数主体中，返回指定的变量。</p></li></ul>
+          <h1 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h1><h2 id="重载"><a href="#重载" class="headerlink" title="重载"></a>重载</h2><p><code>solidity</code>中允许函数进行重载（<code>overloading</code>），即名字相同但输入参数类型不同的函数可以同时存在，他们被视为不同的函数。注意，<code>solidity</code>不允许修饰器（<code>modifier</code>）重载。</p>
+<h3 id="函数重载-1"><a href="#函数重载-1" class="headerlink" title="函数重载"></a>函数重载</h3><p>举个例子，我们可以定义两个都叫<code>saySomething()</code>的函数，一个没有任何参数，输出<code>&quot;Nothing&quot;</code>；另一个接收一个<code>string</code>参数，输出这个<code>string</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function saySomething() public pure returns(string memory)&#123;</span><br><span class="line">    return(&quot;Nothing&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function saySomething(string memory something) public pure returns(string memory)&#123;</span><br><span class="line">    return(something);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/#more" rel="contents">
+              <a class="btn" href="/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -523,6 +520,92 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/" class="post-title-link" itemprop="url">solidity基础4-6</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-25 18:03:07" itemprop="dateCreated datePublished" datetime="2023-08-25T18:03:07+08:00">2023-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-21 21:28:13" itemprop="dateModified" datetime="2024-04-21T21:28:13+08:00">2024-04-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/solidity/" itemprop="url" rel="index"><span itemprop="name">solidity</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Solidity极简入门-4-函数输出-return"><a href="#Solidity极简入门-4-函数输出-return" class="headerlink" title="Solidity极简入门: 4. 函数输出 return"></a>Solidity极简入门: 4. 函数输出 return</h1><p>这一讲，我们将介绍<code>Solidity</code>函数输出，包括：返回多种变量，命名式返回，以及利用解构式赋值读取全部和部分返回值。</p>
+<h2 id="返回值-return和returns"><a href="#返回值-return和returns" class="headerlink" title="返回值 return和returns"></a>返回值 return和returns</h2><p><code>Solidity</code>有两个关键字与函数输出相关：<code>return</code>和<code>returns</code>，他们的区别在于：</p>
+<ul>
+<li><p><code>returns</code>加在函数名后面，用于声明返回的变量类型及变量名；</p>
+</li>
+<li><p><code>return</code>用于函数主体中，返回指定的变量。</p></li></ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%807-9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -588,229 +671,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
-      <meta itemprop="name" content="陈永辉">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大帅哥">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/" class="post-title-link" itemprop="url">solidity基础16-18</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-08-25 18:03:07" itemprop="dateCreated datePublished" datetime="2023-08-25T18:03:07+08:00">2023-08-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-05-09 11:25:23" itemprop="dateModified" datetime="2024-05-09T11:25:23+08:00">2024-05-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/solidity/" itemprop="url" rel="index"><span itemprop="name">solidity</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h1><h2 id="重载"><a href="#重载" class="headerlink" title="重载"></a>重载</h2><p><code>solidity</code>中允许函数进行重载（<code>overloading</code>），即名字相同但输入参数类型不同的函数可以同时存在，他们被视为不同的函数。注意，<code>solidity</code>不允许修饰器（<code>modifier</code>）重载。</p>
-<h3 id="函数重载-1"><a href="#函数重载-1" class="headerlink" title="函数重载"></a>函数重载</h3><p>举个例子，我们可以定义两个都叫<code>saySomething()</code>的函数，一个没有任何参数，输出<code>&quot;Nothing&quot;</code>；另一个接收一个<code>string</code>参数，输出这个<code>string</code>。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function saySomething() public pure returns(string memory)&#123;</span><br><span class="line">    return(&quot;Nothing&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function saySomething(string memory something) public pure returns(string memory)&#123;</span><br><span class="line">    return(something);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>&#x3D;&#x3D;最终重载函数在经过编译器编译后，由于不同的参数类型，都变成了不同的函数选择器（selector）。关于函数选择器的具体内容可参考<a target="_blank" rel="noopener" href="https://github.com/AmazingAng/WTFSolidity/tree/main/29_Selector">Solidity极简入门: 29. 函数选择器Selector</a>。&#x3D;&#x3D;</p>
-<p>以 <code>Overloading.sol</code> 合约为例，在 Remix 上编译部署后，分别调用重载函数 <code>saySomething()</code> 和 <code>saySomething(string memory something)</code>，可以看到他们返回了不同的结果，被区分为不同的函数。</p>
-<p><img src="/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/16-1-02e5e7643e93251800ec337e341a58a4.jpg" alt="img"></p>
-<h3 id="实参匹配（Argument-Matching）"><a href="#实参匹配（Argument-Matching）" class="headerlink" title="实参匹配（Argument Matching）"></a>实参匹配（Argument Matching）</h3><p>在调用重载函数时，会把输入的实际参数和函数参数的变量类型做匹配。 如果出现多个匹配的重载函数，则会报错。下面这个例子有两个叫<code>f()</code>的函数，一个参数为<code>uint8</code>，另一个为<code>uint256</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function f(uint8 _in) public pure returns (uint8 out) &#123;</span><br><span class="line">    out = _in;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function f(uint256 _in) public pure returns (uint256 out) &#123;</span><br><span class="line">    out = _in;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>&#x3D;&#x3D;我们调用<code>f(50)</code>，因为<code>50</code>既可以被转换为<code>uint8</code>，也可以被转换为<code>uint256</code>，因此会报错。&#x3D;&#x3D;</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们介绍了<code>solidity</code>中函数重载的基本用法：名字相同但输入参数类型不同的函数可以同时存在，他们被视为不同的函数。</p>
-<p>&#x3D;&#x3D;<code>solidity</code>不允许修饰器（<code>modifier</code>）重载。&#x3D;&#x3D;</p>
-<p>最终重载函数在经过编译器编译后，由于不同的参数类型，都变成了不同的函数选择器（selector）</p>
-<h2 id="函数重载有什么用"><a href="#函数重载有什么用" class="headerlink" title="函数重载有什么用"></a>函数重载有什么用</h2><p>函数重载（Function Overloading）是一种编程技术，允许在同一个作用域内创建多个同名函数，但这些函数的参数列表（参数类型或参数数量）不同。在Solidity智能合约编程中，函数重载用于提供多个具有相同名称但接受不同参数的函数版本，这使得合约的功能更加灵活和强大。函数重载的主要用途包括：</p>
-<h3 id="提高代码的可读性和易用性"><a href="#提高代码的可读性和易用性" class="headerlink" title="提高代码的可读性和易用性"></a>提高代码的可读性和易用性</h3><p>通过使用相同的函数名来执行类似的操作，但针对不同的参数类型或数量，可以使代码更容易理解和使用。调用者可以根据他们提供的参数类型和数量，选择最合适的函数版本执行。</p>
-<h3 id="实现多态"><a href="#实现多态" class="headerlink" title="实现多态"></a>实现多态</h3><p>函数重载是多态的一种形式，允许相同的函数调用根据调用时提供的参数类型或数量，映射到不同的函数实现上。这增加了合约的灵活性，允许开发者根据不同的使用场景优雅地处理不同类型的数据。</p>
-<h3 id="简化函数命名"><a href="#简化函数命名" class="headerlink" title="简化函数命名"></a>简化函数命名</h3><p>开发者不需要为执行相似操作的不同函数版本想出不同的名字，这样可以避免在合约接口中出现大量几乎相同功能的函数，只是因为它们的参数类型或数量不同。例如，一个处理支付的函数，无论是接收一个地址和金额，还是接收一个地址数组和金额数组，都可以命名为<code>pay</code>，只是参数不同。</p>
-<h3 id="代码组织"><a href="#代码组织" class="headerlink" title="代码组织"></a>代码组织</h3><p>在某些情况下，函数重载可以帮助组织和模块化代码。例如，你可能有一个基础操作的简单版本和一个支持更多自定义选项的高级版本。通过重载，可以保持这些函数在逻辑上紧密相关，而不是分散在合约中。</p>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>假设你有一个资产交易的智能合约，你可能需要一个<code>transfer</code>函数来处理不同类型的资产转移，如下所示：</p>
-<ul>
-<li><code>transfer(address to, uint256 amount)</code>：转移代币到指定地址。</li>
-<li><code>transfer(address to, uint256 tokenId)</code>：转移特定ID的NFT到指定地址。</li>
-</ul>
-<p>在这个例子中，<code>transfer</code>函数被重载来处理不同类型的资产，使得同一合约能够以统一的方式处理多种转账操作。</p>
-<p>总的来说，函数重载增加了Solidity合约的表达能力，使开发者能够以更直观和灵活的方式设计合约接口。</p>
-<h2 id="面向对象编程（Object-Oriented-Programming-OOP）的三大特点是："><a href="#面向对象编程（Object-Oriented-Programming-OOP）的三大特点是：" class="headerlink" title="面向对象编程（Object-Oriented Programming, OOP）的三大特点是："></a>面向对象编程（Object-Oriented Programming, OOP）的三大特点是：</h2><ol>
-<li><p><strong>封装（Encapsulation）</strong>：</p>
-<ul>
-<li>封装是指将数据（属性）和操作数据的方法（方法或函数）捆绑在一起形成类（Class）的过程。</li>
-<li>类通过暴露有限的接口来与外部交互，隐藏了内部的实现细节，从而提高了安全性和可维护性。</li>
-<li>封装有助于实现信息隐藏，使得对象的状态只能通过定义的接口进行访问和修改。</li>
-</ul>
-</li>
-<li><p><strong>继承（Inheritance）</strong>：</p>
-<ul>
-<li>继承是指一个类（子类或派生类）可以继承另一个类（父类或基类）的属性和方法。</li>
-<li>子类可以通过继承从父类中获得已有的功能，同时可以添加新的功能或重写已有的方法。</li>
-<li>继承提高了代码的重用性和扩展性，减少了重复编码的工作量。</li>
-</ul>
-</li>
-<li><p><strong>多态（Polymorphism）</strong>：</p>
-<ul>
-<li>多态是指同一个方法名可以在不同的对象上有不同的实现。</li>
-<li>多态性允许以统一的方式处理不同类型的对象，通过向上转型和动态绑定实现。</li>
-<li>多态性提高了代码的灵活性和可扩展性，使得程序更加易于理解和维护。</li>
-</ul>
-</li>
-</ol>
-<p>这三个特点共同构成了面向对象编程的核心思想，使得程序设计更加模块化、可重用和易于理解。</p>
-<h1 id="库合约"><a href="#库合约" class="headerlink" title="库合约"></a>库合约</h1><p>这一讲，我们用<code>ERC721</code>的引用的库合约<code>String</code>为例介绍<code>solidity</code>中的库合约（<code>library</code>），并总结了常用的库函数。</p>
-<h2 id="库函数"><a href="#库函数" class="headerlink" title="库函数"></a>库函数</h2><p>库函数是一种特殊的合约，为了提升<code>solidity</code>代码的复用性和减少<code>gas</code>而存在。库合约一般都是一些好用的函数合集（<code>库函数</code>），由大神或者项目方创作，咱们站在巨人的肩膀上，会用就行了。</p>
-<p><img src="/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/HJC0UjkALdrL8a2BmAE2J.jpeg" alt="库合约：站在巨人的肩膀上"></p>
-<p>&#x3D;&#x3D;</p>
-<p>他和普通合约主要有以下几点不同：</p>
-<ol>
-<li>不能存在状态变量</li>
-<li>不能够继承或被继承</li>
-<li>不能接收以太币</li>
-<li>不可以被销毁</li>
-</ol>
-<p>&#x3D;&#x3D;</p>
-<h2 id="Strings库合约"><a href="#Strings库合约" class="headerlink" title="Strings库合约"></a>Strings库合约</h2><p>&#x3D;&#x3D;注意Strings库合约跟string类型不一样&#x3D;&#x3D;</p>
-<p><code>Strings库合约</code>是将<code>uint256</code>类型转换为相应的<code>string</code>类型的代码库，样例代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">library Strings &#123;</span><br><span class="line">    bytes16 private constant _HEX_SYMBOLS = &quot;0123456789abcdef&quot;;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * @dev Converts a `uint256` to its ASCII `string` decimal representation.</span><br><span class="line">     */</span><br><span class="line">    function toString(uint256 value) public pure returns (string memory) &#123;</span><br><span class="line">        // Inspired by OraclizeAPI&#x27;s implementation - MIT licence</span><br><span class="line">        // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol</span><br><span class="line"></span><br><span class="line">        if (value == 0) &#123;</span><br><span class="line">            return &quot;0&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        uint256 temp = value;</span><br><span class="line">        uint256 digits;</span><br><span class="line">        while (temp != 0) &#123;</span><br><span class="line">            digits++;</span><br><span class="line">            temp /= 10;</span><br><span class="line">        &#125;</span><br><span class="line">        bytes memory buffer = new bytes(digits);</span><br><span class="line">        while (value != 0) &#123;</span><br><span class="line">            digits -= 1;</span><br><span class="line">            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));</span><br><span class="line">            value /= 10;</span><br><span class="line">        &#125;</span><br><span class="line">        return string(buffer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation.</span><br><span class="line">     */</span><br><span class="line">    function toHexString(uint256 value) public pure returns (string memory) &#123;</span><br><span class="line">        if (value == 0) &#123;</span><br><span class="line">            return &quot;0x00&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        uint256 temp = value;</span><br><span class="line">        uint256 length = 0;</span><br><span class="line">        while (temp != 0) &#123;</span><br><span class="line">            length++;</span><br><span class="line">            temp &gt;&gt;= 8;</span><br><span class="line">        &#125;</span><br><span class="line">        return toHexString(value, length);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.</span><br><span class="line">     */</span><br><span class="line">    function toHexString(uint256 value, uint256 length) public pure returns (string memory) &#123;</span><br><span class="line">        bytes memory buffer = new bytes(2 * length + 2);</span><br><span class="line">        buffer[0] = &quot;0&quot;;</span><br><span class="line">        buffer[1] = &quot;x&quot;;</span><br><span class="line">        for (uint256 i = 2 * length + 1; i &gt; 1; --i) &#123;</span><br><span class="line">            buffer[i] = _HEX_SYMBOLS[value &amp; 0xf];</span><br><span class="line">            value &gt;&gt;= 4;</span><br><span class="line">        &#125;</span><br><span class="line">        require(value == 0, &quot;Strings: hex length insufficient&quot;);</span><br><span class="line">        return string(buffer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>他主要包含两个函数，<code>toString()</code>将<code>uint256</code>转为<code>string</code>，<code>toHexString()</code>将<code>uint256</code>转换为<code>16进制</code>，再转换为<code>string</code>。<code>toHexString</code>是重载函数，有两个函数</p>
-<h3 id="如何使用库合约"><a href="#如何使用库合约" class="headerlink" title="如何使用库合约"></a>如何使用库合约</h3><p>我们用String库函数的toHexString()来演示两种使用库合约中函数的办法。</p>
-<p><strong>1. 利用using for指令</strong></p>
-<p>指令<code>using A for B;</code>可用于附加库函数（从库 A）到任何类型（B）。添加完指令后，库<code>A</code>中的函数会自动添加为<code>B</code>类型变量的成员，可以直接调用。注意：在调用的时候，这个变量会被当作第一个参数传递给函数：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 利用using for指令</span><br><span class="line">using Strings for uint256;</span><br><span class="line">function getString1(uint256 _number) public pure returns(string memory)&#123;</span><br><span class="line">    // 库函数会自动添加为uint256型变量的成员</span><br><span class="line">    return _number.toHexString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>2. 通过库合约名称调用库函数</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 直接通过库合约名调用</span><br><span class="line">function getString2(uint256 _number) public pure returns(string memory)&#123;</span><br><span class="line">    return Strings.toHexString(_number);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>我们部署合约并输入<code>170</code>测试一下，两种方法均能返回正确的<code>16进制string</code> “0xaa”。证明我们调用库函数成功！</p>
-<p><img src="/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/bzB_JDC9f5VWHRjsjQyQa.png" alt="成功调用库函数"></p>
-<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们用<code>ERC721</code>的引用的库函数<code>String</code>为例介绍<code>solidity</code>中的库函数（<code>Library</code>）。99%的开发者都不需要自己去写库合约，会用大神写的就可以了。我们只需要知道什么情况该用什么库合约。常用的有：</p>
-<ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/4a9cc8b4918ef3736229a5cc5a310bdc17bf759f/contracts/utils/Strings.sol">Strings</a>：将<code>uint256</code>转换为<code>String</code></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/4a9cc8b4918ef3736229a5cc5a310bdc17bf759f/contracts/utils/Address.sol">Address</a>：判断某个地址是否为合约地址</li>
-<li><a target="_blank" rel="noopener" href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/4a9cc8b4918ef3736229a5cc5a310bdc17bf759f/contracts/utils/Create2.sol">Create2</a>：更安全的使用<code>Create2 EVM opcode</code></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/4a9cc8b4918ef3736229a5cc5a310bdc17bf759f/contracts/utils/Arrays.sol">Arrays</a>：跟数组相关的库函数</li>
-</ol>
-<p>是的，使用库（Libraries）函数在某些情况下可以帮助减少智能合约的Gas消耗。库在Solidity中是一种特殊类型的合约，旨在被部署一次，然后由其他合约通过委托调用（delegatecall）来复用其函数。这种设计可以在多个合约之间共享代码逻辑，从而减少重复代码的部署，进一步减少Gas消耗。以下是库函数减少Gas消耗的几种方式：</p>
-<h3 id="1-代码复用"><a href="#1-代码复用" class="headerlink" title="1. 代码复用"></a>1. 代码复用</h3><p>通过将常用的逻辑和函数放在库中，多个合约可以共享这些代码，而不是在每个合约中重复相同的代码。这减少了链上存储的总量，因为库代码只需要部署一次，而不是与每个合约一起部署。</p>
-<h3 id="2-优化存储访问"><a href="#2-优化存储访问" class="headerlink" title="2. 优化存储访问"></a>2. 优化存储访问</h3><p>库可以用来优化数据的存储和访问模式。例如，Solidity的<code>SafeMath</code>库提供了安全的数学运算，防止溢出，而不增加额外的存储开销。通过优化数据处理，可以减少执行操作所需的Gas。</p>
-<h3 id="3-减少部署成本"><a href="#3-减少部署成本" class="headerlink" title="3. 减少部署成本"></a>3. 减少部署成本</h3><p>库的部署是独立于使用它的合约进行的。一旦库被部署，任何合约都可以通过委托调用来访问其函数，而不需要再次部署库代码。这意味着合约的部署成本降低了，因为合约体积变小。</p>
-<h3 id="4-简化合约代码"><a href="#4-简化合约代码" class="headerlink" title="4. 简化合约代码"></a>4. 简化合约代码</h3><p>通过将复杂逻辑移至库中，合约代码本身变得更简单、更清晰。这不仅有助于减少直接的Gas消耗，而且还使得合约更容易审核，减少了因错误或低效率代码导致的潜在Gas浪费。</p>
-<p>&#x3D;&#x3D;然而，值得注意的是，使用库并不总是导致Gas成本的减少。委托调用（delegatecall）本身是有成本的，并且如果库函数相对简单，那么使用库可能不会带来显著的Gas节省。因此，是否使用库以及如何使用库，应该根据具体情况和需求来决定，以确保能有效优化Gas消耗。&#x3D;&#x3D;</p>
-<h1 id="Import"><a href="#Import" class="headerlink" title="Import"></a>Import</h1><p><code>solidity</code>支持利用<code>import</code>关键字导入其他源代码中的合约，让开发更加模块化。</p>
-<h2 id="import用法"><a href="#import用法" class="headerlink" title="import用法"></a><code>import</code>用法</h2><ul>
-<li>通过源文件相对位置导入，例子：</li>
-</ul>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">文件结构</span><br><span class="line">├── Import.sol</span><br><span class="line">└── Yeye.sol</span><br><span class="line"></span><br><span class="line">// 通过文件相对位置import</span><br><span class="line">import &#x27;./Yeye.sol&#x27;;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>通过源文件网址导入网上的合约，例子：</li>
-</ul>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 通过网址引用</span><br><span class="line">import &#x27;https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Address.sol&#x27;;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>通过<code>npm</code>的目录导入，例子：</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import &#x27;@openzeppelin/contracts/access/Ownable.sol&#x27;;</span><br></pre></td></tr></table></figure>
-
-<p>OpenZeppelin 是一个在区块链开发领域非常知名的库，专门为智能合约开发提供安全的基础设施。它主要用于构建在以太坊和其他兼容EVM（以太坊虚拟机）的区块链上的智能合约。OpenZeppelin 的库和工具广泛应用于实现代币发行（如 ERC-20 和 ERC-721 代币标准）、访问控制、安全合约升级以及各种金融工具。</p>
-<h3 id="OpenZeppelin-主要特点包括："><a href="#OpenZeppelin-主要特点包括：" class="headerlink" title="OpenZeppelin 主要特点包括："></a>OpenZeppelin 主要特点包括：</h3><ol>
-<li><p><strong>安全性</strong>：提供经过严格审核和社区验证的智能合约实现，帮助开发人员避免常见的安全问题，如重入攻击、整数溢出等。</p>
-</li>
-<li><p><strong>可复用性</strong>：通过提供标准化的合约模板（如代币合约、所有权管理合约等），简化了开发流程并提高了代码的可复用性。</p>
-</li>
-<li><p><strong>易于集成</strong>：OpenZeppelin 的合约可以轻松集成到任何基于Solidity的项目中，支持通过 npm 安装，方便与其他项目或库结合使用。</p>
-</li>
-<li><p><strong>社区支持</strong>：拥有活跃的开发社区和广泛的用户基础，为开发者提供问题解答、最新的安全实践和持续的库更新。</p>
-</li>
-<li><p><strong>升级插件</strong>：提供了升级插件支持智能合约的透明升级，允许开发者修复、更新和改进已部署的合约。</p>
-</li>
-</ol>
-<h3 id="使用场景示例："><a href="#使用场景示例：" class="headerlink" title="使用场景示例："></a>使用场景示例：</h3><ul>
-<li><p><strong>创建代币</strong>：OpenZeppelin 提供了多种代币合约实现，如 ERC-20（标准化代币）、ERC-721（非同质化代币，即NFT）、ERC-1155（多代币标准）等。</p>
-</li>
-<li><p><strong>访问控制</strong>：提供了多种访问控制机制，如 <code>Ownable</code> 和 <code>Roles</code>，允许合约的创建者控制谁可以调用合约的特定功能。</p>
-</li>
-<li><p><strong>金融工具</strong>：例如创建可在特定条件下执行的智能合约，如基于时间的锁定或投票机制。</p>
-</li>
-<li><p>通过<code>全局符号</code>导入特定的合约，例子：</p>
-</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import &#123;Yeye&#125; from &#x27;./Yeye.sol&#x27;;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>引用(<code>import</code>)在代码中的位置为：在声明版本号之后，在其余代码之前。</li>
-</ul>
-<h2 id="测试导入结果"><a href="#测试导入结果" class="headerlink" title="测试导入结果"></a>测试导入结果</h2><p>我们可以用下面这段代码测试是否成功导入了外部源代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">contract Import &#123;</span><br><span class="line">    // 成功导入Address库</span><br><span class="line">    using Address for address;</span><br><span class="line">    // 声明yeye变量</span><br><span class="line">    Yeye yeye = new Yeye();</span><br><span class="line"></span><br><span class="line">    // 测试是否能调用yeye的函数</span><br><span class="line">    function test() external&#123;</span><br><span class="line">        yeye.hip();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="/2023/08/25/solidity%E5%9F%BA%E7%A1%8016-18/18-1-be3039b3dda4b85f9a3197fbe6102abb.png" alt="result"></p>
-<h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们介绍了利用<code>import</code>关键字导入外部源代码的方法。通过<code>import</code>关键字，可以引用我们写的其他文件中的合约或者函数，也可以直接导入别人写好的代码，非常方便。</p>
-<p>在Solidity中，<code>import</code>语句用于导入其他源文件中定义的全局符号，这些符号包括合约、库、接口、其他类型的定义以及函数等。使用<code>import</code>可以组织和重用代码，允许开发者将合约逻辑分散在多个文件中，便于管理和维护。<code>import</code>不仅限于接口，它可以导入任何在其他Solidity文件中定义的公共或外部可见的元素，但不能导入私有变量或内部变量，因为这些元素是封装在其原始合约中的，不对外部可见。</p>
-<p>当你想要在Solidity中单独导入被导入文件中的全局符号（如合约、接口、库、函数、结构体等）时，这些符号应该与合约并列在文件结构中，而不是被包含在另一个合约的内部。这样，每个全局符号都被视为独立的定义，可以通过<code>import</code>语句单独导入到其他合约或文件中。</p>
-<p>这种组织方式有助于提高代码的模块化和可重用性，允许开发者仅导入他们需要的部分，而不是整个文件。例如，如果你有一个定义了多个合约、库或其他全局符号的Solidity文件，你可以选择性地只导入需要的那部分符号到你的合约中，这样做可以减少编译后代码的大小，提高合约的效率。</p>
-
       
     </div>
 
