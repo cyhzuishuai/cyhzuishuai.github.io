@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Solidity极简入门: 19. 接收ETH receive和fallbackSolidity支持两种特殊的回调函数，receive()和fallback()，他们主要在两种情况下被使用：  接收ETH 处理合约中不存在的函数调用（代理合约proxy contract）  注意⚠️：在solidity 0.6.x版本之前，语法上只有 fallback() 函数，用来接收用户发送的ETH时调用以及">
+<meta property="og:type" content="article">
+<meta property="og:title" content="solidity基础16-18">
+<meta property="og:url" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/index.html">
+<meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="Solidity极简入门: 19. 接收ETH receive和fallbackSolidity支持两种特殊的回调函数，receive()和fallback()，他们主要在两种情况下被使用：  接收ETH 处理合约中不存在的函数调用（代理合约proxy contract）  注意⚠️：在solidity 0.6.x版本之前，语法上只有 fallback() 函数，用来接收用户发送的ETH时调用以及">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/19-1-4ba34e6d9cbb74a98a3c8affd59bc583.jpg">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/19-2-b933741438ce18210739446f85b8e3c4.jpg">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/19-3-83c411c3270d886d6ea0535c4cc9660d.jpg">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/19-4-a6bbcb103838f43fe8987b95606b8e27.jpg">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-1-b18baa5867c909e527eca6852945ad46.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-2-572c8ac0dfa42d4ea7fc62de0ff1c5af.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-3-c48a1c9f41ff2a53095bbf4d0b7767b7.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-5-cb457285c7185c438995bfcc95b6a01d.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-6-1ae2f81d902c618059d813e5b16cbe4c.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-7-bbfe1e7134676767c0a6c9612165ea9e.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-8-5c25a6d4556ce624ff27752f24e85d4a.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-1-9c522c370dfc53d1a0c273716f949c9e.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-2-a3c672e6dca937bf09dc3dfe5a421534.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-3-dd0cfc401d8462761c9b740ec21aa994.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-4-89e705ffc18c8f90063c922e7504b31e.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-5-52866e87f467b4ebad52d6d00d4d2744.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-6-615b6ab5f73c18a1c4a7a7d0be5f7228.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-7-ab9a5e3d84b27006392eb368b1e93d2d.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-8-3566ee52a32b536dded77112c6599bdb.png">
+<meta property="og:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-9-d90c3bad37dd4d77acbd2ea8b695242e.png">
+<meta property="article:published_time" content="2023-08-25T10:03:07.000Z">
+<meta property="article:modified_time" content="2024-05-14T07:38:52.860Z">
+<meta property="article:author" content="陈永辉">
+<meta property="article:tag" content="solidity基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/19-1-4ba34e6d9cbb74a98a3c8affd59bc583.jpg">
+
+<link rel="canonical" href="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>solidity基础16-18 | 大帅哥</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大帅哥</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          solidity基础16-18
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-25 18:03:07" itemprop="dateCreated datePublished" datetime="2023-08-25T18:03:07+08:00">2023-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-14 15:38:52" itemprop="dateModified" datetime="2024-05-14T15:38:52+08:00">2024-05-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/solidity/" itemprop="url" rel="index"><span itemprop="name">solidity</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Solidity极简入门-19-接收ETH-receive和fallback"><a href="#Solidity极简入门-19-接收ETH-receive和fallback" class="headerlink" title="Solidity极简入门: 19. 接收ETH receive和fallback"></a>Solidity极简入门: 19. 接收ETH receive和fallback</h1><p><code>Solidity</code>支持两种特殊的回调函数，<code>receive()</code>和<code>fallback()</code>，他们主要在两种情况下被使用：</p>
+<ol>
+<li>接收ETH</li>
+<li>处理合约中不存在的函数调用（代理合约proxy contract）</li>
+</ol>
+<p>注意⚠️：在solidity 0.6.x版本之前，语法上只有 <code>fallback()</code> 函数，用来接收用户发送的ETH时调用以及在被调用函数签名没有匹配到时，来调用。 0.6版本之后，solidity才将 <code>fallback()</code> 函数拆分成 <code>receive()</code> 和 <code>fallback()</code> 两个函数。</p>
+<p>我们这一讲主要讲接收ETH的情况。</p>
+<span id="more"></span>
+
+<h2 id="接收ETH函数-receive"><a href="#接收ETH函数-receive" class="headerlink" title="接收ETH函数 receive"></a>接收ETH函数 receive</h2><p><code>receive()</code>只用于处理接收<code>ETH</code>。一个合约最多有一个<code>receive()</code>函数，声明方式与一般函数不一样，不需要<code>function</code>关键字：<code>receive() external payable &#123; ... &#125;</code>。<code>receive()</code>函数不能有任何的参数，不能返回任何值，必须包含<code>external</code>和<code>payable</code>。</p>
+<p>当合约接收ETH的时候，<code>receive()</code>会被触发。<code>receive()</code>最好不要执行太多的逻辑因为如果别人用<code>send</code>和<code>transfer</code>方法发送<code>ETH</code>的话，<code>gas</code>会限制在<code>2300</code>，<code>receive()</code>太复杂可能会触发<code>Out of Gas</code>报错；如果用<code>call</code>就可以自定义<code>gas</code>执行更复杂的逻辑（这三种发送ETH的方法我们之后会讲到）。</p>
+<p>我们可以在<code>receive()</code>里发送一个<code>event</code>，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 定义事件</span><br><span class="line">event Received(address Sender, uint Value);</span><br><span class="line">// 接收ETH时释放Received事件</span><br><span class="line">receive() external payable &#123;</span><br><span class="line">    emit Received(msg.sender, msg.value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有些恶意合约，会在<code>receive()</code> 函数（老版本的话，就是 <code>fallback()</code> 函数）嵌入恶意消耗<code>gas</code>的内容或者使得执行故意失败的代码，导致一些包含退款和转账逻辑的合约不能正常工作，因此写包含退款等逻辑的合约时候，一定要注意这种情况。</p>
+<h2 id="回退函数-fallback"><a href="#回退函数-fallback" class="headerlink" title="回退函数 fallback"></a>回退函数 fallback</h2><p><code>fallback()</code>函数会在调用合约不存在的函数时被触发。可用于接收ETH，也可以用于代理合约<code>proxy contract</code>。<code>fallback()</code>声明时不需要<code>function</code>关键字，必须由<code>external</code>修饰，一般也会用<code>payable</code>修饰，用于接收ETH:<code>fallback() external payable &#123; ... &#125;</code>。</p>
+<p>我们定义一个<code>fallback()</code>函数，被触发时候会释放<code>fallbackCalled</code>事件，并输出<code>msg.sender</code>，<code>msg.value</code>和<code>msg.data</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// fallback</span><br><span class="line">fallback() external payable&#123;</span><br><span class="line">    emit fallbackCalled(msg.sender, msg.value, msg.data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="receive和fallback的区别"><a href="#receive和fallback的区别" class="headerlink" title="receive和fallback的区别"></a>receive和fallback的区别</h2><p><code>receive</code>和<code>fallback</code>都能够用于接收<code>ETH</code>，他们触发的规则如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">触发fallback() 还是 receive()?</span><br><span class="line">           接收ETH</span><br><span class="line">              |</span><br><span class="line">         msg.data是空？</span><br><span class="line">            /  \</span><br><span class="line">          是    否</span><br><span class="line">          /      \</span><br><span class="line">receive()存在?   fallback()</span><br><span class="line">        / \</span><br><span class="line">       是  否</span><br><span class="line">      /     \</span><br><span class="line">receive()   fallback()</span><br></pre></td></tr></table></figure>
+
+<p>简单来说，合约接收<code>ETH</code>时，<code>msg.data</code>为空且存在<code>receive()</code>时，会触发<code>receive()</code>；<code>msg.data</code>不为空或不存在<code>receive()</code>时，会触发<code>fallback()</code>，此时<code>fallback()</code>必须为<code>payable</code>。</p>
+<p><code>receive()</code>和<code>payable fallback()</code>均不存在的时候，向合约<strong>直接</strong>发送<code>ETH</code>将会报错（你仍可以通过带有<code>payable</code>的函数向合约发送<code>ETH</code>）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// SPDX-License-Identifier: MIT</span><br><span class="line">pragma solidity ^0.8.0;</span><br><span class="line"></span><br><span class="line">contract jieshou&#123;</span><br><span class="line">    event Receive(address sender,uint256 value);</span><br><span class="line">    receive() external payable &#123;</span><br><span class="line">        emit Receive(msg.sender,msg.value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    event Fallback(address sender, uint256 value,bytes data);</span><br><span class="line"></span><br><span class="line">    fallback() external payable&#123;</span><br><span class="line">        emit Fallback(msg.sender,msg.value,msg.data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function balanceof() public view returns(uint256)&#123;</span><br><span class="line">        return address(this).balance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&#x3D;&#x3D;就算value等于0，我填上calldata,他也会触发fallback(),也就是说想要有msg.data（calldata）就必须有fallback()函数&#x3D;&#x3D;</p>
+<h2 id="Remix-演示"><a href="#Remix-演示" class="headerlink" title="Remix 演示"></a>Remix 演示</h2><ol>
+<li><p>首先在 Remix 上部署合约 “Fallback.sol”。</p>
+</li>
+<li><p>“VALUE” 栏中填入要发送给合约的金额（单位是 Wei），然后点击 “Transact”。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/19-1-4ba34e6d9cbb74a98a3c8affd59bc583.jpg" alt="img"></p>
+</li>
+<li><p>可以看到交易成功，并且触发了 “receivedCalled” 事件。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/19-2-b933741438ce18210739446f85b8e3c4.jpg" alt="img"></p>
+</li>
+<li><p>“VALUE” 栏中填入要发送给合约的金额（单位是 Wei），”CALLDATA” 栏中填入随意编写的<code>msg.data</code>，然后点击 “Transact”。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/19-3-83c411c3270d886d6ea0535c4cc9660d.jpg" alt="img"></p>
+</li>
+<li><p>可以看到交易成功，并且触发了 “fallbackCalled” 事件。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/19-4-a6bbcb103838f43fe8987b95606b8e27.jpg" alt="img"></p>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我介绍了<code>Solidity</code>中的两种特殊函数，<code>receive()</code>和<code>fallback()</code>，他们主要在两种情况下被使用，他们主要用于处理接收<code>ETH</code>和代理合约<code>proxy contract</code>。</p>
+<h1 id="Solidity极简入门-20-发送ETH"><a href="#Solidity极简入门-20-发送ETH" class="headerlink" title="Solidity极简入门: 20. 发送ETH"></a>Solidity极简入门: 20. 发送ETH</h1><p><code>Solidity</code>有三种方法向其他合约发送<code>ETH</code>，他们是：<code>transfer()</code>，<code>send()</code>和<code>call()</code>，其中<code>call()</code>是被鼓励的用法。</p>
+<h2 id="接收ETH合约"><a href="#接收ETH合约" class="headerlink" title="接收ETH合约"></a>接收ETH合约</h2><p>我们先部署一个接收<code>ETH</code>合约<code>ReceiveETH</code>。<code>ReceiveETH</code>合约里有一个事件<code>Log</code>，记录收到的<code>ETH</code>数量和<code>gas</code>剩余。还有两个函数，一个是<code>receive()</code>函数，收到<code>ETH</code>被触发，并发送<code>Log</code>事件；另一个是查询合约<code>ETH</code>余额的<code>getBalance()</code>函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">contract ReceiveETH &#123;</span><br><span class="line">    // 收到eth事件，记录amount和gas</span><br><span class="line">    event Log(uint amount, uint gas);</span><br><span class="line">    </span><br><span class="line">    // receive方法，接收eth时被触发</span><br><span class="line">    receive() external payable&#123;</span><br><span class="line">        emit Log(msg.value, gasleft());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 返回合约ETH余额</span><br><span class="line">    function getBalance() view public returns(uint) &#123;</span><br><span class="line">        return address(this).balance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>部署<code>ReceiveETH</code>合约后，运行<code>getBalance()</code>函数，可以看到当前合约的<code>ETH</code>余额为<code>0</code>。</p>
+<p>&#x3D;&#x3D;gasleft()是什么</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-1-b18baa5867c909e527eca6852945ad46.png" alt="20-1"></p>
+<h2 id="发送ETH合约"><a href="#发送ETH合约" class="headerlink" title="发送ETH合约"></a>发送ETH合约</h2><p>我们将实现三种方法向<code>ReceiveETH</code>合约发送<code>ETH</code>。首先，先在发送ETH合约<code>SendETH</code>中实现<code>payable</code>的<code>构造函数</code>和<code>receive()</code>，让我们能够在部署时和部署后向合约转账。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">contract SendETH &#123;</span><br><span class="line">    // 构造函数，payable使得部署的时候可以转eth进去</span><br><span class="line">    constructor() payable&#123;&#125;</span><br><span class="line">    // receive方法，接收eth时被触发</span><br><span class="line">    receive() external payable&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="transfer"><a href="#transfer" class="headerlink" title="transfer"></a>transfer</h3><ul>
+<li>用法是<code>接收方地址.transfer(发送ETH数额)</code>。</li>
+<li><code>transfer()</code>的<code>gas</code>限制是<code>2300</code>，足够用于转账，但对方合约的<code>fallback()</code>或<code>receive()</code>函数不能实现太复杂的逻辑。</li>
+<li><code>transfer()</code>如果转账失败，会自动<code>revert</code>（回滚交易）。</li>
+</ul>
+<p>代码样例，注意里面的<code>_to</code>填<code>ReceiveETH</code>合约的地址，<code>amount</code>是<code>ETH</code>转账金额：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 用transfer()发送ETH</span><br><span class="line">function transferETH(address payable _to, uint256 amount) external payable&#123;</span><br><span class="line">    _to.transfer(amount);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>部署<code>SendETH</code>合约后，对<code>ReceiveETH</code>合约发送ETH，此时<code>amount</code>为10，<code>value</code>为0，<code>amount</code>&gt;<code>value</code>，转账失败，发生<code>revert</code>。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-2-572c8ac0dfa42d4ea7fc62de0ff1c5af.png" alt="20-2"></p>
+<p>此时<code>amount</code>为10，<code>value</code>为10，<code>amount</code>&lt;&#x3D;<code>value</code>，转账成功。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-3-c48a1c9f41ff2a53095bbf4d0b7767b7.png" alt="20-3"></p>
+<p>在<code>ReceiveETH</code>合约中，运行<code>getBalance()</code>函数，可以看到当前合约的<code>ETH</code>余额为<code>10</code>。</p>
+<p><img src="data:image/png;base64,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" alt="20-4"></p>
+<h3 id="send"><a href="#send" class="headerlink" title="send"></a>send</h3><ul>
+<li>用法是<code>接收方地址.send(发送ETH数额)</code>。</li>
+<li><code>send()</code>的<code>gas</code>限制是<code>2300</code>，足够用于转账，但对方合约的<code>fallback()</code>或<code>receive()</code>函数不能实现太复杂的逻辑。</li>
+<li><code>send()</code>如果转账失败，不会<code>revert</code>。</li>
+<li><code>send()</code>的返回值是<code>bool</code>，代表着转账成功或失败，需要额外代码处理一下。</li>
+</ul>
+<p>代码样例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// send()发送ETH</span><br><span class="line">function sendETH(address payable _to, uint256 amount) external payable&#123;</span><br><span class="line">    // 处理下send的返回值，如果失败，revert交易并发送error</span><br><span class="line">    bool success = _to.send(amount);</span><br><span class="line">    if(!success)&#123;</span><br><span class="line">        revert SendFailed();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对<code>ReceiveETH</code>合约发送ETH，此时<code>amount</code>为10，<code>value</code>为0，<code>amount</code>&gt;<code>value</code>，转账失败，因为经过处理，所以发生<code>revert</code>。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-5-cb457285c7185c438995bfcc95b6a01d.png" alt="20-5"></p>
+<p>此时<code>amount</code>为10，<code>value</code>为11，<code>amount</code>&lt;&#x3D;<code>value</code>，转账成功。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-6-1ae2f81d902c618059d813e5b16cbe4c.png" alt="20-6"></p>
+<h3 id="call"><a href="#call" class="headerlink" title="call"></a>call</h3><ul>
+<li>用法是<code>接收方地址.call&#123;value: 发送ETH数额&#125;(&quot;&quot;)</code>。</li>
+<li><code>call()</code>没有<code>gas</code>限制，可以支持对方合约<code>fallback()</code>或<code>receive()</code>函数实现复杂逻辑。</li>
+<li><code>call()</code>如果转账失败，不会<code>revert</code>。</li>
+<li><code>call()</code>的返回值是<code>(bool, data)</code>，其中<code>bool</code>代表着转账成功或失败，需要额外代码处理一下。</li>
+</ul>
+<p>代码样例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// call()发送ETH</span><br><span class="line">function callETH(address payable _to, uint256 amount) external payable&#123;</span><br><span class="line">    // 处理下call的返回值，如果失败，revert交易并发送error</span><br><span class="line">    (bool success,) = _to.call&#123;value: amount&#125;(&quot;&quot;);</span><br><span class="line">    if(!success)&#123;</span><br><span class="line">        revert CallFailed();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对<code>ReceiveETH</code>合约发送ETH，此时<code>amount</code>为10，<code>value</code>为0，<code>amount</code>&gt;<code>value</code>，转账失败，因为经过处理，所以发生<code>revert</code>。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-7-bbfe1e7134676767c0a6c9612165ea9e.png" alt="20-7"></p>
+<p>此时<code>amount</code>为10，<code>value</code>为11，<code>amount</code>&lt;&#x3D;<code>value</code>，转账成功。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/20-8-5c25a6d4556ce624ff27752f24e85d4a.png" alt="20-8"></p>
+<p>运行三种方法，可以看到，他们都可以成功地向<code>ReceiveETH</code>合约发送<code>ETH</code>。</p>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们介绍<code>solidity</code>三种发送<code>ETH</code>的方法：<code>transfer</code>，<code>send</code>和<code>call</code>。</p>
+<ul>
+<li><code>call</code>没有<code>gas</code>限制，最为灵活，是最提倡的方法；</li>
+<li><code>transfer</code>有<code>2300 gas</code>限制，但是发送失败会自动<code>revert</code>交易，是次优选择；</li>
+<li><code>send</code>有<code>2300 gas</code>限制，而且发送失败不会自动<code>revert</code>交易，几乎没有人用它。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">// SPDX-License-Identifier: MIT</span><br><span class="line">pragma solidity ^0.8.0;</span><br><span class="line">contract SendEth&#123;</span><br><span class="line">    constructor() payable&#123;&#125;</span><br><span class="line">    receive() external payable&#123;&#125;</span><br><span class="line">    function transferEth(address payable to,uint amount) external payable&#123;</span><br><span class="line">        to.transfer(amount);</span><br><span class="line">    &#125;</span><br><span class="line">    function getbalance() external view returns(uint)&#123;</span><br><span class="line">        return address(this).balance;</span><br><span class="line">    &#125; </span><br><span class="line">    function sendEth(address payable _to,uint256 amount)external payable&#123;</span><br><span class="line">        bool success = _to.send(amount);</span><br><span class="line">        if(!success)&#123;</span><br><span class="line">            revert (&quot;error&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    function callEth(address payable _to,uint256 amount) external payable&#123;</span><br><span class="line">        (bool success,) = _to.call&#123;value: amount&#125;(&quot;&quot;);</span><br><span class="line">        if(!success)&#123;</span><br><span class="line">            revert (&quot;error&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">// SPDX-License-Identifier: MIT</span><br><span class="line"></span><br><span class="line">pragma solidity ^0.8.0;</span><br><span class="line"></span><br><span class="line">contract othercontract&#123;</span><br><span class="line">    uint256 private _x = 0;</span><br><span class="line"></span><br><span class="line">    event Log(uint amount,uint gas);</span><br><span class="line"></span><br><span class="line">    function getbalance() view public returns(uint)&#123;</span><br><span class="line">        return address(this).balance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function setx(uint256 x) external payable&#123;</span><br><span class="line">        _x = x;</span><br><span class="line">        if(msg.value &gt; 0)&#123;</span><br><span class="line">            emit Log(msg.value,gasleft());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function getx() external view returns(uint x)&#123;</span><br><span class="line">        x = _x;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">contract callcontract&#123;</span><br><span class="line">    function callsetx(address _address, uint256 x) external&#123;</span><br><span class="line">        othercontract(_address).setx(x);</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    function callgetx(othercontract _address) external view returns(uint x)&#123;</span><br><span class="line">        x = _address.getx();</span><br><span class="line">    &#125;</span><br><span class="line">    function callgetx2(address _address) external view returns(uint x)&#123;</span><br><span class="line"></span><br><span class="line">        othercontract oc = othercontract(_address);</span><br><span class="line"></span><br><span class="line">        x = oc.getx();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function setxTransferETH(address _address,uint x) payable external&#123;</span><br><span class="line">        othercontract(_address).setx&#123;value: msg.value&#125;(x);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="Solidity极简入门-21-调用其他合约"><a href="#Solidity极简入门-21-调用其他合约" class="headerlink" title="Solidity极简入门: 21. 调用其他合约"></a>Solidity极简入门: 21. 调用其他合约</h1><h2 id="调用已部署合约"><a href="#调用已部署合约" class="headerlink" title="调用已部署合约"></a>调用已部署合约</h2><p>开发者写智能合约来调用其他合约，这让以太坊网络上的程序可以复用，从而建立繁荣的生态。很多<code>web3</code>项目依赖于调用其他合约，比如收益农场（<code>yield farming</code>）。这一讲，我们介绍如何在已知合约代码（或接口）和地址情况下调用目标合约的函数。</p>
+<h2 id="目标合约"><a href="#目标合约" class="headerlink" title="目标合约"></a>目标合约</h2><p>我们先写一个简单的合约<code>OtherContract</code>来调用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">contract OtherContract &#123;</span><br><span class="line">    uint256 private _x = 0; // 状态变量_x</span><br><span class="line">    // 收到eth的事件，记录amount和gas</span><br><span class="line">    event Log(uint amount, uint gas);</span><br><span class="line">    </span><br><span class="line">    // 返回合约ETH余额</span><br><span class="line">    function getBalance() view public returns(uint) &#123;</span><br><span class="line">        return address(this).balance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 可以调整状态变量_x的函数，并且可以往合约转ETH (payable)</span><br><span class="line">    function setX(uint256 x) external payable&#123;</span><br><span class="line">        _x = x;</span><br><span class="line">        // 如果转入ETH，则释放Log事件</span><br><span class="line">        if(msg.value &gt; 0)&#123;</span><br><span class="line">            emit Log(msg.value, gasleft());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 读取_x</span><br><span class="line">    function getX() external view returns(uint x)&#123;</span><br><span class="line">        x = _x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这个合约包含一个状态变量<code>_x</code>，一个事件<code>Log</code>在收到<code>ETH</code>时触发，三个函数：</p>
+<ul>
+<li><code>getBalance()</code>: 返回合约<code>ETH</code>余额。</li>
+<li><code>setX()</code>: <code>external payable</code>函数，可以设置<code>_x</code>的值，并向合约发送<code>ETH</code>。</li>
+<li><code>getX()</code>: 读取<code>_x</code>的值。</li>
+</ul>
+<h2 id="调用OtherContract合约"><a href="#调用OtherContract合约" class="headerlink" title="调用OtherContract合约"></a>调用<code>OtherContract</code>合约</h2><p>我们可以利用合约的地址和合约代码（或接口）来创建合约的引用：<code>_Name(_Address)</code>，其中<code>_Name</code>是合约名，<code>_Address</code>是合约地址。然后用合约的引用来调用它的函数：<code>_Name(_Address).f()</code>，其中<code>f()</code>是要调用的函数。</p>
+<p>下面我们介绍4个调用合约的例子，在remix中编译合约后，分别部署<code>OtherContract</code>和<code>CallContract</code>：</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-1-9c522c370dfc53d1a0c273716f949c9e.png" alt="deploy contract0 in remix"></p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-2-a3c672e6dca937bf09dc3dfe5a421534.png" alt="deploy contract1 in remix"></p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-3-dd0cfc401d8462761c9b740ec21aa994.png" alt="deploy contract2 in remix"></p>
+<h3 id="1-传入合约地址"><a href="#1-传入合约地址" class="headerlink" title="1. 传入合约地址"></a>1. 传入合约地址</h3><p>我们可以在函数里传入目标合约地址，生成目标合约的引用，然后调用目标函数。以调用<code>OtherContract</code>合约的<code>setX</code>函数为例，我们在新合约中写一个<code>callSetX</code>函数，传入已部署好的<code>OtherContract</code>合约地址<code>_Address</code>和<code>setX</code>的参数<code>x</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function callSetX(address _Address, uint256 x) external&#123;</span><br><span class="line">    OtherContract(_Address).setX(x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>复制<code>OtherContract</code>合约的地址，填入<code>callSetX</code>函数的参数中，成功调用后，调用<code>OtherContract</code>合约中的<code>getX</code>验证<code>x</code>变为123</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-4-89e705ffc18c8f90063c922e7504b31e.png" alt="call contract1 in remix"></p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-5-52866e87f467b4ebad52d6d00d4d2744.png" alt="call contract2 in remix"></p>
+<h3 id="2-传入合约变量"><a href="#2-传入合约变量" class="headerlink" title="2. 传入合约变量"></a>2. 传入合约变量</h3><p>我们可以直接在函数里传入合约的引用，只需要把上面参数的<code>address</code>类型改为目标合约名，比如<code>OtherContract</code>。下面例子实现了调用目标合约的<code>getX()</code>函数。</p>
+<p><strong>注意</strong>该函数参数<code>OtherContract _Address</code>底层类型仍然是<code>address</code>，生成的<code>ABI</code>中、调用<code>callGetX</code>时传入的参数都是<code>address</code>类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function callGetX(OtherContract _Address) external view returns(uint x)&#123;</span><br><span class="line">    x = _Address.getX();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>复制<code>OtherContract</code>合约的地址，填入<code>callGetX</code>函数的参数中，调用后成功获取<code>x</code>的值</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-6-615b6ab5f73c18a1c4a7a7d0be5f7228.png" alt="call contract3 in remix"></p>
+<h3 id="3-创建合约变量"><a href="#3-创建合约变量" class="headerlink" title="3. 创建合约变量"></a>3. 创建合约变量</h3><p>我们可以创建合约变量，然后通过它来调用目标函数。下面例子，我们给变量<code>oc</code>存储了<code>OtherContract</code>合约的引用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function callGetX2(address _Address) external view returns(uint x)&#123;</span><br><span class="line">    OtherContract oc = OtherContract(_Address);</span><br><span class="line">    x = oc.getX();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>复制<code>OtherContract</code>合约的地址，填入<code>callGetX2</code>函数的参数中，调用后成功获取<code>x</code>的值</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-7-ab9a5e3d84b27006392eb368b1e93d2d.png" alt="call contract4 in remix"></p>
+<h3 id="4-调用合约并发送ETH"><a href="#4-调用合约并发送ETH" class="headerlink" title="4. 调用合约并发送ETH"></a>4. 调用合约并发送<code>ETH</code></h3><p>如果目标合约的函数是<code>payable</code>的，那么我们可以通过调用它来给合约转账：<code>_Name(_Address).f&#123;value: _Value&#125;()</code>，其中<code>_Name</code>是合约名，<code>_Address</code>是合约地址，<code>f</code>是目标函数名，<code>_Value</code>是要转的<code>ETH</code>数额（以<code>wei</code>为单位）。</p>
+<p><code>OtherContract</code>合约的<code>setX</code>函数是<code>payable</code>的，在下面这个例子中我们通过调用<code>setX</code>来往目标合约转账。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function setXTransferETH(address otherContract, uint256 x) payable external&#123;</span><br><span class="line">    OtherContract(otherContract).setX&#123;value: msg.value&#125;(x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>复制<code>OtherContract</code>合约的地址，填入<code>setXTransferETH</code>函数的参数中，并转入10ETH</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-8-3566ee52a32b536dded77112c6599bdb.png" alt="call contract5 in remix"></p>
+<p>转账后，我们可以通过<code>Log</code>事件和<code>getBalance()</code>函数观察目标合约<code>ETH</code>余额的变化。</p>
+<p><img src="/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/21-9-d90c3bad37dd4d77acbd2ea8b695242e.png" alt="call contract6 in remix"></p>
+<h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><p>这一讲，我们介绍了如何通过目标合约代码（或接口）和地址来创建合约的引用，从而调用目标合约的函数。</p>
+<h1 id="拓展知识：插槽冲突"><a href="#拓展知识：插槽冲突" class="headerlink" title="拓展知识：插槽冲突"></a>拓展知识：插槽冲突</h1><p>在计算机科学和软件开发中，“插槽冲突”这个术语可以有几个不同的含义，具体取决于其应用的上下文。以下是几个最常见的场景：</p>
+<h3 id="1-哈希表中的插槽冲突"><a href="#1-哈希表中的插槽冲突" class="headerlink" title="1. 哈希表中的插槽冲突"></a>1. 哈希表中的插槽冲突</h3><p>在哈希表（或哈希映射）的实现中，插槽冲突（也称为哈希冲突）发生在两个不同的键通过哈希函数计算出相同的哈希值或索引时。当这种情况发生时，哈希表需要有一种机制来解决冲突，以确保所有的键都能被正确地存储和检索。常见的冲突解决技术包括：</p>
+<ul>
+<li><strong>开放寻址</strong>：如果一个插槽已被占用，哈希表将寻找下一个空闲的插槽。</li>
+<li><strong>链表法</strong>：每个插槽存储一个链表，所有具有相同哈希值的元素都会被添加到这个链表中。</li>
+</ul>
+<h3 id="2-计算机网络中的插槽冲突"><a href="#2-计算机网络中的插槽冲突" class="headerlink" title="2. 计算机网络中的插槽冲突"></a>2. 计算机网络中的插槽冲突</h3><p>在计算机网络特别是使用时间分割多路访问（TDMA）协议的无线通信系统中，插槽冲突可能发生在多个设备尝试同时使用同一个时间插槽来传输数据时。这种冲突需要通过协调机制来避免或解决，例如使用冲突检测和冲突解决算法。</p>
+<h3 id="3-Solidity智能合约中的存储插槽冲突"><a href="#3-Solidity智能合约中的存储插槽冲突" class="headerlink" title="3. Solidity智能合约中的存储插槽冲突"></a>3. Solidity智能合约中的存储插槽冲突</h3><p>在Solidity智能合约开发中，插槽冲突是一个特定于合约存储优化的问题。在Ethereum的智能合约中，存储是非常昂贵的资源，每个变量都被分配到一个称为“插槽”的位置。智能合约的变量如果不正确地排序，可能会导致不必要的存储空间浪费。在某些情况下，不同变量或继承的合约之间的不恰当交互也可能导致存储覆盖，这是一种严重的安全问题。</p>
+<p>在设计和实现数据结构、通信协议或智能合约时，了解如何处理各种类型的插槽冲突是非常重要的，以确保系统的效率和安全性。如果你有一个特定的上下文或应用场景关于插槽冲突，提供更多的细节可以帮助我给出更具体的解释或解决方案。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2023/08/25/solidity%E8%BF%9B%E9%98%B619-21/" title="solidity基础16-18">http://example.com/2023/08/25/solidity进阶19-21/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/solidity%E5%9F%BA%E7%A1%80/" rel="tag"># solidity基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%807-9/" rel="prev" title="solidity基础7-9">
+      <i class="fa fa-chevron-left"></i> solidity基础7-9
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/25/solidity%E5%9F%BA%E7%A1%804-6/" rel="next" title="solidity基础4-6">
+      solidity基础4-6 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solidity%E6%9E%81%E7%AE%80%E5%85%A5%E9%97%A8-19-%E6%8E%A5%E6%94%B6ETH-receive%E5%92%8Cfallback"><span class="nav-number">1.</span> <span class="nav-text">Solidity极简入门: 19. 接收ETH receive和fallback</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6ETH%E5%87%BD%E6%95%B0-receive"><span class="nav-number">1.1.</span> <span class="nav-text">接收ETH函数 receive</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E9%80%80%E5%87%BD%E6%95%B0-fallback"><span class="nav-number">1.2.</span> <span class="nav-text">回退函数 fallback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#receive%E5%92%8Cfallback%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.3.</span> <span class="nav-text">receive和fallback的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Remix-%E6%BC%94%E7%A4%BA"><span class="nav-number">1.4.</span> <span class="nav-text">Remix 演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Solidity%E6%9E%81%E7%AE%80%E5%85%A5%E9%97%A8-20-%E5%8F%91%E9%80%81ETH"><span class="nav-number">2.</span> <span class="nav-text">Solidity极简入门: 20. 发送ETH</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6ETH%E5%90%88%E7%BA%A6"><span class="nav-number">2.1.</span> <span class="nav-text">接收ETH合约</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E9%80%81ETH%E5%90%88%E7%BA%A6"><span class="nav-number">2.2.</span> <span class="nav-text">发送ETH合约</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#transfer"><span class="nav-number">2.2.1.</span> <span class="nav-text">transfer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#send"><span class="nav-number">2.2.2.</span> <span class="nav-text">send</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#call"><span class="nav-number">2.2.3.</span> <span class="nav-text">call</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">2.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Solidity%E6%9E%81%E7%AE%80%E5%85%A5%E9%97%A8-21-%E8%B0%83%E7%94%A8%E5%85%B6%E4%BB%96%E5%90%88%E7%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">Solidity极简入门: 21. 调用其他合约</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E5%B7%B2%E9%83%A8%E7%BD%B2%E5%90%88%E7%BA%A6"><span class="nav-number">3.1.</span> <span class="nav-text">调用已部署合约</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E5%90%88%E7%BA%A6"><span class="nav-number">3.2.</span> <span class="nav-text">目标合约</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E7%94%A8OtherContract%E5%90%88%E7%BA%A6"><span class="nav-number">3.3.</span> <span class="nav-text">调用OtherContract合约</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BC%A0%E5%85%A5%E5%90%88%E7%BA%A6%E5%9C%B0%E5%9D%80"><span class="nav-number">3.3.1.</span> <span class="nav-text">1. 传入合约地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BC%A0%E5%85%A5%E5%90%88%E7%BA%A6%E5%8F%98%E9%87%8F"><span class="nav-number">3.3.2.</span> <span class="nav-text">2. 传入合约变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BA%E5%90%88%E7%BA%A6%E5%8F%98%E9%87%8F"><span class="nav-number">3.3.3.</span> <span class="nav-text">3. 创建合约变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%B0%83%E7%94%A8%E5%90%88%E7%BA%A6%E5%B9%B6%E5%8F%91%E9%80%81ETH"><span class="nav-number">3.3.4.</span> <span class="nav-text">4. 调用合约并发送ETH</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-2"><span class="nav-number">3.4.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8B%93%E5%B1%95%E7%9F%A5%E8%AF%86%EF%BC%9A%E6%8F%92%E6%A7%BD%E5%86%B2%E7%AA%81"><span class="nav-number">4.</span> <span class="nav-text">拓展知识：插槽冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%93%88%E5%B8%8C%E8%A1%A8%E4%B8%AD%E7%9A%84%E6%8F%92%E6%A7%BD%E5%86%B2%E7%AA%81"><span class="nav-number">4.0.1.</span> <span class="nav-text">1. 哈希表中的插槽冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E6%8F%92%E6%A7%BD%E5%86%B2%E7%AA%81"><span class="nav-number">4.0.2.</span> <span class="nav-text">2. 计算机网络中的插槽冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Solidity%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E4%B8%AD%E7%9A%84%E5%AD%98%E5%82%A8%E6%8F%92%E6%A7%BD%E5%86%B2%E7%AA%81"><span class="nav-number">4.0.3.</span> <span class="nav-text">3. Solidity智能合约中的存储插槽冲突</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="陈永辉"
+      src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+  <p class="site-author-name" itemprop="name">陈永辉</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cyhzuishuai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cyhzuishuai" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2426230801@qq.com" title="E-Mail → 2426230801@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/chenyonghuizui" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;chenyonghuizui" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈永辉</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共23.4k字</span>
+</div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
