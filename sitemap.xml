@@ -112,7 +112,7 @@
 
   <url>
     <loc>http://example.com/</loc>
-    <lastmod>2024-06-28</lastmod>
+    <lastmod>2024-09-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -120,28 +120,28 @@
   
   <url>
     <loc>http://example.com/tags/solidity%E5%9F%BA%E7%A1%80/</loc>
-    <lastmod>2024-06-28</lastmod>
+    <lastmod>2024-09-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://example.com/tags/DeFi/</loc>
-    <lastmod>2024-06-28</lastmod>
+    <lastmod>2024-09-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://example.com/tags/Bloackchain/</loc>
-    <lastmod>2024-06-28</lastmod>
+    <lastmod>2024-09-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://example.com/tags/Blockchain/</loc>
-    <lastmod>2024-06-28</lastmod>
+    <lastmod>2024-09-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -150,14 +150,14 @@
   
   <url>
     <loc>http://example.com/categories/solidity/</loc>
-    <lastmod>2024-06-28</lastmod>
+    <lastmod>2024-09-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://example.com/categories/DeFi/</loc>
-    <lastmod>2024-06-28</lastmod>
+    <lastmod>2024-09-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
