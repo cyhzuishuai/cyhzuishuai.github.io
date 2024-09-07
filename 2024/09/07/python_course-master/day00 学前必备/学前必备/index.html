@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学习须知在正式开始学习前，带大家先来了解下路飞学城的授课和学习模式，这是结合众多学员的学习感受并根据我们多年课程开发经验制定出来，让你可以快速并高效的掌握授课内容。 1. 授课须知 模块闯关式教学，每个模块都【笔试】&amp;【线上面试】的考核，只有考核通过之后才能开通下一模块进行学习，以保证学员掌握每个阶段的知识点。  以天为单位授课和学习，学员需每天完成对应的任务，包括：知识点学习、练习题 和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大帅哥">
+<meta property="og:url" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/index.html">
+<meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="学习须知在正式开始学习前，带大家先来了解下路飞学城的授课和学习模式，这是结合众多学员的学习感受并根据我们多年课程开发经验制定出来，让你可以快速并高效的掌握授课内容。 1. 授课须知 模块闯关式教学，每个模块都【笔试】&amp;【线上面试】的考核，只有考核通过之后才能开通下一模块进行学习，以保证学员掌握每个阶段的知识点。  以天为单位授课和学习，学员需每天完成对应的任务，包括：知识点学习、练习题 和">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011095336789.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011125657758.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011125909612.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011130339602.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011130623276.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011131100278.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011131441988.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011131931183.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011132632820.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011133122518.png">
+<meta property="article:published_time" content="2024-09-07T13:27:27.964Z">
+<meta property="article:modified_time" content="2024-08-28T10:21:18.246Z">
+<meta property="article:author" content="陈永辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011095336789.png">
+
+<link rel="canonical" href="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 大帅哥</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大帅哥</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-07 21:27:27" itemprop="dateCreated datePublished" datetime="2024-09-07T21:27:27+08:00">2024-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-28 18:21:18" itemprop="dateModified" datetime="2024-08-28T18:21:18+08:00">2024-08-28</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学习须知"><a href="#学习须知" class="headerlink" title="学习须知"></a>学习须知</h1><p>在正式开始学习前，带大家先来了解下路飞学城的授课和学习模式，这是结合众多学员的学习感受并根据我们多年课程开发经验制定出来，让你可以快速并高效的掌握授课内容。</p>
+<h2 id="1-授课须知"><a href="#1-授课须知" class="headerlink" title="1. 授课须知"></a>1. 授课须知</h2><ul>
+<li><p>模块闯关式教学，每个模块都【笔试】&amp;【线上面试】的考核，只有考核通过之后才能开通下一模块进行学习，以保证学员掌握每个阶段的知识点。</p>
+</li>
+<li><p>以天为单位授课和学习，学员需每天完成对应的任务，包括：知识点学习、练习题 和 每天的作业。<br>注：练习题和作业都有视频讲解，学员需自己独立完成之后再根据视频讲解来核对自己的答案正确与否。</p>
+</li>
+<li><p>自主项目研发，为了培养学员独立开发项目能力，在学习期间指导学员自己开发出3个项目（除授课项目以外），毕业之后直接可以胜任企业安排的开发任务。</p>
+</li>
+</ul>
+<h2 id="2-建议学习方式"><a href="#2-建议学习方式" class="headerlink" title="2. 建议学习方式"></a>2. 建议学习方式</h2><ul>
+<li><p>学习笔记，在观看视频学习的过程中，可以结合老师讲解的知识点做好自己的课程笔记，便于回顾和复习。在每个模块结束时，可根据自己课堂笔记进行复习（不要再重新观看视频），提高学习效率。</p>
+</li>
+<li><p>课堂练习 &#x2F; 作业题，自己独立完成之后，再看老师的讲解视频，通过对比了解的自己的不足。</p>
+</li>
+<li><p>模块总结，在每个模块结束时，回顾当前模块中所有知识点并将其整理成一个思维导图，回顾知识点的同时也可以了解所有知识点关联关系，可帮助加深记忆。</p>
+</li>
+<li><p>错题本，将自己所有的错题都记录下来，在模块结束时，着重去复习以前做过的错题。</p>
+</li>
+<li><p>单词本，编程会涉及到一些英语单词，英语薄弱的同学建议整理一份单词本，每天早上和晚上看一遍。</p>
+</li>
+</ul>
+<h2 id="3-笔记"><a href="#3-笔记" class="headerlink" title="3. 笔记"></a>3. 笔记</h2><p>作为程序员平时编写笔记和开发文档时一般都使用Markdown格式，为了让你能成为更加专业的程序员，所以建议大家的课程笔记都要使用Markdown格式来编写。</p>
+<p>Markdown格式的文档可以用很多工具来编写，此处建议推荐大家使用 Typora 工具。</p>
+<h3 id="3-1-下载Typora"><a href="#3-1-下载Typora" class="headerlink" title="3.1 下载Typora"></a>3.1 下载Typora</h3><p>官网地址：<a target="_blank" rel="noopener" href="https://www.typora.io/">https://www.typora.io/</a></p>
+<p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011095336789.png" alt="image-20201011095336789"></p>
+<h3 id="3-2-Typra大纲视图"><a href="#3-2-Typra大纲视图" class="headerlink" title="3.2 Typra大纲视图"></a>3.2 Typra大纲视图</h3><p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011125657758.png" alt="image-20201011125657758"></p>
+<p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011125909612.png" alt="image-20201011125909612"></p>
+<h3 id="3-3-标题"><a href="#3-3-标题" class="headerlink" title="3.3 标题"></a>3.3 标题</h3><p>在文档中可以快速实现标题的编写，基本结构为：</p>
+<ul>
+<li><code># 内容</code>，一级标题</li>
+<li><code>## 内容</code>，二级标题</li>
+<li><code>### 内容</code>，三级标题</li>
+<li>…</li>
+</ul>
+<p>注意：#符号和文本中间必须有空格。</p>
+<p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011130339602.png" alt="image-20201011130339602"></p>
+<p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011130623276.png" alt="image-20201011130623276"></p>
+<h3 id="3-4-引用"><a href="#3-4-引用" class="headerlink" title="3.4 引用"></a>3.4 引用</h3><p>在文档中想要让文本内容以 引用 方式展示，可通过 <code>&gt; 内容</code> 格式实现。如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; 计算机一门xx学科</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011131100278.png" alt="image-20201011131100278"></p>
+<h3 id="3-5-列表"><a href="#3-5-列表" class="headerlink" title="3.5 列表"></a>3.5 列表</h3><p>想要以列表的形式展示数据，可以通过 <code>- 内容</code> 格式实现，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- CPU</span><br><span class="line">- 硬盘</span><br><span class="line">  - 普通硬盘</span><br><span class="line">  - 固态硬盘</span><br><span class="line">- 主板</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011131441988.png" alt="image-20201011131441988"></p>
+<h3 id="3-6-代码"><a href="#3-6-代码" class="headerlink" title="3.6 代码"></a>3.6 代码</h3><p>想要在文档中集成代码时，可以通过 &#96; 符号包裹实现，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">​```Python</span><br><span class="line">name = input(&quot;请输入用户名：&quot;)</span><br><span class="line">if name == &quot;wupeiqi&quot;:</span><br><span class="line">	print(&quot;登录成功&quot;)</span><br><span class="line">else:</span><br><span class="line">    print(&quot;登录失败&quot;)</span><br><span class="line">​```</span><br></pre></td></tr></table></figure>
+
+<p>注意：第一行写上Python表示代码会按照Python的语法进行高亮显示（也可以是Java等其他语言）。</p>
+<p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011131931183.png" alt="image-20201011131931183"></p>
+<h3 id="3-7-图片"><a href="#3-7-图片" class="headerlink" title="3.7 图片"></a>3.7 图片</h3><p>想要在文档中显示图片时，可以通过 <code>![](图片路径)</code>来展示，但这种编写方式比较麻烦，因为需要自己录入图片的路径，所以一般不会这么写入图片，而是选择直接 复制图片 或 截图 直接粘贴到文档中，Typora可以自动帮助我们生成图片格式。</p>
+<p>为了将文档中的管理文档中的图片，防止因为删除导致图片在文档中丢失，所以一般会在Typora中设置成将文档中的图片都复制到制定目录。</p>
+<p>在Typora中找到设置页面，并按照图片先进行如下设置：</p>
+<p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011132632820.png" alt="image-20201011132632820"></p>
+<p>那些接下来就可以直接将图片粘贴到文档中且Typora自动将图片保存至文档根目录的 assets 文件夹中。</p>
+<p><img src="/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/image-20201011133122518.png" alt="image-20201011133122518"></p>
+<p>上述就是我们Typora最常见的功能，其他更多功能在后续课程中会逐步交给大家。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>希望大家在了解授课模式之后，按照建议方式进行学习，早日学成！！！</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/09/07/python_course-master/day00%20%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/%E5%AD%A6%E5%89%8D%E5%BF%85%E5%A4%87/" title="">http://example.com/2024/09/07/python_course-master/day00 学前必备/学前必备/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/README/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day01%20%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E5%92%8C%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E7%AC%94%E8%AE%B0%E5%92%8C%E4%BD%9C%E4%B8%9A%E7%AD%94%E6%A1%88/day01%20%E4%BD%9C%E4%B8%9A%E8%AE%B2%E8%A7%A3/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E9%A1%BB%E7%9F%A5"><span class="nav-number">1.</span> <span class="nav-text">学习须知</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%8E%88%E8%AF%BE%E9%A1%BB%E7%9F%A5"><span class="nav-number">1.1.</span> <span class="nav-text">1. 授课须知</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%BB%BA%E8%AE%AE%E5%AD%A6%E4%B9%A0%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">2. 建议学习方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%AC%94%E8%AE%B0"><span class="nav-number">1.3.</span> <span class="nav-text">3. 笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%8B%E8%BD%BDTypora"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 下载Typora</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Typra%E5%A4%A7%E7%BA%B2%E8%A7%86%E5%9B%BE"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 Typra大纲视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%A0%87%E9%A2%98"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 标题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%BC%95%E7%94%A8"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E5%88%97%E8%A1%A8"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-%E5%9B%BE%E7%89%87"><span class="nav-number">1.3.7.</span> <span class="nav-text">3.7 图片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="陈永辉"
+      src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+  <p class="site-author-name" itemprop="name">陈永辉</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cyhzuishuai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cyhzuishuai" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2426230801@qq.com" title="E-Mail → 2426230801@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/chenyonghuizui" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;chenyonghuizui" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈永辉</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共126.9k字</span>
+</div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

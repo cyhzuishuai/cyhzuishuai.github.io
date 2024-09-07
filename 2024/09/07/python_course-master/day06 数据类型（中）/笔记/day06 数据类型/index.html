@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="day06 数据类型（中）常见的数据类型：  int，整数类型（整形） bool，布尔类型 str，字符串类型 list，列表类型 tuple，元组类型 dict，字典类型 set，集合类型 float，浮点类型（浮点型）  目标：掌握列表和元组数据类型的各种操作（知识点应用案例）。 课程概要：  list，列表类型，用于存储一些数据的容器（有序 &amp; 可修改）。【80%】 tuple，元组">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大帅哥">
+<meta property="og:url" content="http://example.com/2024/09/07/python_course-master/day06%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%AD%EF%BC%89/%E7%AC%94%E8%AE%B0/day06%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">
+<meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="day06 数据类型（中）常见的数据类型：  int，整数类型（整形） bool，布尔类型 str，字符串类型 list，列表类型 tuple，元组类型 dict，字典类型 set，集合类型 float，浮点类型（浮点型）  目标：掌握列表和元组数据类型的各种操作（知识点应用案例）。 课程概要：  list，列表类型，用于存储一些数据的容器（有序 &amp; 可修改）。【80%】 tuple，元组">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-09-07T13:27:28.829Z">
+<meta property="article:modified_time" content="2024-08-28T10:21:20.852Z">
+<meta property="article:author" content="陈永辉">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/09/07/python_course-master/day06%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%AD%EF%BC%89/%E7%AC%94%E8%AE%B0/day06%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 大帅哥</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大帅哥</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/python_course-master/day06%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%AD%EF%BC%89/%E7%AC%94%E8%AE%B0/day06%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-07 21:27:28" itemprop="dateCreated datePublished" datetime="2024-09-07T21:27:28+08:00">2024-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-28 18:21:20" itemprop="dateModified" datetime="2024-08-28T18:21:20+08:00">2024-08-28</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="day06-数据类型（中）"><a href="#day06-数据类型（中）" class="headerlink" title="day06 数据类型（中）"></a>day06 数据类型（中）</h1><p>常见的数据类型：</p>
+<ul>
+<li><span style="color:gray">int，整数类型（整形）</span></li>
+<li><span style="color:gray">bool，布尔类型</span></li>
+<li><span style="color:gray">str，字符串类型</span></li>
+<li><strong>list，列表类型</strong></li>
+<li><strong>tuple，元组类型</strong></li>
+<li><span style="color:gray">dict，字典类型</span></li>
+<li><span style="color:gray">set，集合类型</span></li>
+<li><span style="color:gray">float，浮点类型（浮点型）</span></li>
+</ul>
+<p>目标：掌握列表和元组数据类型的各种操作（知识点应用案例）。</p>
+<p>课程概要：</p>
+<ul>
+<li>list，列表类型，用于存储一些数据的容器（有序 &amp; 可修改）。【80%】</li>
+<li>tuple，元组类型，用于存储一些数据的容器（有序 &amp; 不可修改）。【20%】</li>
+</ul>
+<h2 id="1-列表（list）"><a href="#1-列表（list）" class="headerlink" title="1.列表（list）"></a>1.列表（list）</h2><p>列表（list），是一个<strong>有序</strong>且<strong>可变</strong>的容器，在里面可以存放<strong>多个不同类型</strong>的元素。</p>
+<h3 id="1-1-定义"><a href="#1-1-定义" class="headerlink" title="1.1 定义"></a>1.1 定义</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">user_list =  [<span class="string">&quot;苍老师&quot;</span>,<span class="string">&quot;有坂深雪&quot;</span>,<span class="string">&quot;大桥未久&quot;</span>]</span><br><span class="line">number_list = [<span class="number">98</span>,<span class="number">88</span>,<span class="number">666</span>,<span class="number">12</span>,-<span class="number">1</span>]</span><br><span class="line">data_list = [<span class="number">1</span>,<span class="literal">True</span>,<span class="string">&quot;Alex&quot;</span>,<span class="string">&quot;宝强&quot;</span>,<span class="string">&quot;贾乃亮&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">user_list = []</span><br><span class="line">user_list.append(<span class="string">&quot;铁锤&quot;</span>)</span><br><span class="line">user_list.append(<span class="number">123</span>)</span><br><span class="line">user_list.append(<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># [&quot;铁锤&quot;,123,True]</span></span><br></pre></td></tr></table></figure>
+
+<p>不可变类型：字符串、布尔、整型（已最小，内部数据无法进行修改）</p>
+<p>可变类型：列表（内部数据元素可以修改）</p>
+<h3 id="1-2-独有功能"><a href="#1-2-独有功能" class="headerlink" title="1.2 独有功能"></a>1.2 独有功能</h3><p>Python中为所有的列表类型的数据提供了一批独有的功能。</p>
+<p>在开始学习列表的独有功能之前，先来做一个字符串和列表的对比：</p>
+<ul>
+<li><p>字符串，不可变，即：创建好之后内部就无法修改。【独有功能都是新创建一份数据】</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;alex&quot;</span></span><br><span class="line">data = name.upper()</span><br><span class="line"><span class="built_in">print</span>(name)</span><br><span class="line"><span class="built_in">print</span>(data)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列表，可变，即：创建好之后内部元素可以修改。【独有功能基本上都是直接操作列表内部，不会创建新的一份数据】</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;车子&quot;</span>,<span class="string">&quot;妹子&quot;</span>]</span><br><span class="line">user_list.append(<span class="string">&quot;嫂子&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># [&quot;车子&quot;,&quot;妹子&quot;,&quot;嫂子&quot;]</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>列表中的常见独有功能如下：</p>
+<ol>
+<li><p>追加，在原列表中尾部追加值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">data_list = []</span><br><span class="line"></span><br><span class="line">v1 = <span class="built_in">input</span>(<span class="string">&quot;请输入姓名&quot;</span>)</span><br><span class="line">data_list.append(v1)</span><br><span class="line"></span><br><span class="line">v2 = <span class="built_in">input</span>(<span class="string">&quot;请输入姓名&quot;</span>)</span><br><span class="line">data_list.append(v2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&quot;alex&quot;,&quot;eric&quot;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 案例1</span></span><br><span class="line">user_list = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    user = <span class="built_in">input</span>(<span class="string">&quot;请输入用户名(Q退出)：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> user == <span class="string">&quot;Q&quot;</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    user_list.append(user)</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(user_list) </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 案例2</span></span><br><span class="line">welcome = <span class="string">&quot;欢迎使用NB游戏&quot;</span>.center(<span class="number">30</span>, <span class="string">&#x27;*&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(welcome)</span><br><span class="line"></span><br><span class="line">user_count = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    count = <span class="built_in">input</span>(<span class="string">&quot;请输入游戏人数：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> count.isdecimal():</span><br><span class="line">        user_count = <span class="built_in">int</span>(count)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;输入格式错误，人数必须是数字。&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">message = <span class="string">&quot;&#123;&#125;人参加游戏NB游戏。&quot;</span>.<span class="built_in">format</span>(user_count)</span><br><span class="line"><span class="built_in">print</span>(message)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">user_name_list = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, user_count + <span class="number">1</span>):</span><br><span class="line">    tips = <span class="string">&quot;请输入玩家姓名（&#123;&#125;/&#123;&#125;）：&quot;</span>.<span class="built_in">format</span>(i, user_count)</span><br><span class="line">    name = <span class="built_in">input</span>(tips)</span><br><span class="line">    user_name_list.append(name)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(user_name_list)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>批量追加，将一个列表中的元素逐一添加另外一个列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tools = [<span class="string">&quot;搬砖&quot;</span>,<span class="string">&quot;菜刀&quot;</span>,<span class="string">&quot;榔头&quot;</span>]</span><br><span class="line">tools.extend( [<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>] ) <span class="comment"># weapon中的值逐一追加到tools中</span></span><br><span class="line"><span class="built_in">print</span>(tools) <span class="comment"># [&quot;搬砖&quot;,&quot;菜刀&quot;,&quot;榔头&quot;,11,22,33]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">tools = [<span class="string">&quot;搬砖&quot;</span>,<span class="string">&quot;菜刀&quot;</span>,<span class="string">&quot;榔头&quot;</span>]</span><br><span class="line">weapon = [<span class="string">&quot;AK47&quot;</span>,<span class="string">&quot;M6&quot;</span>]</span><br><span class="line"><span class="comment">#tools.extend(weapon) # weapon中的值逐一追加到tools中</span></span><br><span class="line"><span class="comment">#print(tools) # [&quot;搬砖&quot;,&quot;菜刀&quot;,&quot;榔头&quot;,&quot;AK47&quot;,&quot;M6&quot;]</span></span><br><span class="line"></span><br><span class="line">weapon.extend(tools)</span><br><span class="line"><span class="built_in">print</span>(tools) <span class="comment"># [&quot;搬砖&quot;,&quot;菜刀&quot;,&quot;榔头&quot;]</span></span><br><span class="line"><span class="built_in">print</span>(weapon) <span class="comment"># [&quot;AK47&quot;,&quot;M6&quot;,&quot;搬砖&quot;,&quot;菜刀&quot;,&quot;榔头&quot;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 等价于(扩展)</span></span><br><span class="line">weapon = [<span class="string">&quot;AK47&quot;</span>,<span class="string">&quot;M6&quot;</span>]</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> weapon:</span><br><span class="line">    <span class="built_in">print</span>(item)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment">#  AK47</span></span><br><span class="line"><span class="comment">#  M6</span></span><br><span class="line">tools = [<span class="string">&quot;搬砖&quot;</span>,<span class="string">&quot;菜刀&quot;</span>,<span class="string">&quot;榔头&quot;</span>]</span><br><span class="line">weapon = [<span class="string">&quot;AK47&quot;</span>,<span class="string">&quot;M6&quot;</span>]</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> weapon:</span><br><span class="line">    tools.append(item)  </span><br><span class="line"><span class="built_in">print</span>(tools) <span class="comment"># [&quot;搬砖&quot;,&quot;菜刀&quot;,&quot;榔头&quot;,&quot;AK47&quot;,&quot;M6&quot;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>插入，在原列表的指定索引位置插入值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;苍老师&quot;</span>,<span class="string">&quot;有坂深雪&quot;</span>,<span class="string">&quot;大桥未久&quot;</span>]</span><br><span class="line">user_list.insert(<span class="number">0</span>,<span class="string">&quot;马蓉&quot;</span>)</span><br><span class="line">user_list.insert(<span class="number">2</span>,<span class="string">&quot;李小璐&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 案例</span></span><br><span class="line">name_list = []</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    name = <span class="built_in">input</span>(<span class="string">&quot;请输入购买火车票用户姓名（Q/q退出）：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> name.upper() == <span class="string">&quot;Q&quot;</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">if</span> name.startswith(<span class="string">&quot;刁&quot;</span>):</span><br><span class="line">        name_list.insert(<span class="number">0</span>, name)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        name_list.append(name)</span><br><span class="line"><span class="built_in">print</span>(name_list)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在原列表中根据值删除（从左到右找到第一个删除）【慎用，里面没有会报错】</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;王宝强&quot;</span>,<span class="string">&quot;陈羽凡&quot;</span>,<span class="string">&quot;Alex&quot;</span>,<span class="string">&quot;贾乃亮&quot;</span>,<span class="string">&quot;Alex&quot;</span>]</span><br><span class="line">user_list.remove(<span class="string">&quot;Alex&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">user_list = [<span class="string">&quot;王宝强&quot;</span>,<span class="string">&quot;陈羽凡&quot;</span>,<span class="string">&quot;Alex&quot;</span>,<span class="string">&quot;贾乃亮&quot;</span>,<span class="string">&quot;Alex&quot;</span>]</span><br><span class="line"><span class="keyword">if</span> <span class="string">&quot;Alex&quot;</span> <span class="keyword">in</span> user_list:</span><br><span class="line">	user_list.remove(<span class="string">&quot;Alex&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">user_list = [<span class="string">&quot;王宝强&quot;</span>,<span class="string">&quot;陈羽凡&quot;</span>,<span class="string">&quot;Alex&quot;</span>,<span class="string">&quot;贾乃亮&quot;</span>,<span class="string">&quot;Alex&quot;</span>]</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;Alex&quot;</span> <span class="keyword">in</span> user_list:</span><br><span class="line">        user_list.remove(<span class="string">&quot;Alex&quot;</span>)</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 案例：自动抽奖程序</span></span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">data_list = [<span class="string">&quot;iphone12&quot;</span>, <span class="string">&quot;二手充气女友&quot;</span>, <span class="string">&quot;大保健一次&quot;</span>, <span class="string">&quot;泰国5日游&quot;</span>, <span class="string">&quot;避孕套&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> data_list:</span><br><span class="line">    name = <span class="built_in">input</span>(<span class="string">&quot;自动抽奖程序，请输入自己的姓名：&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 随机从data_list抽取一个值出来</span></span><br><span class="line">    value = random.choice(data_list) <span class="comment"># &quot;二手充气女友&quot;</span></span><br><span class="line">    <span class="built_in">print</span>( <span class="string">&quot;恭喜&#123;&#125;，抽中&#123;&#125;.&quot;</span>.<span class="built_in">format</span>(name, value) )</span><br><span class="line">    </span><br><span class="line">    data_list.remove(value) <span class="comment"># &quot;二手充气女友&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在原列表中根据索引踢出某个元素（根据索引位置删除）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;王宝强&quot;</span>,<span class="string">&quot;陈羽凡&quot;</span>,<span class="string">&quot;Alex&quot;</span>,<span class="string">&quot;贾乃亮&quot;</span>,<span class="string">&quot;Alex&quot;</span>]</span><br><span class="line"><span class="comment">#               0       1      2      3       4</span></span><br><span class="line">user_list.pop(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment">#  [&quot;王宝强&quot;,&quot;Alex&quot;,&quot;贾乃亮&quot;,&quot;Alex&quot;]</span></span><br><span class="line"></span><br><span class="line">user_list.pop()</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># [&quot;王宝强&quot;,&quot;Alex&quot;,&quot;贾乃亮&quot;]</span></span><br><span class="line"></span><br><span class="line">item = user_list.pop(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(item) <span class="comment"># &quot;Alex&quot;</span></span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># [&quot;王宝强&quot;,&quot;贾乃亮&quot;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 案例：排队买火车票</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [&quot;alex&quot;,&quot;李杰&quot;,&quot;eric&quot;,&quot;武沛齐&quot;,&quot;老妖&quot;,&quot;肝胆&quot;]</span></span><br><span class="line">user_queue = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    name = <span class="built_in">input</span>(<span class="string">&quot;北京~上海火车票，购买请输入姓名排队(Q退出)：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> name == <span class="string">&quot;Q&quot;</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    user_queue.append(name)</span><br><span class="line"></span><br><span class="line">ticket_count = <span class="number">3</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(ticket_count):</span><br><span class="line">    username = user_queue.pop(<span class="number">0</span>)</span><br><span class="line">    message = <span class="string">&quot;恭喜&#123;&#125;,购买火车票成功。&quot;</span>.<span class="built_in">format</span>(username)</span><br><span class="line">    <span class="built_in">print</span>(message)</span><br><span class="line"></span><br><span class="line"><span class="comment"># user_queue = [&quot;武沛齐&quot;,&quot;老妖&quot;,&quot;肝胆&quot;]</span></span><br><span class="line">faild_user = <span class="string">&quot;、&quot;</span>.join(user_queue) <span class="comment"># &quot;武沛齐、老妖、肝胆&quot;</span></span><br><span class="line">faild_message = <span class="string">&quot;非常抱歉，票已售完，以下几位用户请选择其他出行方式，名单：&#123;&#125;。&quot;</span>.<span class="built_in">format</span>(faild_user)</span><br><span class="line"><span class="built_in">print</span>(faild_message)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>清空原列表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;王宝强&quot;</span>,<span class="string">&quot;陈羽凡&quot;</span>,<span class="string">&quot;Alex&quot;</span>,<span class="string">&quot;贾乃亮&quot;</span>,<span class="string">&quot;Alex&quot;</span>]</span><br><span class="line">user_list.clear()</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># []</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据值获取索引（从左到右找到第一个删除）【慎用，找不到报错】</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;王宝强&quot;</span>,<span class="string">&quot;陈羽凡&quot;</span>,<span class="string">&quot;Alex&quot;</span>,<span class="string">&quot;贾乃亮&quot;</span>,<span class="string">&quot;Alex&quot;</span>]</span><br><span class="line"><span class="comment">#               0       1      2       3      4</span></span><br><span class="line"><span class="keyword">if</span> <span class="string">&quot;Alex&quot;</span> <span class="keyword">in</span> user_list:</span><br><span class="line">	index = user_list.index(<span class="string">&quot;Alex&quot;</span>)</span><br><span class="line">	<span class="built_in">print</span>(index) <span class="comment"># 2</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;不存在&quot;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列表元素排序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 数字排序</span></span><br><span class="line">num_list = [<span class="number">11</span>, <span class="number">22</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">11</span>, <span class="number">99</span>, <span class="number">88</span>]</span><br><span class="line"><span class="built_in">print</span>(num_list)</span><br><span class="line">num_list.sort()  <span class="comment"># 让num_list从小到大排序</span></span><br><span class="line">num_list.sort(reverse=<span class="literal">True</span>)  <span class="comment"># # 让num_list从大到小排序</span></span><br><span class="line"><span class="built_in">print</span>(num_list)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 字符串排序</span></span><br><span class="line">user_list = [<span class="string">&quot;王宝强&quot;</span>, <span class="string">&quot;Ab陈羽凡&quot;</span>, <span class="string">&quot;Alex&quot;</span>, <span class="string">&quot;贾乃亮&quot;</span>, <span class="string">&quot;贾乃&quot;</span>, <span class="string">&quot;1&quot;</span>]</span><br><span class="line"><span class="comment">#       [29579, 23453, 24378]</span></span><br><span class="line"><span class="comment">#       [65, 98, 38472, 32701, 20961]</span></span><br><span class="line"><span class="comment">#       [65, 108, 101, 120]</span></span><br><span class="line"><span class="comment">#       [49]</span></span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">sort的排序原理</span></span><br><span class="line"><span class="string">    [ &quot;x x x&quot; ,&quot; x x x x x &quot; ]</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">user_list.sort()</span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br></pre></td></tr></table></figure>
+
+<p>注意：排序时内部元素无法进行比较时，程序会报错（尽量数据类型统一）。</p>
+</li>
+<li><p>反转原列表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;王宝强&quot;</span>,<span class="string">&quot;陈羽凡&quot;</span>,<span class="string">&quot;Alex&quot;</span>,<span class="string">&quot;贾乃亮&quot;</span>,<span class="string">&quot;Alex&quot;</span>]</span><br><span class="line">user_list.reverse()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="1-3-公共功能"><a href="#1-3-公共功能" class="headerlink" title="1.3 公共功能"></a>1.3 公共功能</h3><ol>
+<li><p>相加，两个列表相加获取生成一个新的列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data = [<span class="string">&quot;赵四&quot;</span>,<span class="string">&quot;刘能&quot;</span>] + [<span class="string">&quot;宋晓峰&quot;</span>,<span class="string">&quot;范德彪&quot;</span>]</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># [&quot;赵四&quot;,&quot;刘能&quot;,&quot;宋晓峰&quot;,&quot;范德彪&quot;]</span></span><br><span class="line"></span><br><span class="line">v1 = [<span class="string">&quot;赵四&quot;</span>,<span class="string">&quot;刘能&quot;</span>]</span><br><span class="line">v2 = [<span class="string">&quot;宋晓峰&quot;</span>,<span class="string">&quot;范德彪&quot;</span>]</span><br><span class="line">v3 = v1 + v2</span><br><span class="line"><span class="built_in">print</span>(v3) <span class="comment"># [&quot;赵四&quot;,&quot;刘能&quot;,&quot;宋晓峰&quot;,&quot;范德彪&quot;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>相乘，列表*整型 将列表中的元素再创建N份并生成一个新的列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data = [<span class="string">&quot;赵四&quot;</span>,<span class="string">&quot;刘能&quot;</span>] * <span class="number">2</span></span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># [&quot;赵四&quot;,&quot;刘能&quot;,&quot;赵四&quot;,&quot;刘能&quot;]</span></span><br><span class="line"></span><br><span class="line">v1 = [<span class="string">&quot;赵四&quot;</span>,<span class="string">&quot;刘能&quot;</span>]</span><br><span class="line">v2 = v1 * <span class="number">2</span></span><br><span class="line"><span class="built_in">print</span>(v1) <span class="comment"># [&quot;赵四&quot;,&quot;刘能&quot;]</span></span><br><span class="line"><span class="built_in">print</span>(v2) <span class="comment"># [&quot;赵四&quot;,&quot;刘能&quot;,&quot;赵四&quot;,&quot;刘能&quot;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>运算符in包含<br>由于列表内部是由多个元素组成，可以通过in来判断元素是否在列表中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;狗子&quot;</span>,<span class="string">&quot;二蛋&quot;</span>,<span class="string">&quot;沙雕&quot;</span>,<span class="string">&quot;alex&quot;</span>] </span><br><span class="line">result = <span class="string">&quot;alex&quot;</span> <span class="keyword">in</span> user_list</span><br><span class="line"><span class="comment"># result = &quot;alex&quot; not in user_list</span></span><br><span class="line"><span class="built_in">print</span>(result) <span class="comment">#  True</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="string">&quot;alex&quot;</span> <span class="keyword">in</span> user_list:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;在，把他删除&quot;</span>)</span><br><span class="line">    user_list.remove(<span class="string">&quot;alex&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;不在&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;狗子&quot;</span>,<span class="string">&quot;二蛋&quot;</span>,<span class="string">&quot;沙雕&quot;</span>,<span class="string">&quot;alex&quot;</span>] </span><br><span class="line"><span class="keyword">if</span> <span class="string">&quot;alex&quot;</span> <span class="keyword">in</span> user_list:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;在，把他删除&quot;</span>)</span><br><span class="line">    user_list.remove(<span class="string">&quot;alex&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;不在&quot;</span>)</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;打倒小日本&quot;</span></span><br><span class="line">data = <span class="string">&quot;日&quot;</span> <span class="keyword">in</span> text</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 案例</span></span><br><span class="line">user_list = [<span class="string">&quot;狗子&quot;</span>,<span class="string">&quot;二蛋&quot;</span>,<span class="string">&quot;沙雕&quot;</span>,<span class="string">&quot;alex&quot;</span>] </span><br><span class="line"><span class="keyword">if</span> <span class="string">&quot;alex&quot;</span> <span class="keyword">in</span> user_list:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;在，把他删除&quot;</span>)</span><br><span class="line">    user_list.remove(<span class="string">&quot;alex&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;不在&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 案例</span></span><br><span class="line">user_list = [<span class="string">&quot;王宝强&quot;</span>,<span class="string">&quot;陈羽凡&quot;</span>,<span class="string">&quot;Alex&quot;</span>,<span class="string">&quot;贾乃亮&quot;</span>,<span class="string">&quot;Alex&quot;</span>]</span><br><span class="line"><span class="keyword">if</span> <span class="string">&quot;Alex&quot;</span> <span class="keyword">in</span> user_list:</span><br><span class="line">	index = user_list.index(<span class="string">&quot;Alex&quot;</span>)</span><br><span class="line">	user_list.pop(index)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 案例：敏感词替换</span></span><br><span class="line">text = <span class="built_in">input</span>(<span class="string">&quot;请输入文本内容：&quot;</span>) <span class="comment"># 按时打发第三方科技爱普生豆腐啊；了深刻的房价破阿偶打飞机</span></span><br><span class="line">forbidden_list = [<span class="string">&quot;草&quot;</span>,<span class="string">&quot;欧美&quot;</span>,<span class="string">&quot;日韩&quot;</span>]</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> forbidden_list:</span><br><span class="line">    text = text.replace(item,<span class="string">&quot;**&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(text)</span><br></pre></td></tr></table></figure>
+
+<p>注意：<strong>列表检查元素是否存在时，是采用逐一比较的方式，效率会比较低。</strong></p>
+</li>
+<li><p>获取长度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>( <span class="built_in">len</span>(user_list) )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>索引，一个元素的操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读</span></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">0</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">2</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">3</span>] ) <span class="comment"># 报错</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 改</span></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line">user_list[<span class="number">0</span>] = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># [&quot;武沛齐&quot;,&quot;刘华强&quot;,&#x27;尼古拉斯赵四&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删</span></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line"><span class="keyword">del</span> user_list[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">user_list.remove(<span class="string">&quot;刘华强&quot;</span>)</span><br><span class="line">ele = user_list.pop(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注意：超出索引范围会报错。<br>提示：由于字符串是不可变类型，所以他只有索引读的功能，而列表可以进行 读、改、删</p>
+</li>
+<li><p>切片，多个元素的操作（很少用）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读</span></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">0</span>:<span class="number">2</span>] ) <span class="comment"># [&quot;范德彪&quot;,&quot;刘华强&quot;]</span></span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">1</span>:] )</span><br><span class="line"><span class="built_in">print</span>( user_list[:-<span class="number">1</span>] )</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 改</span></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>, <span class="string">&quot;刘华强&quot;</span>, <span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line">user_list[<span class="number">0</span>:<span class="number">2</span>] = [<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>]</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># 输出 [11, 22, 33, 44, &#x27;尼古拉斯赵四&#x27;]</span></span><br><span class="line"></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>, <span class="string">&quot;刘华强&quot;</span>, <span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line">user_list[<span class="number">2</span>:] = [<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>]</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># 输出 [&#x27;范德彪&#x27;, &#x27;刘华强&#x27;, 11, 22, 33, 44]</span></span><br><span class="line"></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>, <span class="string">&quot;刘华强&quot;</span>, <span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line">user_list[<span class="number">3</span>:] = [<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>]</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># 输出 [&#x27;范德彪&#x27;, &#x27;刘华强&#x27;, &#x27;尼古拉斯赵四&#x27;, 11, 22, 33, 44]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>, <span class="string">&quot;刘华强&quot;</span>, <span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line">user_list[<span class="number">10000</span>:] = [<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>]</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># 输出 [&#x27;范德彪&#x27;, &#x27;刘华强&#x27;, &#x27;尼古拉斯赵四&#x27;, 11, 22, 33, 44]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>, <span class="string">&quot;刘华强&quot;</span>, <span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line">user_list[-<span class="number">10000</span>:<span class="number">1</span>] = [<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>]</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># 输出 [11, 22, 33, 44, &#x27;刘华强&#x27;, &#x27;尼古拉斯赵四&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删</span></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>, <span class="string">&quot;刘华强&quot;</span>, <span class="string">&#x27;尼古拉斯赵四&#x27;</span>]</span><br><span class="line"><span class="keyword">del</span> user_list[<span class="number">1</span>:]</span><br><span class="line"><span class="built_in">print</span>(user_list) <span class="comment"># 输出 [&#x27;范德彪&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>步长</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>]</span><br><span class="line"><span class="comment">#              0        1        2          3       4</span></span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">1</span>:<span class="number">4</span>:<span class="number">2</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">0</span>::<span class="number">2</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">1</span>::<span class="number">2</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">4</span>:<span class="number">1</span>:-<span class="number">1</span>] )</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 案例：实现列表的翻转</span></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>]</span><br><span class="line">new_data = user_list[::-<span class="number">1</span>]</span><br><span class="line"><span class="built_in">print</span>(new_data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">data_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>]</span><br><span class="line">data_list.reverse()</span><br><span class="line"><span class="built_in">print</span>(data_list)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 给你一个字符串请实现字符串的翻转？</span></span><br><span class="line">name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line">name[::-<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>for循环</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>]</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> user_list:</span><br><span class="line">	<span class="built_in">print</span>(item)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> index <span class="keyword">in</span> <span class="built_in">range</span>( <span class="built_in">len</span>(user_list) ):</span><br><span class="line">    item = user_index[index]</span><br><span class="line">    <span class="built_in">print</span>(item)</span><br></pre></td></tr></table></figure>
+
+<p>切记，循环的过程中对数据进行删除会踩坑【面试题】。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 错误方式， 有坑，结果不是你想要的。</span></span><br><span class="line"></span><br><span class="line">user_list = [<span class="string">&quot;刘的话&quot;</span>, <span class="string">&quot;范德彪&quot;</span>, <span class="string">&quot;刘华强&quot;</span>, <span class="string">&#x27;刘尼古拉斯赵四&#x27;</span>, <span class="string">&quot;宋小宝&quot;</span>, <span class="string">&quot;刘能&quot;</span>]</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> user_list:</span><br><span class="line">    <span class="keyword">if</span> item.startswith(<span class="string">&quot;刘&quot;</span>):</span><br><span class="line">        user_list.remove(item)</span><br><span class="line">        </span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 正确方式，倒着删除。</span></span><br><span class="line">user_list = [<span class="string">&quot;刘的话&quot;</span>, <span class="string">&quot;范德彪&quot;</span>, <span class="string">&quot;刘华强&quot;</span>, <span class="string">&#x27;刘尼古拉斯赵四&#x27;</span>, <span class="string">&quot;宋小宝&quot;</span>, <span class="string">&quot;刘能&quot;</span>]</span><br><span class="line"><span class="keyword">for</span> index <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(user_list) - <span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">    item = user_list[index]</span><br><span class="line">    <span class="keyword">if</span> item.startswith(<span class="string">&quot;刘&quot;</span>):</span><br><span class="line">        user_list.remove(item)</span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="1-4-转换"><a href="#1-4-转换" class="headerlink" title="1.4 转换"></a>1.4 转换</h3><ul>
+<li><p>int、bool无法转换成列表</p>
+</li>
+<li><p>str</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"></span><br><span class="line">data = <span class="built_in">list</span>(name)  <span class="comment"># [&quot;武&quot;,&quot;沛&quot;,&quot;齐&quot;]</span></span><br><span class="line"><span class="built_in">print</span>(data)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>超前</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">v1 = (<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>,<span class="number">44</span>) <span class="comment"># 元组</span></span><br><span class="line">vv1 = <span class="built_in">list</span>(v1)     <span class="comment"># 列表 [11,22,33,44]</span></span><br><span class="line"></span><br><span class="line">v2 = &#123;<span class="string">&quot;alex&quot;</span>,<span class="string">&quot;eric&quot;</span>,<span class="string">&quot;dsb&quot;</span>&#125; <span class="comment"># 集合</span></span><br><span class="line">vv2 = <span class="built_in">list</span>(v2) <span class="comment"># 列表 [&quot;alex&quot;,&quot;eric&quot;,&quot;dsb&quot;]</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="1-5-其他"><a href="#1-5-其他" class="headerlink" title="1.5. 其他"></a>1.5. 其他</h3><h4 id="1-5-1-嵌套"><a href="#1-5-1-嵌套" class="headerlink" title="1.5.1 嵌套"></a>1.5.1 嵌套</h4><p>列表属于容器，内部可以存放各种数据，所以他也支持列表的嵌套，如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data = [ <span class="string">&quot;谢广坤&quot;</span>,[<span class="string">&quot;海燕&quot;</span>,<span class="string">&quot;赵本山&quot;</span>],<span class="literal">True</span>,[<span class="number">11</span>,<span class="number">22</span>,[<span class="number">999</span>,<span class="number">123</span>],<span class="number">33</span>,<span class="number">44</span>],<span class="string">&quot;宋小宝&quot;</span> ]</span><br></pre></td></tr></table></figure>
+
+<p>对于嵌套的值，可以根据之前学习的索引知识点来进行学习，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">data = [ <span class="string">&quot;谢广坤&quot;</span>,[<span class="string">&quot;海燕&quot;</span>,<span class="string">&quot;赵本山&quot;</span>],<span class="literal">True</span>,[<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>,<span class="number">44</span>],<span class="string">&quot;宋小宝&quot;</span> ]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>( data[<span class="number">0</span>] ) <span class="comment"># &quot;谢广坤&quot;</span></span><br><span class="line"><span class="built_in">print</span>( data[<span class="number">1</span>] ) <span class="comment"># [&quot;海燕&quot;,&quot;赵本山&quot;]</span></span><br><span class="line"><span class="built_in">print</span>( data[<span class="number">0</span>][<span class="number">2</span>] ) <span class="comment"># &quot;坤&quot;</span></span><br><span class="line"><span class="built_in">print</span>( data[<span class="number">1</span>][-<span class="number">1</span>] ) <span class="comment"># &quot;赵本山&quot;</span></span><br><span class="line"></span><br><span class="line">data.append(<span class="number">666</span>)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># [ &quot;谢广坤&quot;,[&quot;海燕&quot;,&quot;赵本山&quot;],True,[11,22,33,44],&quot;宋小宝&quot;,666]</span></span><br><span class="line"></span><br><span class="line">data[<span class="number">1</span>].append(<span class="string">&quot;谢大脚&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># [ &quot;谢广坤&quot;,[&quot;海燕&quot;,&quot;赵本山&quot;,&quot;谢大脚&quot;],True,[11,22,33,44],&quot;宋小宝&quot;,666 ]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">del</span> data[-<span class="number">2</span>]</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># [ &quot;谢广坤&quot;,[&quot;海燕&quot;,&quot;赵本山&quot;,&quot;谢大脚&quot;],True,[11,22,33,44],666 ]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">data[-<span class="number">2</span>][<span class="number">1</span>] = <span class="string">&quot;alex&quot;</span></span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># [ &quot;谢广坤&quot;,[&quot;海燕&quot;,&quot;赵本山&quot;,&quot;谢大脚&quot;],True,[11,&quot;alex&quot;,33,44],666 ]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">data[<span class="number">1</span>][<span class="number">0</span>:<span class="number">2</span>] = [<span class="number">999</span>,<span class="number">666</span>]</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># [ &quot;谢广坤&quot;,[999,666,&quot;谢大脚&quot;],True,[11,&quot;alex&quot;,33,44],666 ]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建用户列表</span></span><br><span class="line"><span class="comment">#    用户列表应该长： [ [&quot;alex&quot;,&quot;123&quot;],[&quot;eric&quot;,&quot;666&quot;] ]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># user_list = [[&quot;alex&quot;,&quot;123&quot;],[&quot;eric&quot;,&quot;666&quot;],]</span></span><br><span class="line"><span class="comment"># user_list.append([&quot;alex&quot;,&quot;123&quot;])</span></span><br><span class="line"><span class="comment"># user_list.append([&quot;eric&quot;,&quot;666&quot;])</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">user_list = []</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    user = <span class="built_in">input</span>(<span class="string">&quot;请输入用户名：&quot;</span>)</span><br><span class="line">    pwd = <span class="built_in">input</span>(<span class="string">&quot;请输入密码：&quot;</span>)</span><br><span class="line"></span><br><span class="line">    data = []</span><br><span class="line">    data.append(user)</span><br><span class="line">    data.append(pwd)</span><br><span class="line">    </span><br><span class="line">    user_list.append(data)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">user_list = []</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    user = <span class="built_in">input</span>(<span class="string">&quot;请输入用户名(Q退出)：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> user == <span class="string">&quot;Q&quot;</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    pwd = <span class="built_in">input</span>(<span class="string">&quot;请输入密码：&quot;</span>)</span><br><span class="line">    data = [user,pwd]</span><br><span class="line">    user_list.append(data)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-6-列表阶段作业"><a href="#1-6-列表阶段作业" class="headerlink" title="1.6 列表阶段作业"></a>1.6 列表阶段作业</h3><ol>
+<li><p>写代码，有如下列表，按照要求实现每一个功能。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">li = [<span class="string">&quot;alex&quot;</span>, <span class="string">&quot;WuSir&quot;</span>, <span class="string">&quot;ritian&quot;</span>, <span class="string">&quot;barry&quot;</span>, <span class="string">&quot;武沛齐&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>计算列表的长度并输出</li>
+<li>列表中追加元素”seven”,并输出添加后的列表</li>
+<li>请在列表的第1个索引位置插入元素”Tony”,并输出添加后的列表</li>
+<li>请修改列表第2个索引位置的元素为”Kelly”,并输出修改后的列表</li>
+<li>请将列表的第3个位置的值改成 “妖怪”，并输出修改后的列表</li>
+<li>请将列表 <code>data=[1,&quot;a&quot;,3,4,&quot;heart&quot;]</code> 的每一个元素追加到列表 <code>li</code> 中，并输出添加后的列表</li>
+<li>请将字符串 <code>s = &quot;qwert&quot;</code>的每一个元素到列表 <code>li</code> 中。</li>
+<li>请删除列表中的元素”barry”,并输出添加后的列表</li>
+<li>请删除列表中的第2个元素，并输出删除元素后的列表</li>
+<li>请删除列表中的第2至第4个元素，并输出删除元素后的列表</li>
+</ul>
+</li>
+<li><p>写代码，有如下列表，利用切片实现每一个功能</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">li = [<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="string">&quot;a&quot;</span>, <span class="number">4</span>, <span class="string">&quot;b&quot;</span>, <span class="number">5</span>,<span class="string">&quot;c&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过对li列表的切片形成新的列表 [1,3,2]</li>
+<li>通过对li列表的切片形成新的列表 [“a”,4,”b”] </li>
+<li>通过对li列表的切片形成新的列表  [1,2,4,5]</li>
+<li>通过对li列表的切片形成新的列表 [3,”a”,”b”]</li>
+<li>通过对li列表的切片形成新的列表 [3,”a”,”b”,”c”]</li>
+<li>通过对li列表的切片形成新的列表  [“c”]</li>
+<li>通过对li列表的切片形成新的列表 [“b”,”a”,3]</li>
+</ul>
+</li>
+<li><p>写代码，有如下列表，按照要求实现每一个功能。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lis = [<span class="number">2</span>, <span class="number">3</span>, <span class="string">&quot;k&quot;</span>, [<span class="string">&quot;qwe&quot;</span>, <span class="number">20</span>, [<span class="string">&quot;k1&quot;</span>, [<span class="string">&quot;tt&quot;</span>, <span class="number">3</span>, <span class="string">&quot;1&quot;</span>]], <span class="number">89</span>], <span class="string">&quot;ab&quot;</span>, <span class="string">&quot;adv&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将列表lis中的第2个索引位置的值变成大写，并打印列表。</li>
+<li>将列表中的数字3变成字符串”100”</li>
+<li>将列表中的字符串”tt”变成数字 101</li>
+<li>在 “qwe”前面插入字符串：”火车头”</li>
+</ul>
+</li>
+<li><p>请用代码实现循环输出元素和值：users &#x3D; [“武沛齐”,”景女神”,”肖大侠”] ，如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span> 武沛齐</span><br><span class="line"><span class="number">1</span> 景女神</span><br><span class="line"><span class="number">2</span> 肖大侠</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请用代码实现循环输出元素和值：users &#x3D; [“武沛齐”,”景女神”,”肖大侠”] ，如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> 武沛齐</span><br><span class="line"><span class="number">2</span> 景女神</span><br><span class="line"><span class="number">3</span> 肖大侠</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>写代码实现以下功能</p>
+<ul>
+<li><p>如有变量 goods &#x3D; [‘汽车’,’飞机’,’火箭’] 提示用户可供选择的商品：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>,汽车</span><br><span class="line"><span class="number">1</span>,飞机</span><br><span class="line"><span class="number">2</span>,火箭</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用户输入索引后，将指定商品的内容拼接打印，如：用户输入0，则打印 您选择的商品是汽车。</p>
+</li>
+</ul>
+</li>
+<li><p>利用for循环和range 找出 0 ~ 50 以内能被3整除的数，并追加到一个列表。</p>
+</li>
+<li><p>利用for循环和range 找出 0 ~ 50 以内能被3整除的数，并插入到列表的第0个索引位置，最终结果如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">48</span>,<span class="number">45</span>,<span class="number">42.</span>..]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查找列表li中的元素，移除每个元素的空格，并找出以”a”开头，并添加到一个新列表中,最后循环打印这个新列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">li = [<span class="string">&quot;alexC&quot;</span>, <span class="string">&quot;AbC &quot;</span>, <span class="string">&quot;egon&quot;</span>, <span class="string">&quot; riTiAn&quot;</span>, <span class="string">&quot;WuSir&quot;</span>, <span class="string">&quot;  aqc&quot;</span>]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将以下车牌中所有 <code>京 </code>的车牌搞到一个列表中，并输出京牌车辆的数量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data = [<span class="string">&quot;京1231&quot;</span>, <span class="string">&quot;冀8899&quot;</span>, <span class="string">&quot;京166631&quot;</span>, <span class="string">&quot;晋989&quot;</span>]</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="2-元组"><a href="#2-元组" class="headerlink" title="2.元组"></a>2.元组</h2><p>列表（list），是一个<strong>有序</strong>且<strong>可变</strong>的容器，在里面可以存放<strong>多个不同类型</strong>的元素。</p>
+<p>元组（tuple），是一个<strong>有序</strong>且<strong>不可变</strong>的容器，在里面可以存放<strong>多个不同类型</strong>的元素。</p>
+<blockquote>
+<p>如何体现不可变呢？<br>记住一句话：《”我儿子永远不能换成是别人，但我儿子可以长大”》</p>
+</blockquote>
+<h3 id="2-1-定义"><a href="#2-1-定义" class="headerlink" title="2.1 定义"></a>2.1 定义</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">v1 = (<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>)</span><br><span class="line">v2 = (<span class="string">&quot;李杰&quot;</span>,<span class="string">&quot;Alex&quot;</span>)</span><br><span class="line">v3 = (<span class="literal">True</span>,<span class="number">123</span>,<span class="string">&quot;Alex&quot;</span>,[<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>,<span class="number">44</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建议：议在元组的最后多加一个逗v3 = (&quot;李杰&quot;,&quot;Alex&quot;,)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">d1 = (<span class="number">1</span>)  <span class="comment"># 1</span></span><br><span class="line">d2 = (<span class="number">1</span>,) <span class="comment"># (1,)</span></span><br><span class="line"></span><br><span class="line">d3 = (<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">d4 = (<span class="number">1</span>,<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注意：建议在元组的最后多加一个逗号，用于标识他是一个元组。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 面试题</span></span><br><span class="line"><span class="number">1.</span> 比较值 v1 = (<span class="number">1</span>) 和 v2 = <span class="number">1</span> 和 v3 = (<span class="number">1</span>,) 有什么区别？</span><br><span class="line"><span class="number">2.</span> 比较值 v1 = ( (<span class="number">1</span>),(<span class="number">2</span>),(<span class="number">3</span>) ) 和 v2 = ( (<span class="number">1</span>,) , (<span class="number">2</span>,) , (<span class="number">3</span>,),) 有什么区别？</span><br><span class="line">              (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-独有功能"><a href="#2-2-独有功能" class="headerlink" title="2.2 独有功能"></a>2.2 独有功能</h3><p>无</p>
+<h3 id="2-3-公共功能"><a href="#2-3-公共功能" class="headerlink" title="2.3 公共功能"></a>2.3 公共功能</h3><ol>
+<li><p>相加，两个列表相加获取生成一个新的列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data = (<span class="string">&quot;赵四&quot;</span>,<span class="string">&quot;刘能&quot;</span>) + (<span class="string">&quot;宋晓峰&quot;</span>,<span class="string">&quot;范德彪&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># (&quot;赵四&quot;,&quot;刘能&quot;,&quot;宋晓峰&quot;,&quot;范德彪&quot;)</span></span><br><span class="line"></span><br><span class="line">v1 = (<span class="string">&quot;赵四&quot;</span>,<span class="string">&quot;刘能&quot;</span>)</span><br><span class="line">v2 = (<span class="string">&quot;宋晓峰&quot;</span>,<span class="string">&quot;范德彪&quot;</span>)</span><br><span class="line">v3 = v1 + v2</span><br><span class="line"><span class="built_in">print</span>(v3) <span class="comment"># (&quot;赵四&quot;,&quot;刘能&quot;,&quot;宋晓峰&quot;,&quot;范德彪&quot;)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>相乘，列表*整型 将列表中的元素再创建N份并生成一个新的列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data = (<span class="string">&quot;赵四&quot;</span>,<span class="string">&quot;刘能&quot;</span>) * <span class="number">2</span></span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># (&quot;赵四&quot;,&quot;刘能&quot;,&quot;赵四&quot;,&quot;刘能&quot;)</span></span><br><span class="line"></span><br><span class="line">v1 = (<span class="string">&quot;赵四&quot;</span>,<span class="string">&quot;刘能&quot;</span>)</span><br><span class="line">v2 = v1 * <span class="number">2</span></span><br><span class="line"><span class="built_in">print</span>(v1) <span class="comment"># (&quot;赵四&quot;,&quot;刘能&quot;)</span></span><br><span class="line"><span class="built_in">print</span>(v2) <span class="comment"># (&quot;赵四&quot;,&quot;刘能&quot;,&quot;赵四&quot;,&quot;刘能&quot;)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取长度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">user_list = (<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,)</span><br><span class="line"><span class="built_in">print</span>( <span class="built_in">len</span>(user_list) )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>索引</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">user_list = (<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,)</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">0</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">2</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">3</span>] )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切片</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">user_list = (<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,)</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">0</span>:<span class="number">2</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">1</span>:] )</span><br><span class="line"><span class="built_in">print</span>( user_list[:-<span class="number">1</span>] )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>步长</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">user_list = (<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">1</span>:<span class="number">4</span>:<span class="number">2</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">0</span>::<span class="number">2</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">1</span>::<span class="number">2</span>] )</span><br><span class="line"><span class="built_in">print</span>( user_list[<span class="number">4</span>:<span class="number">1</span>:-<span class="number">1</span>] )</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 字符串 &amp; 元组。</span></span><br><span class="line">user_list = (<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>)</span><br><span class="line">data = user_list[::-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列表</span></span><br><span class="line">user_list = [<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>]</span><br><span class="line">data = user_list[::-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">user_list.reverse()</span><br><span class="line"><span class="built_in">print</span>(user_list)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>for循环</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">user_list = (<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> user_list:</span><br><span class="line">	<span class="built_in">print</span>(item)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">user_list = (<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> user_list:</span><br><span class="line"> <span class="keyword">if</span> item == <span class="string">&#x27;刘华强&#x27;</span>:</span><br><span class="line">	 <span class="keyword">continue</span></span><br><span class="line"> <span class="built_in">print</span>(name)</span><br></pre></td></tr></table></figure>
+
+<p>目前：只有 str、list、tuple 可以被for循环。 “xxx”  [11,22,33]  (111,22,33)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># len + range + for + 索引</span></span><br><span class="line">user_list = (<span class="string">&quot;范德彪&quot;</span>,<span class="string">&quot;刘华强&quot;</span>,<span class="string">&#x27;尼古拉斯赵四&#x27;</span>,<span class="string">&quot;宋小宝&quot;</span>,<span class="string">&quot;刘能&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> index <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(user_list)):</span><br><span class="line">    item = user_list[index]</span><br><span class="line">    <span class="built_in">print</span>(item)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="2-4-转换"><a href="#2-4-转换" class="headerlink" title="2.4 转换"></a>2.4 转换</h3><p>其他类型转换为元组，使用<code>tuple(其他类型)</code>，目前只有字符串和列表可以转换为元组。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data = <span class="built_in">tuple</span>(其他)</span><br><span class="line"></span><br><span class="line"><span class="comment"># str / list </span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line">data = <span class="built_in">tuple</span>(name)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># 输出 (&quot;武&quot;,&quot;沛&quot;,&quot;齐&quot;)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name = [<span class="string">&quot;武沛齐&quot;</span>,<span class="number">18</span>,<span class="string">&quot;pythonav&quot;</span>]</span><br><span class="line">data = <span class="built_in">tuple</span>(name)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># 输出 (&quot;武沛齐&quot;,18,&quot;pythonav&quot;)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-5-其他"><a href="#2-5-其他" class="headerlink" title="2.5 其他"></a>2.5 其他</h3><h4 id="2-5-1-嵌套"><a href="#2-5-1-嵌套" class="headerlink" title="2.5.1 嵌套"></a>2.5.1 嵌套</h4><p>由于元组和列表都可以充当<code>容器</code>，他们内部可以放很多元素，并且也支持元素内的各种嵌套。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">tu = ( <span class="string">&#x27;今天姐姐不在家&#x27;</span>, <span class="string">&#x27;姐夫和小姨子在客厅聊天&#x27;</span>, (<span class="string">&#x27;姐夫问小姨子税后多少钱&#x27;</span>,<span class="string">&#x27;小姨子低声说道说和姐夫还提钱&#x27;</span>) )</span><br><span class="line">tu1 = tu[<span class="number">0</span>]</span><br><span class="line">tu2 = tu[<span class="number">1</span>]</span><br><span class="line">tu3 = tu[<span class="number">2</span>][<span class="number">0</span>]</span><br><span class="line">tu4 = tu[<span class="number">2</span>][<span class="number">1</span>]</span><br><span class="line">tu5 = tu[<span class="number">2</span>][<span class="number">1</span>][<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(tu1) <span class="comment"># 今天姐姐不在家</span></span><br><span class="line"><span class="built_in">print</span>(tu2) <span class="comment"># 姐夫和小姨子在客厅聊天</span></span><br><span class="line"><span class="built_in">print</span>(tu3) <span class="comment"># 姐夫问小姨子税后多少钱</span></span><br><span class="line"><span class="built_in">print</span>(tu4) <span class="comment"># 小姨子低声说道说和姐夫还提钱</span></span><br></pre></td></tr></table></figure>
+
+<p>练习题1：判断是否可以实现，如果可以请写代码实现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">li = [<span class="string">&quot;alex&quot;</span>, [<span class="number">11</span>,<span class="number">22</span>,(<span class="number">88</span>,<span class="number">99</span>,<span class="number">100</span>,),<span class="number">33</span>],  <span class="string">&quot;WuSir&quot;</span>,  (<span class="string">&quot;ritian&quot;</span>, <span class="string">&quot;barry&quot;</span>,),  <span class="string">&quot;wenzhou&quot;</span>]</span><br><span class="line"><span class="comment">#        0               1                 2                3                4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.请将 &quot;WuSir&quot; 修改成 &quot;武沛齐&quot;</span></span><br><span class="line">li[<span class="number">2</span>] = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line">index = li.index(<span class="string">&quot;Wusir&quot;</span>)</span><br><span class="line">li[index] = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.请将 (&quot;ritian&quot;, &quot;barry&quot;,) 修改为 [&#x27;日天&#x27;,&#x27;日地&#x27;]</span></span><br><span class="line">li[<span class="number">3</span>] = [<span class="string">&#x27;日天&#x27;</span>,<span class="string">&#x27;日地&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.请将 88 修改为 87</span></span><br><span class="line">li[<span class="number">1</span>][<span class="number">2</span>][<span class="number">0</span>] = <span class="number">87</span> <span class="comment"># (报错，)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.请将 &quot;wenzhou&quot; 删除，然后再在列表第0个索引位置插入 &quot;周周&quot;</span></span><br><span class="line"><span class="comment"># li.remove(&quot;wenzhou&quot;)</span></span><br><span class="line"><span class="comment"># del li[-1]</span></span><br><span class="line">li.insert(<span class="number">0</span>,<span class="string">&quot;周周&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>练习题2：记住一句话：《”我儿子永远不能换成是别人，但我儿子可以长大”》</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">data = (<span class="string">&quot;123&quot;</span>,<span class="number">666</span>,[<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>], (<span class="string">&quot;alex&quot;</span>,<span class="string">&quot;李杰&quot;</span>,[<span class="number">999</span>,<span class="number">666</span>,(<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>)]) )</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.将 “123” 替换成 9   报错</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.将 [11,22,33] 换成 &quot;武沛齐&quot;    报错</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.将 11 换成 99</span></span><br><span class="line">data[<span class="number">2</span>][<span class="number">0</span>] = <span class="number">99</span></span><br><span class="line"><span class="built_in">print</span>(data)  <span class="comment"># (&quot;123&quot;,666,[99,22,33], (&quot;alex&quot;,&quot;李杰&quot;,[999,666,(5,6,7)]) )</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.在列表 [11,22,33] 追加一个44</span></span><br><span class="line">data[<span class="number">2</span>].append(<span class="number">44</span>)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># (&quot;123&quot;,666,[11,22,33,44], (&quot;alex&quot;,&quot;李杰&quot;,[999,666,(5,6,7)]) )</span></span><br></pre></td></tr></table></figure>
+
+<p>练习题3：动态的创建用户并添加到用户列表中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建用户 5个</span></span><br><span class="line"><span class="comment"># user_list = [] # 用户信息</span></span><br><span class="line">user_list = [ (<span class="string">&quot;alex&quot;</span>,<span class="string">&quot;132&quot;</span>),(<span class="string">&quot;admin&quot;</span>,<span class="string">&quot;123&quot;</span>),(<span class="string">&quot;eric&quot;</span>,<span class="string">&quot;123&quot;</span>) ]</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    user = <span class="built_in">input</span>(<span class="string">&quot;请输入用户名：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> user == <span class="string">&quot;Q&quot;</span>:</span><br><span class="line">        brek</span><br><span class="line">    pwd = <span class="built_in">input</span>(<span class="string">&quot;请输入密码：&quot;</span>)</span><br><span class="line">    item = (user,pwd,)</span><br><span class="line">    user_list.append(item)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 实现：用户登录案例</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;登录程序&quot;</span>)</span><br><span class="line">username = <span class="built_in">input</span>(<span class="string">&quot;请输入用户名：&quot;</span>)</span><br><span class="line">password = <span class="built_in">input</span>(<span class="string">&quot;请输入密码：&quot;</span>)</span><br><span class="line"></span><br><span class="line">is_success = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> user_list:</span><br><span class="line">    <span class="comment"># item = (&quot;alex&quot;,&quot;132&quot;)   (&quot;admin&quot;,&quot;123&quot;)    (&quot;eric&quot;,&quot;123&quot;)</span></span><br><span class="line">    <span class="keyword">if</span> username == item[<span class="number">0</span>] <span class="keyword">and</span> password == item[<span class="number">1</span>]:</span><br><span class="line">        is_success = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> is_success:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;登录成功&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;登录失败&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>概述<ul>
+<li>列表，以后写程序会用的非常多，要多些多练。</li>
+<li>元组，以后写程序用的不是很多，主要以了解其特殊和用法为主。</li>
+</ul>
+</li>
+<li>列表和元组的区别。</li>
+<li>可变类型和不可变类型。</li>
+<li>列表独有功能 &amp; 公共功能（不用特地去记，多做题目去用，以后每天都会有相关的练习题）。</li>
+<li>列表和元组等数据的嵌套</li>
+<li>元组中 (1) 和 (1,) 的区别。</li>
+<li>元组的元素不能被替换，但元组的元素如果是可变类型，可变类型内部是可以修改的。</li>
+</ol>
+<h2 id="作业"><a href="#作业" class="headerlink" title="作业"></a>作业</h2><ol>
+<li><p>以下哪些数据类型转换为布尔值为False</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line"><span class="string">&quot;&quot;</span></span><br><span class="line">-<span class="number">19</span></span><br><span class="line">[]</span><br><span class="line">[<span class="number">11</span>,<span class="number">22</span>]</span><br><span class="line">(<span class="number">1</span>)</span><br><span class="line">(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>运算符操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v1 = [] <span class="keyword">or</span> <span class="string">&quot;alex&quot;</span></span><br><span class="line">v2 = [<span class="number">11</span>,<span class="number">22</span>] <span class="keyword">and</span> (<span class="number">1</span>,<span class="number">2</span>,)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>比较：<code>a = [1,2,3]</code>和 <code>b = [(1),(2),(3) ]</code> 以及 <code>c = [(1,),(2,),(3,) ]</code> 的区别？</p>
+</li>
+<li><p>将字符串<code>text = &quot;wupeiqi|alex|eric&quot;</code>根据 <code>|</code> 分割为列表，然后列表转换为元组类型。</p>
+</li>
+<li><p>根据如下规则创建一副扑克牌（排除大小王）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 花色列表</span></span><br><span class="line">color_list = [<span class="string">&quot;红桃&quot;</span>,<span class="string">&quot;黑桃&quot;</span>,<span class="string">&quot;方片&quot;</span>,<span class="string">&quot;梅花&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 牌值</span></span><br><span class="line">num_list = []</span><br><span class="line"><span class="keyword">for</span> num <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">14</span>):</span><br><span class="line">    num_list.append(num)</span><br><span class="line">    </span><br><span class="line">result = []</span><br><span class="line"><span class="comment"># 请根据以上的花色和牌值创建一副扑克牌（排除大小王）</span></span><br><span class="line"><span class="comment"># 最终result的结果格式为： [ (&quot;红桃&quot;,1), (&quot;红桃&quot;,2) ... ]</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/09/07/python_course-master/day06%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%AD%EF%BC%89/%E7%AC%94%E8%AE%B0/day06%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="">http://example.com/2024/09/07/python_course-master/day06 数据类型（中）/笔记/day06 数据类型/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day05%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day05%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day07%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%8B%EF%BC%89/%E7%AC%94%E8%AE%B0/day07/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#day06-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%AD%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">day06 数据类型（中）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%97%E8%A1%A8%EF%BC%88list%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">1.列表（list）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E7%8B%AC%E6%9C%89%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 独有功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%85%AC%E5%85%B1%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 公共功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E5%85%B6%E4%BB%96"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5. 其他</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E5%B5%8C%E5%A5%97"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">1.5.1 嵌套</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-%E5%88%97%E8%A1%A8%E9%98%B6%E6%AE%B5%E4%BD%9C%E4%B8%9A"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 列表阶段作业</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%85%83%E7%BB%84"><span class="nav-number">1.2.</span> <span class="nav-text">2.元组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%AE%9A%E4%B9%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%8B%AC%E6%9C%89%E5%8A%9F%E8%83%BD"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 独有功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%85%AC%E5%85%B1%E5%8A%9F%E8%83%BD"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 公共功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E5%85%B6%E4%BB%96"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 其他</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-1-%E5%B5%8C%E5%A5%97"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">2.5.1 嵌套</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A"><span class="nav-number">1.4.</span> <span class="nav-text">作业</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="陈永辉"
+      src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+  <p class="site-author-name" itemprop="name">陈永辉</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cyhzuishuai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cyhzuishuai" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2426230801@qq.com" title="E-Mail → 2426230801@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/chenyonghuizui" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;chenyonghuizui" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈永辉</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共126.9k字</span>
+</div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

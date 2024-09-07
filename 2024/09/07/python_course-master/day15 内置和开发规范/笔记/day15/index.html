@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="day15 内置模块和开发规范 目标：掌握常见的内置模块的使用及了解软件开发的规范。 今日概要：  内置模块 json time datetime re   开发规范 主文件 配置文件 数据 附件 业务代码    1. 内置模块1.1 jsonjson模块，是python内部的一个模块，可以将python的数据格式 转换为json格式的数据，也可以将json格式的数据转换为python的数据格式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大帅哥">
+<meta property="og:url" content="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/index.html">
+<meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="day15 内置模块和开发规范 目标：掌握常见的内置模块的使用及了解软件开发的规范。 今日概要：  内置模块 json time datetime re   开发规范 主文件 配置文件 数据 附件 业务代码    1. 内置模块1.1 jsonjson模块，是python内部的一个模块，可以将python的数据格式 转换为json格式的数据，也可以将json格式的数据转换为python的数据格式。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210104122555935.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210104123415566.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210104171741529.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210105160728297.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210105163335127.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210105164740583.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210105223331765.png">
+<meta property="article:published_time" content="2024-09-07T13:27:30.839Z">
+<meta property="article:modified_time" content="2024-08-28T10:21:29.542Z">
+<meta property="article:author" content="陈永辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210104122555935.png">
+
+<link rel="canonical" href="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 大帅哥</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大帅哥</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-07 21:27:30" itemprop="dateCreated datePublished" datetime="2024-09-07T21:27:30+08:00">2024-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-28 18:21:29" itemprop="dateModified" datetime="2024-08-28T18:21:29+08:00">2024-08-28</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="day15-内置模块和开发规范"><a href="#day15-内置模块和开发规范" class="headerlink" title="day15 内置模块和开发规范"></a>day15 内置模块和开发规范</h1><p><img src="/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210104122555935.png" alt="image-20210104122555935"></p>
+<p>目标：掌握常见的内置模块的使用及了解软件开发的规范。</p>
+<p>今日概要：</p>
+<ul>
+<li>内置模块<ul>
+<li>json</li>
+<li>time</li>
+<li>datetime</li>
+<li>re</li>
+</ul>
+</li>
+<li>开发规范<ul>
+<li>主文件</li>
+<li>配置文件</li>
+<li>数据</li>
+<li>附件</li>
+<li>业务代码</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-内置模块"><a href="#1-内置模块" class="headerlink" title="1. 内置模块"></a>1. 内置模块</h2><h3 id="1-1-json"><a href="#1-1-json" class="headerlink" title="1.1 json"></a>1.1 json</h3><p>json模块，是python内部的一个模块，可以将python的数据格式 转换为json格式的数据，也可以将json格式的数据转换为python的数据格式。</p>
+<p>json格式，是一个数据格式（本质上就是个字符串，常用语网络数据传输）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Python中的数据类型的格式</span></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">1</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;武沛齐&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">2</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;alex&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">    (<span class="string">&#x27;wupeiqi&#x27;</span>,<span class="number">123</span>),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># JSON格式</span></span><br><span class="line">value = <span class="string">&#x27;[&#123;&quot;id&quot;: 1, &quot;name&quot;: &quot;武沛齐&quot;, &quot;age&quot;: 18&#125;, &#123;&quot;id&quot;: 2, &quot;name&quot;: &quot;alex&quot;, &quot;age&quot;: 18&#125;,[&quot;wupeiqi&quot;,123]]&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-1-1-核心功能"><a href="#1-1-1-核心功能" class="headerlink" title="1.1.1 核心功能"></a>1.1.1 核心功能</h4><p>json格式的作用？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">跨语言数据传输，例如：</span><br><span class="line">	A系统用Python开发，有列表类型和字典类型等。</span><br><span class="line">	B系统用Java开发，有数组、map等的类型。</span><br><span class="line"></span><br><span class="line">	语言不同，基础数据类型格式都不同。</span><br><span class="line">	</span><br><span class="line">	为了方便数据传输，大家约定一个格式：json格式，每种语言都是将自己数据类型转换为json格式，也可以将json格式的数据转换为自己的数据类型。</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210104123415566.png" alt="image-20210104123415566"></p>
+<p>Python数据类型与json格式的相互转换：</p>
+<ul>
+<li><p>数据类型 -&gt; json ，一般称为：序列化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">1</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;武沛齐&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">2</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;alex&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">res = json.dumps(data)</span><br><span class="line"><span class="built_in">print</span>(res) <span class="comment"># &#x27;[&#123;&quot;id&quot;: 1, &quot;name&quot;: &quot;\u6b66\u6c9b\u9f50&quot;, &quot;age&quot;: 18&#125;, &#123;&quot;id&quot;: 2, &quot;name&quot;: &quot;alex&quot;, &quot;age&quot;: 18&#125;]&#x27;</span></span><br><span class="line"></span><br><span class="line">res = json.dumps(data, ensure_ascii=<span class="literal">False</span>)</span><br><span class="line"><span class="built_in">print</span>(res) <span class="comment"># &#x27;[&#123;&quot;id&quot;: 1, &quot;name&quot;: &quot;武沛齐&quot;, &quot;age&quot;: 18&#125;, &#123;&quot;id&quot;: 2, &quot;name&quot;: &quot;alex&quot;, &quot;age&quot;: 18&#125;]&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>json格式 -&gt; 数据类型，一般称为：反序列化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">data_string = <span class="string">&#x27;[&#123;&quot;id&quot;: 1, &quot;name&quot;: &quot;武沛齐&quot;, &quot;age&quot;: 18&#125;, &#123;&quot;id&quot;: 2, &quot;name&quot;: &quot;alex&quot;, &quot;age&quot;: 18&#125;]&#x27;</span></span><br><span class="line"></span><br><span class="line">data_list = json.loads(data_string)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(data_list)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="练习题"><a href="#练习题" class="headerlink" title="练习题"></a>练习题</h4><ol>
+<li><p>写网站，给用户返回json格式数据</p>
+<ul>
+<li><p>安装flask模块，协助我们快速写网站（之前已安装过）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install flask</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用flask写网站</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;首页&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">users</span>():</span><br><span class="line">    data = [</span><br><span class="line">        &#123;<span class="string">&quot;id&quot;</span>: <span class="number">1</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;武沛齐&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;id&quot;</span>: <span class="number">2</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;alex&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">return</span> json.dumps(data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.add_url_rule(<span class="string">&#x27;/index/&#x27;</span>, view_func=index, endpoint=<span class="string">&#x27;index&#x27;</span>)</span><br><span class="line">app.add_url_rule(<span class="string">&#x27;/users/&#x27;</span>, view_func=users, endpoint=<span class="string">&#x27;users&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>发送网络请求，获取json格式数据并处理。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;https://movie.douban.com/j/search_subjects?type=movie&amp;tag=%E7%83%AD%E9%97%A8&amp;sort=recommend&amp;page_limit=5&amp;page_start=20&quot;</span></span><br><span class="line"></span><br><span class="line">res = requests.get(</span><br><span class="line">    url=url,</span><br><span class="line">    headers=&#123;</span><br><span class="line">        <span class="string">&quot;User-Agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># json格式</span></span><br><span class="line"><span class="built_in">print</span>(res.text)</span><br><span class="line"></span><br><span class="line"><span class="comment"># json格式转换为python数据类型</span></span><br><span class="line">data_dict = json.loads(res.text)</span><br><span class="line"><span class="built_in">print</span>(data_dict)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="1-1-2-类型要求"><a href="#1-1-2-类型要求" class="headerlink" title="1.1.2 类型要求"></a>1.1.2 类型要求</h4><p>python的数据类型转换为 json 格式，对数据类型是有要求的，默认只支持：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+---------------+</span><br><span class="line">| Python            | JSON          |</span><br><span class="line">+===================+===============+</span><br><span class="line">| dict              | object        |</span><br><span class="line">+-------------------+---------------+</span><br><span class="line">| list, tuple       | array         |</span><br><span class="line">+-------------------+---------------+</span><br><span class="line">| str               | string        |</span><br><span class="line">+-------------------+---------------+</span><br><span class="line">| int, float        | number        |</span><br><span class="line">+-------------------+---------------+</span><br><span class="line">| True              | true          |</span><br><span class="line">+-------------------+---------------+</span><br><span class="line">| False             | false         |</span><br><span class="line">+-------------------+---------------+</span><br><span class="line">| None              | null          |</span><br><span class="line">+-------------------+---------------+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">1</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;武沛齐&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">2</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;alex&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>其他类型如果想要支持，需要自定义<code>JSONEncoder </code>才能实现【目前只需要了解大概意思即可，以后项目开发中用到了还会讲解。】，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> decimal <span class="keyword">import</span> Decimal</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">1</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;武沛齐&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>, <span class="string">&#x27;size&#x27;</span>: Decimal(<span class="string">&quot;18.99&quot;</span>), <span class="string">&#x27;ctime&#x27;</span>: datetime.now()&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">2</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;alex&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>, <span class="string">&#x27;size&#x27;</span>: Decimal(<span class="string">&quot;9.99&quot;</span>), <span class="string">&#x27;ctime&#x27;</span>: datetime.now()&#125;,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyJSONEncoder</span>(json.JSONEncoder):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">default</span>(<span class="params">self, o</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">type</span>(o) == Decimal:</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">str</span>(o)</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">type</span>(o) == datetime:</span><br><span class="line">            <span class="keyword">return</span> o.strftime(<span class="string">&quot;%Y-%M-%d&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>().default(o)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">res = json.dumps(data, cls=MyJSONEncoder)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-1-3-其他功能"><a href="#1-1-3-其他功能" class="headerlink" title="1.1.3 其他功能"></a>1.1.3 其他功能</h4><p>json模块中常用的是：</p>
+<ul>
+<li><p><code>json.dumps</code>，序列化生成一个字符串。</p>
+</li>
+<li><p><code>json.loads</code>，发序列化生成python数据类型。</p>
+</li>
+<li><p><code>json.dump</code>，将数据序列化并写入文件（不常用）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">1</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;武沛齐&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;id&quot;</span>: <span class="number">2</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;alex&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">file_object = <span class="built_in">open</span>(<span class="string">&#x27;xxx.json&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">json.dump(data, file_object)</span><br><span class="line"></span><br><span class="line">file_object.close()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>json.load</code>，读取文件中的数据并反序列化为python的数据类型（不常用）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">file_object = <span class="built_in">open</span>(<span class="string">&#x27;xxx.json&#x27;</span>, mode=<span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">data = json.load(file_object)</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line"></span><br><span class="line">file_object.close()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="1-2-时间处理"><a href="#1-2-时间处理" class="headerlink" title="1.2 时间处理"></a>1.2 时间处理</h3><ul>
+<li><p>UTC&#x2F;GMT：世界时间</p>
+</li>
+<li><p>本地时间：本地时区的时间。</p>
+</li>
+</ul>
+<p>Python中关于时间处理的模块有两个，分别是time和datetime。</p>
+<h4 id="1-2-1-time"><a href="#1-2-1-time" class="headerlink" title="1.2.1 time"></a>1.2.1 time</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前时间戳（自1970-1-1 00:00）</span></span><br><span class="line">v1 = time.time()</span><br><span class="line"><span class="built_in">print</span>(v1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 时区</span></span><br><span class="line">v2 = time.timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止n秒，再执行后续的代码。</span></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-2-2-datetime"><a href="#1-2-2-datetime" class="headerlink" title="1.2.2 datetime"></a>1.2.2 datetime</h4><p>在平时开发过程中的时间一般是以为如下三种格式存在：</p>
+<ul>
+<li><p>datetime</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timezone, timedelta</span><br><span class="line"></span><br><span class="line">v1 = datetime.now()  <span class="comment"># 当前本地时间</span></span><br><span class="line"><span class="built_in">print</span>(v1)</span><br><span class="line"></span><br><span class="line">tz = timezone(timedelta(hours=<span class="number">7</span>))  <span class="comment"># 当前东7区时间</span></span><br><span class="line">v2 = datetime.now(tz)</span><br><span class="line"><span class="built_in">print</span>(v2)</span><br><span class="line"></span><br><span class="line">v3 = datetime.utcnow()  <span class="comment"># 当前UTC时间</span></span><br><span class="line"><span class="built_in">print</span>(v3)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta</span><br><span class="line"></span><br><span class="line">v1 = datetime.now()</span><br><span class="line"><span class="built_in">print</span>(v1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 时间的加减</span></span><br><span class="line">v2 = v1 + timedelta(days=<span class="number">140</span>, minutes=<span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(v2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># datetime类型 + timedelta类型</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timezone, timedelta</span><br><span class="line"></span><br><span class="line">v1 = datetime.now()</span><br><span class="line"><span class="built_in">print</span>(v1)</span><br><span class="line"></span><br><span class="line">v2 = datetime.utcnow()  <span class="comment"># 当前UTC时间</span></span><br><span class="line"><span class="built_in">print</span>(v2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># datetime之间相减，计算间隔时间（不能相加）</span></span><br><span class="line">data = v1 - v2</span><br><span class="line"><span class="built_in">print</span>(data.days, data.seconds / <span class="number">60</span> / <span class="number">60</span>, data.microseconds)</span><br><span class="line"></span><br><span class="line"><span class="comment"># datetime类型 - datetime类型</span></span><br><span class="line"><span class="comment"># datetime类型 比较 datetime类型</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>字符串</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 字符串格式的时间  ---&gt; 转换为datetime格式时间</span></span><br><span class="line">text = <span class="string">&quot;2021-11-11&quot;</span></span><br><span class="line">v1 = datetime.strptime(text,<span class="string">&#x27;%Y-%m-%d&#x27;</span>) <span class="comment"># %Y 年，%m，月份，%d，天。</span></span><br><span class="line"><span class="built_in">print</span>(v1)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># datetime格式 ----&gt; 转换为字符串格式</span></span><br><span class="line">v1 = datetime.now()</span><br><span class="line">val = v1.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(val)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>时间戳</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 时间戳格式 --&gt; 转换为datetime格式</span></span><br><span class="line">ctime = time.time() <span class="comment"># 11213245345.123</span></span><br><span class="line">v1 = datetime.fromtimestamp(ctime)</span><br><span class="line"><span class="built_in">print</span>(v1)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># datetime格式 ---&gt; 转换为时间戳格式</span></span><br><span class="line">v1 = datetime.now()</span><br><span class="line">val = v1.timestamp()</span><br><span class="line"><span class="built_in">print</span>(val)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><img src="/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210104171741529.png" alt="image-20210104171741529"></p>
+<h4 id="练习题-1"><a href="#练习题-1" class="headerlink" title="练习题"></a>练习题</h4><ol>
+<li><p>日志记录，将用户输入的信息写入到文件，文件名格式为<code>年-月-日-时-分.txt</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    text = <span class="built_in">input</span>(<span class="string">&quot;请输入内容：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> text.upper() == <span class="string">&quot;Q&quot;</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">        </span><br><span class="line">    current_datetime = datetime.now().strftime(<span class="string">&quot;%Y-%m-%d-%H-%M&quot;</span>)</span><br><span class="line">    file_name = <span class="string">&quot;&#123;&#125;.txt&quot;</span>.<span class="built_in">format</span>(current_datetime)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_name, mode=<span class="string">&#x27;a&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file_object:</span><br><span class="line">        file_object.write(text)</span><br><span class="line">        file_object.flush()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用户注册，将用户信息写入Excel，其中包含：用户名、密码、注册时间 三列。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> openpyxl <span class="keyword">import</span> load_workbook</span><br><span class="line"><span class="keyword">from</span> openpyxl <span class="keyword">import</span> workbook</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">BASE_DIR = os.path.dirname(os.path.abspath(__file__))</span><br><span class="line">FILE_NAME = <span class="string">&quot;db.xlsx&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">md5</span>(<span class="params">origin</span>):</span><br><span class="line">    hash_object = hashlib.md5(<span class="string">&quot;sdfsdfsdfsd23sd&quot;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    hash_object.update(origin.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> hash_object.hexdigest()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">username, password</span>):</span><br><span class="line">    db_file_path = os.path.join(BASE_DIR, FILE_NAME)</span><br><span class="line">    <span class="keyword">if</span> os.path.exists(db_file_path):</span><br><span class="line">        wb = load_workbook(db_file_path)</span><br><span class="line">        sheet = wb.worksheets[<span class="number">0</span>]</span><br><span class="line">        next_row_position = sheet.max_row + <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        wb = workbook.Workbook()</span><br><span class="line">        sheet = wb.worksheets[<span class="number">0</span>]</span><br><span class="line">        next_row_position = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    user = sheet.cell(next_row_position, <span class="number">1</span>)</span><br><span class="line">    user.value = username</span><br><span class="line"></span><br><span class="line">    pwd = sheet.cell(next_row_position, <span class="number">2</span>)</span><br><span class="line">    pwd.value = md5(password)</span><br><span class="line"></span><br><span class="line">    ctime = sheet.cell(next_row_position, <span class="number">3</span>)</span><br><span class="line">    ctime.value = datetime.now().strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"></span><br><span class="line">    wb.save(db_file_path)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        username = <span class="built_in">input</span>(<span class="string">&quot;请输入用户名：&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> username.upper() == <span class="string">&quot;Q&quot;</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        password = <span class="built_in">input</span>(<span class="string">&quot;请输入密码：&quot;</span>)</span><br><span class="line">        register(username, password)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    run()</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="1-3-正则表达式相关"><a href="#1-3-正则表达式相关" class="headerlink" title="1.3 正则表达式相关"></a>1.3 正则表达式相关</h3><p>当给你一大堆文本信息，让你提取其中的指定数据时，可以使用正则来实现。例如：提取文本中的邮箱和手机号</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line"></span><br><span class="line">phone_list = re.findall(<span class="string">&quot;1[3|5|8|9]\d&#123;9&#125;&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(phone_list)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-3-1-正则表达式"><a href="#1-3-1-正则表达式" class="headerlink" title="1.3.1 正则表达式"></a>1.3.1 正则表达式</h4><h5 id="1-字符相关"><a href="#1-字符相关" class="headerlink" title="1. 字符相关"></a>1. 字符相关</h5><ul>
+<li><p><code>wupeiqi</code> 匹配文本中的wupeiqi</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;你好wupeiqi,阿斯顿发wupeiqasd 阿士大夫能接受的wupeiqiff&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;wupeiqi&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;wupeiqi&#x27;, &#x27;wupeiqi&#x27;] 可用于计算字符串中某个字符出现的次数</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>[abc]</code> 匹配a或b或c 字符。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;你2b好wupeiqi,阿斯顿发awupeiqasd 阿士大夫a能接受的wffbbupqaceiqiff&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;[abc]&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;b&#x27;, &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;, &#x27;b&#x27;, &#x27;b&#x27;, &#x27;c&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;你2b好wupeiqi,阿斯顿发awupeiqasd 阿士大夫a能接受的wffbbupqcceiqiff&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;q[abc]&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;qa&#x27;, &#x27;qc&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>[^abc]</code> 匹配除了abc意外的其他字符。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;你wffbbupceiqiff&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;[^abc]&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list)  <span class="comment"># [&#x27;你&#x27;, &#x27;w&#x27;, &#x27;f&#x27;, &#x27;f&#x27;, &#x27;u&#x27;, &#x27;p&#x27;, &#x27;e&#x27;, &#x27;i&#x27;, &#x27;q&#x27;, &#x27;i&#x27;, &#x27;f&#x27;, &#x27;f&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>[a-z]</code>  匹配a~z的任意字符（ [0-9]也可以 ）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;alexrootrootadmin&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;t[a-z]&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list)  <span class="comment"># [&#x27;tr&#x27;, &#x27;ta&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>.</code>  代指除换行符以外的任意字符。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;alexraotrootadmin&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;r.o&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;rao&#x27;, &#x27;roo&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;alexraotrootadmin&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;r.+o&quot;</span>, text) <span class="comment"># 贪婪匹配</span></span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;raotroo&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;alexraotrootadmin&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;r.+?o&quot;</span>, text) <span class="comment"># 非贪婪匹配</span></span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;rao&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>\w</code> 代指字母或数字或下划线（汉字）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;北京武沛alex齐北  京武沛alex齐&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;武\w+x&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;武沛alex&#x27;, &#x27;武沛alex&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>\d</code> 代指数字</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;root-ad32min-add3-admd1in&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;d\d&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;d3&#x27;, &#x27;d3&#x27;, &#x27;d1&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;root-ad32min-add3-admd1in&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;d\d+&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;d32&#x27;, &#x27;d3&#x27;, &#x27;d1&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>\s</code> 代指任意的空白符，包括空格、制表符等。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;root admin add admin&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;a\w+\s\w+&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;admin add&#x27;]</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2-数量相关"><a href="#2-数量相关" class="headerlink" title="2. 数量相关"></a>2. 数量相关</h5><ul>
+<li><p><code>*</code> 重复0次或更多次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;他是大B个，确实是个大2B。&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;大2*B&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;大B&#x27;, &#x27;大2B&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>+</code> 重复1次或更多次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;他是大B个，确实是个大2B，大3B，大66666B。&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;大\d+B&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;大2B&#x27;, &#x27;大3B&#x27;, &#x27;大66666B&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>?</code> 重复0次或1次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;他是大B个，确实是个大2B，大3B，大66666B。&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;大\d?B&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;大B&#x27;, &#x27;大2B&#x27;, &#x27;大3B&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>&#123;n&#125;</code> 重复n次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;151312\d&#123;5&#125;&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;15131255789&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>&#123;n,&#125;</code> 重复n次或更多次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;\d&#123;9,&#125;&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;442662578&#x27;, &#x27;15131255789&#x27;]</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>&#123;n,m&#125;</code> 重复n到m次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;\d&#123;10,15&#125;&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;15131255789&#x27;]</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="3-括号（分组）"><a href="#3-括号（分组）" class="headerlink" title="3. 括号（分组）"></a>3. 括号（分组）</h5><ul>
+<li><p>提取数据区域</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;15131(2\d&#123;5&#125;)&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list)  <span class="comment"># [&#x27;255789&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来15131266666呀&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;15(13)1(2\d&#123;5&#125;)&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list)  <span class="comment"># [ (&#x27;13&#x27;, &#x27;255789&#x27;)   ]</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;(15131(2\d&#123;5&#125;))&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list)  <span class="comment"># [(&#x27;15131255789&#x27;, &#x27;255789&#x27;)]</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>获取指定区域 + 或条件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主15131root太牛15131alex逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;15131(2\d&#123;5&#125;|r\w+太)&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list)  <span class="comment"># [&#x27;root太&#x27;, &#x27;255789&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主15131root太牛15131alex逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;(15131(2\d&#123;5&#125;|r\w+太))&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list)  <span class="comment"># [(&#x27;15131root太&#x27;, &#x27;root太&#x27;), (&#x27;15131255789&#x27;, &#x27;255789&#x27;)]</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h5 id="练习题-2"><a href="#练习题-2" class="headerlink" title="练习题"></a>练习题</h5></li>
+</ul>
+<ol>
+<li><p>利用正则匹配QQ号码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[1-9]\d&#123;4,&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>身份证号码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;dsf130429191912015219k13042919591219521Xkk&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;\d&#123;17&#125;[\dX]&quot;</span>, text) <span class="comment"># [abc]</span></span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;130429191912015219&#x27;, &#x27;13042919591219521X&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;dsf130429191912015219k13042919591219521Xkk&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;\d&#123;17&#125;(\d|X)&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [&#x27;9&#x27;, &#x27;X&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;dsf130429191912015219k13042919591219521Xkk&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;(\d&#123;17&#125;(\d|X))&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [(&#x27;130429191912015219&#x27;, &#x27;9&#x27;), (&#x27;13042919591219521X&#x27;, &#x27;X&#x27;)]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;dsf130429191912015219k13042919591219521Xkk&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;(\d&#123;6&#125;)(\d&#123;4&#125;)(\d&#123;2&#125;)(\d&#123;2&#125;)(\d&#123;3&#125;)([0-9]|X)&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [(&#x27;130429&#x27;, &#x27;1919&#x27;, &#x27;12&#x27;, &#x27;01&#x27;, &#x27;521&#x27;, &#x27;9&#x27;), (&#x27;130429&#x27;, &#x27;1959&#x27;, &#x27;12&#x27;, &#x27;19&#x27;, &#x27;521&#x27;, &#x27;X&#x27;)]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>手机号</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;我的手机哈是15133377892，你的手机号是1171123啊？&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;1[3-9]\d&#123;9&#125;&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list)  <span class="comment"># [&#x27;15133377892&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>邮箱地址</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">email_list = re.findall(<span class="string">&quot;\w+@\w+\.\w+&quot;</span>,text)</span><br><span class="line"><span class="built_in">print</span>(email_list) <span class="comment"># [&#x27;442662578@qq.com和xxxxx&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">email_list = re.findall(<span class="string">&quot;[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+&quot;</span>, text, re.ASCII)</span><br><span class="line"><span class="built_in">print</span>(email_list) <span class="comment"># [&#x27;442662578@qq.com&#x27;, &#x27;xxxxx@live.com&#x27;]</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">email_list = re.findall(<span class="string">&quot;\w+@\w+\.\w+&quot;</span>, text, re.ASCII)</span><br><span class="line"><span class="built_in">print</span>(email_list) <span class="comment"># [&#x27;442662578@qq.com&#x27;, &#x27;xxxxx@live.com&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;楼主太牛44266-2578@qq.com逼了，在线想要 442662578@qq.com和xxxxx@live.com谢谢楼主，手机号也可15131255789，搞起来呀&quot;</span></span><br><span class="line">email_list = re.findall(<span class="string">&quot;(\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)&quot;</span>, text, re.ASCII)</span><br><span class="line"><span class="built_in">print</span>(email_list) <span class="comment"># [(&#x27;44266-2578@qq.com&#x27;, &#x27;-2578&#x27;, &#x27;&#x27;, &#x27;&#x27;), (&#x27;xxxxx@live.com&#x27;, &#x27;&#x27;, &#x27;&#x27;, &#x27;&#x27;)]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>补充代码，实现获取页面上的所有评论（已实现），并提取里面的邮箱。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先安装两个模块</span></span><br><span class="line">pip3 install requests</span><br><span class="line">pip3 install beautifulsoup4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line">res = requests.get(</span><br><span class="line">    url=<span class="string">&quot;https://www.douban.com/group/topic/79870081/&quot;</span>,</span><br><span class="line">    headers=&#123;</span><br><span class="line">        <span class="string">&#x27;User-Agent&#x27;</span>: <span class="string">&#x27;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36&#x27;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br><span class="line">bs_object = BeautifulSoup(res.text, <span class="string">&quot;html.parser&quot;</span>)</span><br><span class="line">comment_object_list = bs_object.find_all(<span class="string">&quot;p&quot;</span>, attrs=&#123;<span class="string">&quot;class&quot;</span>: <span class="string">&quot;reply-content&quot;</span>&#125;)</span><br><span class="line"><span class="keyword">for</span> comment_object <span class="keyword">in</span> comment_object_list:</span><br><span class="line">    text = comment_object.text</span><br><span class="line">    <span class="built_in">print</span>(text)</span><br><span class="line">    <span class="comment"># 请继续补充代码，提取text中的邮箱地址</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h5 id="4-起始和结束"><a href="#4-起始和结束" class="headerlink" title="4. 起始和结束"></a>4. 起始和结束</h5><p>上述示例中都是去一段文本中提取数据，只要文本中存在即可。</p>
+<p>但，如果要求用户输入的内容必须是指定的内容开头和结尾，比就需要用到如下两个字符。</p>
+<ul>
+<li><code>^</code> 开始</li>
+<li><code>$</code> 结束</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;啊442662578@qq.com我靠&quot;</span></span><br><span class="line">email_list = re.findall(<span class="string">&quot;^\w+@\w+.\w+$&quot;</span>, text, re.ASCII)</span><br><span class="line"><span class="built_in">print</span>(email_list) <span class="comment"># []</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;442662578@qq.com&quot;</span></span><br><span class="line">email_list = re.findall(<span class="string">&quot;^\w+@\w+.\w+$&quot;</span>, text, re.ASCII)</span><br><span class="line"><span class="built_in">print</span>(email_list) <span class="comment"># [&#x27;442662578@qq.com&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>这种一般用于对用户输入数据格式的校验比较多，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="built_in">input</span>(<span class="string">&quot;请输入邮箱：&quot;</span>)</span><br><span class="line">email = re.findall(<span class="string">&quot;^\w+@\w+.\w+$&quot;</span>, text, re.ASCII)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> email:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;邮箱格式错误&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(email)</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="5-特殊字符"><a href="#5-特殊字符" class="headerlink" title="5. 特殊字符"></a>5. 特殊字符</h5><p>由于正则表达式中 <code>*  .  \ &#123; &#125; ( ) </code> 等都具有特殊的含义，所以如果想要在正则中匹配这种指定的字符，需要转义，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;我是你&#123;5&#125;爸爸&quot;</span></span><br><span class="line">data = re.findall(<span class="string">&quot;你&#123;5&#125;爸&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># []</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;我是你&#123;5&#125;爸爸&quot;</span></span><br><span class="line">data = re.findall(<span class="string">&quot;你\&#123;5\&#125;爸&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-3-2-re模块"><a href="#1-3-2-re模块" class="headerlink" title="1.3.2 re模块"></a>1.3.2 re模块</h4><p>python中提供了re模块，可以处理正则表达式并对文本进行处理。</p>
+<ul>
+<li><p>findall，获取匹配到的所有数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;dsf130429191912015219k13042919591219521Xkk&quot;</span></span><br><span class="line">data_list = re.findall(<span class="string">&quot;(\d&#123;6&#125;)(\d&#123;4&#125;)(\d&#123;2&#125;)(\d&#123;2&#125;)(\d&#123;3&#125;)([0-9]|X)&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data_list) <span class="comment"># [(&#x27;130429&#x27;, &#x27;1919&#x27;, &#x27;12&#x27;, &#x27;01&#x27;, &#x27;521&#x27;, &#x27;9&#x27;), (&#x27;130429&#x27;, &#x27;1959&#x27;, &#x27;12&#x27;, &#x27;19&#x27;, &#x27;521&#x27;, &#x27;X&#x27;)]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>match，从起始位置开始匹配，匹配成功返回一个对象，未匹配成功返回None</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;大小逗2B最逗3B欢乐&quot;</span></span><br><span class="line">data = re.<span class="keyword">match</span>(<span class="string">&quot;逗\dB&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># None</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;逗2B最逗3B欢乐&quot;</span></span><br><span class="line">data = re.<span class="keyword">match</span>(<span class="string">&quot;逗\dB&quot;</span>, text)</span><br><span class="line"><span class="keyword">if</span> data:</span><br><span class="line">    content = data.group() <span class="comment"># &quot;逗2B&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(content)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>search，浏览整个字符串去匹配第一个，未匹配成功返回None</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;大小逗2B最逗3B欢乐&quot;</span></span><br><span class="line">data = re.search(<span class="string">&quot;逗\dB&quot;</span>, text)</span><br><span class="line"><span class="keyword">if</span> data:</span><br><span class="line">    <span class="built_in">print</span>(data.group())  <span class="comment"># &quot;逗2B&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>sub，替换匹配成功的位置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;逗2B最逗3B欢乐&quot;</span></span><br><span class="line">data = re.sub(<span class="string">&quot;\dB&quot;</span>, <span class="string">&quot;沙雕&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># 逗沙雕最逗沙雕欢乐</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;逗2B最逗3B欢乐&quot;</span></span><br><span class="line">data = re.sub(<span class="string">&quot;\dB&quot;</span>, <span class="string">&quot;沙雕&quot;</span>, text, <span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># 逗沙雕最逗3B欢乐</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>split，根据匹配成功的位置分割</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;逗2B最逗3B欢乐&quot;</span></span><br><span class="line">data = re.split(<span class="string">&quot;\dB&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># [&#x27;逗&#x27;, &#x27;最逗&#x27;, &#x27;欢乐&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;逗2B最逗3B欢乐&quot;</span></span><br><span class="line">data = re.split(<span class="string">&quot;\dB&quot;</span>, text, <span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(data) <span class="comment"># [&#x27;逗&#x27;, &#x27;最逗3B欢乐&#x27;]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>finditer</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;逗2B最逗3B欢乐&quot;</span></span><br><span class="line">data = re.finditer(<span class="string">&quot;\dB&quot;</span>, text)</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">    <span class="built_in">print</span>(item.group())</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;逗2B最逗3B欢乐&quot;</span></span><br><span class="line">data = re.finditer(<span class="string">&quot;(?P&lt;xx&gt;\dB)&quot;</span>, text)  <span class="comment"># 命名分组</span></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">    <span class="built_in">print</span>(item.groupdict())</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">text = <span class="string">&quot;dsf130429191912015219k13042919591219521Xkk&quot;</span></span><br><span class="line">data_list = re.finditer(<span class="string">&quot;\d&#123;6&#125;(?P&lt;year&gt;\d&#123;4&#125;)(?P&lt;month&gt;\d&#123;2&#125;)(?P&lt;day&gt;\d&#123;2&#125;)\d&#123;3&#125;[\d|X]&quot;</span>, text)</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> data_list:</span><br><span class="line">    info_dict = item.groupdict()</span><br><span class="line">    <span class="built_in">print</span>(info_dict)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>到此，关于最常见的内置模块就全部讲完了（共11个），现阶段只需要掌握这些模块的使用即可，在后续的课程和练习题中也会涉及到一起其他内置模块。</p>
+<ul>
+<li>os</li>
+<li>shutil</li>
+<li>sys</li>
+<li>random</li>
+<li>hashlib</li>
+<li>configparser</li>
+<li>xml</li>
+<li>json</li>
+<li>time</li>
+<li>datetime</li>
+<li>re</li>
+</ul>
+<h2 id="2-项目开发规范"><a href="#2-项目开发规范" class="headerlink" title="2. 项目开发规范"></a>2. 项目开发规范</h2><p>现阶段，我们在开发一些程序时（终端运行），应该遵循一些结构的规范，让你的系统更加专业。</p>
+<h3 id="2-1-单文件应用"><a href="#2-1-单文件应用" class="headerlink" title="2.1 单文件应用"></a>2.1 单文件应用</h3><p>当基于python开发简单应用时（一个py文件就能搞定），需要注意如下几点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">文件注释</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> openpyxl <span class="keyword">import</span> load_workbook</span><br><span class="line"></span><br><span class="line">DB = <span class="string">&quot;XXX&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">do_something</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot; 函数注释 &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># TODO 待完成时，下一期实现xxx功能</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot; 函数注释 &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 对功能代码进行注释</span></span><br><span class="line">    text = <span class="built_in">input</span>(<span class="string">&quot;&gt;&gt;&gt;&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    run()</span><br></pre></td></tr></table></figure>
+
+
+
+<img src="/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210105160728297.png" alt="image-20210105160728297" style="zoom:50%;">
+
+
+
+
+
+<h3 id="2-2-单可执行文件"><a href="#2-2-单可执行文件" class="headerlink" title="2.2 单可执行文件"></a>2.2 单可执行文件</h3><p>新创建一个项目，假设名字叫 【crm】，可以创建如下文件和文件夹来存放代码和数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">crm</span><br><span class="line">├── app.py        文件，程序的主文件（尽量精简）</span><br><span class="line">├── config.py     文件，配置文件（放相关配置信息，代码中读取配置信息，如果想要修改配置，即可以在此修改，不用再去代码中逐一修改了）</span><br><span class="line">├── db            文件夹，存放数据</span><br><span class="line">├── files         文件夹，存放文件</span><br><span class="line">├── src           包，业务处理的代码</span><br><span class="line">└── utils         包，公共功能</span><br></pre></td></tr></table></figure>
+
+<p>示例程序见附件：crm.zip</p>
+<p><img src="/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210105163335127.png" alt="image-20210105163335127"></p>
+<h3 id="2-3-多可执行文件"><a href="#2-3-多可执行文件" class="headerlink" title="2.3 多可执行文件"></a>2.3 多可执行文件</h3><p>新创建项目，假设名称叫【killer】，可以创建如下文件和文件夹来存放代码和数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">killer</span><br><span class="line">├── bin					文件夹，存放多个主文件（可运行）</span><br><span class="line">│   ├── app1.py</span><br><span class="line">│   └── app2.py</span><br><span class="line">├── config              包，配置文件</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   └── settings.py</span><br><span class="line">├── db                  文件夹，存放数据</span><br><span class="line">├── files               文件夹，存放文件</span><br><span class="line">├── src                 包，业务代码</span><br><span class="line">│   └── __init__.py</span><br><span class="line">└── utils               包，公共功能</span><br><span class="line">    └── __init__.py</span><br></pre></td></tr></table></figure>
+
+
+
+<p>示例程序见附件：killer.zip</p>
+<p><img src="/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210105164740583.png" alt="image-20210105164740583"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>json格式和json模块</li>
+<li>json模块处理特殊的数据类型</li>
+<li>datetime格式与字符串、时间戳以及相关之间的转换。</li>
+<li>datetime格式时间与timedelta的加减。</li>
+<li>两个datetime相减可以计算时间间隔，得到的是一个timedelta格式的时间。</li>
+<li>了解正则表达式的编写方式和python中re模块的使用。</li>
+<li>项目开发规范。</li>
+</ol>
+<h2 id="作业：开发短视频资讯平台"><a href="#作业：开发短视频资讯平台" class="headerlink" title="作业：开发短视频资讯平台"></a>作业：开发短视频资讯平台</h2><ul>
+<li><p>有video.csv视频库文件，其中有999条短视频数据，格式如下：【 video.csv 文件已为大家提供好，在day15课件目录下。 】</p>
+<p><img src="/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/image-20210105223331765.png" alt="image-20210105223331765"></p>
+</li>
+<li><p>项目的核心功能有：</p>
+<ul>
+<li><p>分页看新闻（每页显示10条），提示用户输入页码，根据页码显示指定页面的数据。</p>
+<ul>
+<li>提示用户输入页码，根据页码显示指定页面的数据。</li>
+<li>当用户输入的页码不存在时，默认显示第1页</li>
+</ul>
+</li>
+<li><p>搜索专区</p>
+<ul>
+<li>用户输入关键字，根据关键词筛选出所有匹配成功的短视频资讯。</li>
+<li>支持的搜索两种搜索格式：<ul>
+<li><code>id=1715025</code>，筛选出id等于1715025的视频（video.csv的第一列）。</li>
+<li><code>key=文本</code>，模糊搜索，筛选包含关键字的所有新闻（video.csv的第二列）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>下载专区</p>
+<ul>
+<li><p>用户输入视频id，根据id找到对应的mp4视频下载地址，然后下载视频到项目的files目录。</p>
+<ul>
+<li><p>视频的文件名为：<code>视频id-年-月-日-时-分-秒.mp4</code></p>
+</li>
+<li><p>视频下载代码示例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">res = requests.get(</span><br><span class="line">    url=<span class="string">&#x27;https://video.pearvideo.com/mp4/adshort/20210105/cont-1715046-15562045_adpkg-ad_hd.mp4&#x27;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 视频总大小（字节）</span></span><br><span class="line">file_size = <span class="built_in">int</span>(res.headers[<span class="string">&#x27;Content-Length&#x27;</span>])</span><br><span class="line"></span><br><span class="line">download_size = <span class="number">0</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;xxx.mp4&#x27;</span>, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> file_object:</span><br><span class="line">    <span class="comment"># 分块读取下载的视频文件（最多一次读128字节），并逐一写入到文件中。 len(chunk)表示实际读取到每块的视频文件大小。</span></span><br><span class="line">    <span class="keyword">for</span> chunk <span class="keyword">in</span> res.iter_content(<span class="number">128</span>):</span><br><span class="line">        download_size += <span class="built_in">len</span>(chunk)</span><br><span class="line">        file_object.write(chunk)</span><br><span class="line">        file_object.flush()</span><br><span class="line">        message = <span class="string">&quot;视频总大小为：&#123;&#125;字节，已下载&#123;&#125;字节。&quot;</span>.<span class="built_in">format</span>(file_size, download_size)</span><br><span class="line">        <span class="built_in">print</span>(message)</span><br><span class="line">    file_object.close()</span><br><span class="line"></span><br><span class="line">res.close()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载的过程中，输出已下载的百分比，示例代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;正在下载中...&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">101</span>):</span><br><span class="line">    text = <span class="string">&quot;\r&#123;&#125;%&quot;</span>.<span class="built_in">format</span>(i)</span><br><span class="line">    <span class="built_in">print</span>(text, end=<span class="string">&quot;&quot;</span>)</span><br><span class="line">    time.sleep(<span class="number">0.2</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n下载完成&quot;</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="附赠"><a href="#附赠" class="headerlink" title="附赠"></a>附赠</h2><p>自动采集梨视频1000条资讯的爬虫脚本。<span style="color:red;">梨视频平台系统更新后可能会导致下载失败，到时候需根据平台调整再来修改代码。</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">下载梨视频的：视频ID，视频标题，视频URL地址 并写入到本次 video.csv 文件中。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">运行此脚本需要预先安装：</span></span><br><span class="line"><span class="string">    pip install request</span></span><br><span class="line"><span class="string">    pip install beautifulsoup4</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_mp4_url</span>(<span class="params">video_id</span>):</span><br><span class="line">    data = requests.get(</span><br><span class="line">        url=<span class="string">&quot;https://www.pearvideo.com/videoStatus.jsp?contId=&#123;&#125;&quot;</span>.<span class="built_in">format</span>(video_id),</span><br><span class="line">        headers=&#123;</span><br><span class="line">            <span class="string">&quot;Referer&quot;</span>: <span class="string">&quot;https://www.pearvideo.com/video_&#123;&#125;&quot;</span>.<span class="built_in">format</span>(video_id),</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line">    response = data.json()</span><br><span class="line">    image_url = response[<span class="string">&#x27;videoInfo&#x27;</span>][<span class="string">&#x27;video_image&#x27;</span>]</span><br><span class="line">    video_url = response[<span class="string">&#x27;videoInfo&#x27;</span>][<span class="string">&#x27;videos&#x27;</span>][<span class="string">&#x27;srcUrl&#x27;</span>]</span><br><span class="line">    middle = image_url.rsplit(<span class="string">&#x27;/&#x27;</span>, <span class="number">1</span>)[-<span class="number">1</span>].rsplit(<span class="string">&#x27;-&#x27;</span>, <span class="number">1</span>)[<span class="number">0</span>]</span><br><span class="line">    before, after = video_url.rsplit(<span class="string">&#x27;/&#x27;</span>, <span class="number">1</span>)</span><br><span class="line">    suffix = after.split(<span class="string">&#x27;-&#x27;</span>, <span class="number">1</span>)[-<span class="number">1</span>]</span><br><span class="line">    url = <span class="string">&quot;&#123;&#125;/&#123;&#125;-&#123;&#125;&quot;</span>.<span class="built_in">format</span>(before, middle, suffix)</span><br><span class="line">    <span class="keyword">return</span> url</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">download_video</span>():</span><br><span class="line">    file_object = <span class="built_in">open</span>(<span class="string">&#x27;video.csv&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> count &lt;= <span class="number">999</span>:</span><br><span class="line">        res = requests.get(</span><br><span class="line">            url=<span class="string">&quot;https://www.pearvideo.com/category_loading.jsp?reqType=14&amp;categoryId=&amp;start=&#123;&#125;&quot;</span>.<span class="built_in">format</span>(count)</span><br><span class="line">        )</span><br><span class="line">        bs = BeautifulSoup(res.text, <span class="string">&#x27;lxml&#x27;</span>)</span><br><span class="line">        a_list = bs.find_all(<span class="string">&quot;a&quot;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&quot;vervideo-lilink&quot;</span>&#125;)</span><br><span class="line">        <span class="keyword">for</span> tag <span class="keyword">in</span> a_list:</span><br><span class="line">            title = tag.find(<span class="string">&#x27;div&#x27;</span>, attrs=&#123;<span class="string">&#x27;class&#x27;</span>: <span class="string">&quot;vervideo-title&quot;</span>&#125;).text.strip()</span><br><span class="line">            video_id = tag.get(<span class="string">&#x27;href&#x27;</span>).split(<span class="string">&#x27;_&#x27;</span>)[-<span class="number">1</span>]</span><br><span class="line">            mp4_url = get_mp4_url(video_id)</span><br><span class="line">            row = <span class="string">&quot;&#123;&#125;,&#123;&#125;,&#123;&#125;\n&quot;</span>.<span class="built_in">format</span>(video_id, title, mp4_url)</span><br><span class="line">            file_object.write(row)</span><br><span class="line">            file_object.flush()</span><br><span class="line">            count += <span class="number">1</span></span><br><span class="line">            message = <span class="string">&quot;已下载&#123;&#125;个&quot;</span>.<span class="built_in">format</span>(count)</span><br><span class="line">            <span class="built_in">print</span>(message)</span><br><span class="line">    file_object.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    download_video()</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/09/07/python_course-master/day15%20%E5%86%85%E7%BD%AE%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/%E7%AC%94%E8%AE%B0/day15/" title="">http://example.com/2024/09/07/python_course-master/day15 内置和开发规范/笔记/day15/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day14%20%E6%A8%A1%E5%9D%97%E5%92%8C%E5%86%85%E7%BD%AE%E6%A8%A1%E5%9D%97/%E7%AC%94%E8%AE%B0/day14/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day16%20%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%93%E5%92%8C%E8%80%83%E8%AF%95/%E7%AC%94%E8%AE%B0/day16/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#day15-%E5%86%85%E7%BD%AE%E6%A8%A1%E5%9D%97%E5%92%8C%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83"><span class="nav-number">1.</span> <span class="nav-text">day15 内置模块和开发规范</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E7%BD%AE%E6%A8%A1%E5%9D%97"><span class="nav-number">1.1.</span> <span class="nav-text">1. 内置模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-json"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 json</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-1-%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">1.1.1 核心功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0%E9%A2%98"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">练习题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-2-%E7%B1%BB%E5%9E%8B%E8%A6%81%E6%B1%82"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">1.1.2 类型要求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-3-%E5%85%B6%E4%BB%96%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">1.1.3 其他功能</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%97%B6%E9%97%B4%E5%A4%84%E7%90%86"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 时间处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-time"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1.2.1 time</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-datetime"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">1.2.2 datetime</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0%E9%A2%98-1"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">练习题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9B%B8%E5%85%B3"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 正则表达式相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-1-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">1.3.1 正则表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E5%AD%97%E7%AC%A6%E7%9B%B8%E5%85%B3"><span class="nav-number">1.1.3.1.1.</span> <span class="nav-text">1. 字符相关</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E6%95%B0%E9%87%8F%E7%9B%B8%E5%85%B3"><span class="nav-number">1.1.3.1.2.</span> <span class="nav-text">2. 数量相关</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E6%8B%AC%E5%8F%B7%EF%BC%88%E5%88%86%E7%BB%84%EF%BC%89"><span class="nav-number">1.1.3.1.3.</span> <span class="nav-text">3. 括号（分组）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0%E9%A2%98-2"><span class="nav-number">1.1.3.1.4.</span> <span class="nav-text">练习题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E8%B5%B7%E5%A7%8B%E5%92%8C%E7%BB%93%E6%9D%9F"><span class="nav-number">1.1.3.1.5.</span> <span class="nav-text">4. 起始和结束</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6"><span class="nav-number">1.1.3.1.6.</span> <span class="nav-text">5. 特殊字符</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-2-re%E6%A8%A1%E5%9D%97"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">1.3.2 re模块</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.1.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83"><span class="nav-number">1.2.</span> <span class="nav-text">2. 项目开发规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%8D%95%E6%96%87%E4%BB%B6%E5%BA%94%E7%94%A8"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 单文件应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%8D%95%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 单可执行文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%A4%9A%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 多可执行文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A%EF%BC%9A%E5%BC%80%E5%8F%91%E7%9F%AD%E8%A7%86%E9%A2%91%E8%B5%84%E8%AE%AF%E5%B9%B3%E5%8F%B0"><span class="nav-number">1.4.</span> <span class="nav-text">作业：开发短视频资讯平台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%84%E8%B5%A0"><span class="nav-number">1.5.</span> <span class="nav-text">附赠</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="陈永辉"
+      src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+  <p class="site-author-name" itemprop="name">陈永辉</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cyhzuishuai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cyhzuishuai" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2426230801@qq.com" title="E-Mail → 2426230801@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/chenyonghuizui" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;chenyonghuizui" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈永辉</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共126.9k字</span>
+</div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

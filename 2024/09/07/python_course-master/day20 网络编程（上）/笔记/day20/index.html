@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="day20 网络编程 课程目标：掌握网络相关的基础知识并可以基于Python开发程序（基于网络进行数据传输）。 课程概要：  网络必备基础 网络编程（Python代码） B&#x2F;S和C&#x2F;S架构  1.必备基础你必须了解的网络相关设备和基础概念。 1.1 网络架构假设 alex 上了一个野鸡大学买了一台电脑，电脑里存了1部小电影，整宿整宿的在宿舍反复的看。  alex 如何想要和室友">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大帅哥">
+<meta property="og:url" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/index.html">
+<meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="day20 网络编程 课程目标：掌握网络相关的基础知识并可以基于Python开发程序（基于网络进行数据传输）。 课程概要：  网络必备基础 网络编程（Python代码） B&#x2F;S和C&#x2F;S架构  1.必备基础你必须了解的网络相关设备和基础概念。 1.1 网络架构假设 alex 上了一个野鸡大学买了一台电脑，电脑里存了1部小电影，整宿整宿的在宿舍反复的看。  alex 如何想要和室友">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210220091551058.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210204184431053-3881170.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210204185417337-3881170.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221142111266.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210205143317465-3881170.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210204205902286-3890545.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221145506980.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210206092454106-3881170.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210206225844012.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210206231121896.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210206231602247.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207001644433.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207135331788.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207143152690.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207143340596.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207211646642.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221173632272.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207214828047.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207215523168.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207221334711.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207230929229.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207221334711.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207233253951.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208102929953.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208110607388.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208110829796.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208110938038.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207221334711.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208164809572.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221190543727.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221190426551.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207221334711.png">
+<meta property="article:published_time" content="2024-09-07T13:27:31.610Z">
+<meta property="article:modified_time" content="2024-08-28T10:21:32.039Z">
+<meta property="article:author" content="陈永辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210220091551058.png">
+
+<link rel="canonical" href="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 大帅哥</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大帅哥</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-07 21:27:31" itemprop="dateCreated datePublished" datetime="2024-09-07T21:27:31+08:00">2024-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-28 18:21:32" itemprop="dateModified" datetime="2024-08-28T18:21:32+08:00">2024-08-28</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="day20-网络编程"><a href="#day20-网络编程" class="headerlink" title="day20 网络编程"></a>day20 网络编程</h1><p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210220091551058.png" alt="image-20210220091551058"></p>
+<p>课程目标：掌握网络相关的基础知识并可以基于Python开发程序（基于网络进行数据传输）。</p>
+<p>课程概要：</p>
+<ul>
+<li>网络必备基础</li>
+<li>网络编程（Python代码）</li>
+<li>B&#x2F;S和C&#x2F;S架构</li>
+</ul>
+<h2 id="1-必备基础"><a href="#1-必备基础" class="headerlink" title="1.必备基础"></a>1.必备基础</h2><p>你必须了解的网络相关设备和基础概念。</p>
+<h3 id="1-1-网络架构"><a href="#1-1-网络架构" class="headerlink" title="1.1 网络架构"></a>1.1 网络架构</h3><p>假设 <strong>alex</strong> 上了一个野鸡大学买了一台电脑，电脑里存了1部小电影，整宿整宿的在宿舍反复的看。</p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210204184431053-3881170.png" alt="image-20210204184431053"></p>
+<p><strong>alex</strong> 如何想要和室友 <strong>于超</strong> 进行收发数据，可以通过一根网线来进行连接，并进行数据的传输。</p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210204185417337-3881170.png" alt="image-20210204185417337"></p>
+<h4 id="1-1-1-交换机"><a href="#1-1-1-交换机" class="headerlink" title="1.1.1 交换机"></a>1.1.1 交换机</h4><p>其他2位室友如何也想和他们的电脑相互连接然后进行资源的共享，此时就需要一个设备 【二层交换机】组件一个局域网。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">当电脑接入交换机之后，我们需要为每台电脑分配一个IP，例如：</span><br><span class="line">    - 电脑<span class="number">1</span>：<span class="number">192.168</span><span class="number">.10</span><span class="number">.1</span></span><br><span class="line">    - 电脑<span class="number">2</span>：<span class="number">192.168</span><span class="number">.10</span><span class="number">.2</span></span><br><span class="line">    - 电脑<span class="number">3</span>：<span class="number">192.168</span><span class="number">.10</span><span class="number">.3</span></span><br><span class="line">    - 电脑<span class="number">4</span>：<span class="number">192.168</span><span class="number">.10</span><span class="number">.4</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">局域网内容个电脑之间是基于ARP协议来进行通信，例如：A电脑向 IP为192.168.10.3的另一个电脑发送消息。</span><br><span class="line"></span><br><span class="line">第一步：A封装数据包，此时只知道目标IP不知道目标mac地址（未知mac地址时默认会设置为FF）。</span><br><span class="line">第二步：将数据包发送到交换机，交换机通过广播的形式将数据发送给所有电脑。</span><br><span class="line">第三步：目标电脑接收到数据包后，监测自己是否是目标IP。</span><br><span class="line">		- 是，收到数据并回复。</span><br><span class="line">		- 不是，则丢弃包。</span><br><span class="line"></span><br><span class="line">为防止每次发送消息都是广播形式，每台电脑的内部都为维护了一个ARP表，接受到数据时（无论是否自己的）都会记录自己了解的IP和MAC的对应关系，例如：</span><br><span class="line">    Internet地址			       物理地址</span><br><span class="line">    192.168.10.1            14-9d-da-2a-dd-0a</span><br><span class="line">    192.168.10.3            14-9d-da-2a-dd-0c</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">以便于下次在发送消息时，就知道了目标的mac地址，直接让交换机转发给指定的电脑（单播）。</span><br><span class="line"></span><br><span class="line">同时，当有消息发送经过二层交换机时他的内容也会维护记录了交换机接口和连接的电脑的mac地址的对应关系，例如：</span><br><span class="line">    接口（网卡）               mac地址</span><br><span class="line">      接口1              14-9d-da-2a-dd-0A</span><br><span class="line">      接口2              14-9d-da-2a-dd-0B</span><br><span class="line">      接口3              14-9d-da-2a-dd-0C</span><br><span class="line">      ...</span><br><span class="line">这样一来，交换机在进行数据转发时，效率就更高了。</span><br><span class="line"></span><br><span class="line">注意：每台电脑出厂时在网卡中都设置了唯一的mac地址（不重复），网卡集成在主板上，如果更换了主板则mac地址也会变更。</span><br></pre></td></tr></table></figure>
+
+<img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221142111266.png" alt="image-20210221142111266" style="zoom:33%;">
+
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210205143317465-3881170.png" alt="image-20210205143317465"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">头部信息：xxx</span><br><span class="line">数据：你好</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">头部信息：xxx</span><br><span class="line">数据：收到</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h4 id="1-1-2-路由器"><a href="#1-1-2-路由器" class="headerlink" title="1.1.2 路由器"></a>1.1.2 路由器</h4><p>多个宿舍之间想想要组建一个相互可以通信网络，此时需要【二层交换机】和【企业路由器】配合组建稍微大一点的局域网（同时也可缓解广播风暴）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">划分好网络结构之后，其实会给各宿舍的电脑分配IP和网关，例如：</span><br><span class="line">   宿舍A：</span><br><span class="line">		- 电脑1：192.168.10.1  网关：192.168.10.254</span><br><span class="line">		- 电脑2：192.168.10.2  网关：192.168.10.254</span><br><span class="line">		- 电脑3：192.168.10.3  网关：192.168.10.254</span><br><span class="line">		- 电脑4：192.168.10.4  网关：192.168.10.254</span><br><span class="line">   宿舍B</span><br><span class="line">		- 电脑1：192.168.20.1  网关：192.168.20.254</span><br><span class="line">		- 电脑2：192.168.20.2  网关：192.168.20.254</span><br><span class="line">		- 电脑3：192.168.20.3  网关：192.168.20.254</span><br><span class="line">		- 电脑4：192.168.20.4  网关：192.168.20.254</span><br><span class="line"></span><br><span class="line">然后再在路由器中配置路由表（包含网段和路由器上的接口的对应关系），例如：</span><br><span class="line">	 接口             IP</span><br><span class="line">     eth0   	  192.168.10.254（192.168.10网段）</span><br><span class="line">     eth1   	  192.168.20.254（192.168.20网段）</span><br><span class="line">    </span><br><span class="line">想与外部网络通信，需要配置网关，网关就是路由表中配置的指向此网段的IP。其实就类似于贸易出口都需要经过海关。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">数据通信的过程结合了APR协议和IP协议，例如：宿舍A的电脑<span class="number">1</span>向宿舍B的电脑<span class="number">3</span>发送消息（目标IP：<span class="number">192.168</span><span class="number">.20</span><span class="number">.3</span>）。</span><br><span class="line"></span><br><span class="line">简化过程：</span><br><span class="line">	- 宿舍A的电脑<span class="number">1</span>，通过广播或单播将数据发送到网管（路由器）</span><br><span class="line">    - 路由器接收到数据之后，再通过对应的接口把数据通过广播的形式发送到宿舍B。</span><br><span class="line">注意：各自局域网内通过学习并记录相关mac地址后，就可以不再使用广播形式，而是使用单播来发送消息了。</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210204205902286-3890545.png" alt="image-20210204205902286"></p>
+<img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221145506980.png" alt="image-20210221145506980" style="zoom:33%;">
+
+<h4 id="1-1-3-三层交换机"><a href="#1-1-3-三层交换机" class="headerlink" title="1.1.3 三层交换机"></a>1.1.3 三层交换机</h4><p>三层交换机集成了 交换机 &amp; 路由器的功能（大部分路由器功能），上述的三个设备其实可以用一个三层交换机就可以搞定。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">按照下图，在三层交换机上分别做如下几件事：</span><br><span class="line"></span><br><span class="line"><span class="number">1.</span> 划分两个vlan，模拟出来路由器的两个接口。</span><br><span class="line"><span class="number">2.</span> 将交换机的接口划分给指定的vlan，例如：</span><br><span class="line">	接口<span class="number">1</span>、<span class="number">2</span>、<span class="number">3</span>划分给一个vlan，相当于交换机连接上了路由器。</span><br><span class="line">    接口<span class="number">4</span>、<span class="number">5</span>、<span class="number">6</span>划分给一个vlan，相当于交换机连接上了路由器。</span><br><span class="line"><span class="number">3.</span> 电脑连接上交换机。</span><br><span class="line"><span class="number">4.</span> 进行相应的配置。</span><br><span class="line">	宿舍A（左边）电脑配置：</span><br><span class="line">    	- 电脑<span class="number">1</span>：<span class="number">192.168</span><span class="number">.10</span><span class="number">.1</span>  网关：<span class="number">192.168</span><span class="number">.10</span><span class="number">.254</span>	对应交换机接口：<span class="number">1</span></span><br><span class="line">		- 电脑<span class="number">2</span>：<span class="number">192.168</span><span class="number">.10</span><span class="number">.2</span>  网关：<span class="number">192.168</span><span class="number">.10</span><span class="number">.254</span>	对应交换机接口：<span class="number">2</span></span><br><span class="line">		- 电脑<span class="number">3</span>：<span class="number">192.168</span><span class="number">.10</span><span class="number">.3</span>  网关：<span class="number">192.168</span><span class="number">.10</span><span class="number">.254</span>	对应交换机接口：<span class="number">3</span></span><br><span class="line">	宿舍B（右边）电脑配置：</span><br><span class="line">		- 电脑<span class="number">1</span>：<span class="number">192.168</span><span class="number">.20</span><span class="number">.1</span>  网关：<span class="number">192.168</span><span class="number">.20</span><span class="number">.254</span>	对应交换机接口：<span class="number">4</span></span><br><span class="line">		- 电脑<span class="number">2</span>：<span class="number">192.168</span><span class="number">.20</span><span class="number">.2</span>  网关：<span class="number">192.168</span><span class="number">.20</span><span class="number">.254</span>	对应交换机接口：<span class="number">5</span></span><br><span class="line">		- 电脑<span class="number">3</span>：<span class="number">192.168</span><span class="number">.20</span><span class="number">.3</span>  网关：<span class="number">192.168</span><span class="number">.20</span><span class="number">.254</span>	对应交换机接口：<span class="number">6</span></span><br><span class="line">	</span><br><span class="line">    交换机中的路由配置：</span><br><span class="line">    	  接口               IP</span><br><span class="line">         左vlan   	  <span class="number">192.168</span><span class="number">.10</span><span class="number">.254</span>（<span class="number">192.168</span><span class="number">.10</span>网段）</span><br><span class="line">         右vlan   	  <span class="number">192.168</span><span class="number">.20</span><span class="number">.254</span>（<span class="number">192.168</span><span class="number">.20</span>网段）</span><br><span class="line">        </span><br><span class="line">通过上述的配置之后，就可以实现宿舍A和宿舍B的网络通信了。</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210206092454106-3881170.png" alt="image-20210206092454106"></p>
+<h4 id="1-1-4-小型企业基础网络架构"><a href="#1-1-4-小型企业基础网络架构" class="headerlink" title="1.1.4 小型企业基础网络架构"></a>1.1.4 小型企业基础网络架构</h4><p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210206225844012.png" alt="image-20210206225844012"></p>
+<h4 id="1-1-5-家庭网络架构"><a href="#1-1-5-家庭网络架构" class="headerlink" title="1.1.5 家庭网络架构"></a>1.1.5 家庭网络架构</h4><p>家用路由器集成了是交换机和路由的功能（性能差、价格便宜）。</p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210206231121896.png" alt="image-20210206231121896"></p>
+<h4 id="1-1-6-互联网"><a href="#1-1-6-互联网" class="headerlink" title="1.1.6 互联网"></a>1.1.6 互联网</h4><p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210206231602247.png" alt="image-20210206231602247"></p>
+<h3 id="1-2-网络核心词汇"><a href="#1-2-网络核心词汇" class="headerlink" title="1.2 网络核心词汇"></a>1.2 网络核心词汇</h3><h4 id="1-2-1-子网掩码和IP"><a href="#1-2-1-子网掩码和IP" class="headerlink" title="1.2.1 子网掩码和IP"></a>1.2.1 子网掩码和IP</h4><p>之前说过，接入网络设备后，需要一个IP来代指次电脑，例如：192.168.10.1 。</p>
+<p>IP其是一个32位的二进制，为了便于记忆就将它分为4组，每组8位，由小数点分开，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">二进制表示：00000000.10010111.11111111.00001111</span><br><span class="line">十进制表示：251.151.255.15</span><br><span class="line"></span><br><span class="line">0~255</span><br><span class="line">192.178.11.211</span><br><span class="line">192.178.11.311</span><br></pre></td></tr></table></figure>
+
+<p>在网络中的每台电脑都会有一个IP与之绑定，这样通过IP就可以找到相应的电脑。</p>
+<p>一个IP地址可以划分为两个部分，即：网络地址 + 主机地址。</p>
+<ul>
+<li><p>问题1：如何确定网络地址和主机地址呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">通过子网掩码就可以确定IP的网络地址和主机地址。</span><br><span class="line"></span><br><span class="line">示例1：</span><br><span class="line">    	IP：192.168.1.199      11000000.10101000.00000001.11000111</span><br><span class="line">	子网掩码：255.255.255.0     11111111.11111111.11111111.00000000</span><br><span class="line">此时，网络地址就是前24位 + 主机地址是后8位。你可能见过有些IP这样写 192.168.1.199/24，意思也是前24位是网络地址。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">示例2：</span><br><span class="line">    	IP：192.168.99.254     11000000.10101000.01100011.11111110</span><br><span class="line">	子网掩码：255.255.240.0     11111111.11111111.11111100.00000000</span><br><span class="line">此时，网络地址就是前22位 + 主机地址是后10位。你可能见过有些IP这样写 192.168.99.254/22，意思也是前22位是网络地址。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>问题2：划分 网络地址 + 主机地址 的意义是什么？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">网络地址相同的IP，也称为属于同一个网段。</span><br><span class="line">在局域网内只有同一个网段的IP才能相互通信，不同网段IP想要通信需要借助路由的转发才能通信。</span><br><span class="line"></span><br><span class="line">当了解子网掩码之后，其实就可以确定某个网段可以容纳的主机个数，例如：</span><br><span class="line">【IP: 192.168.10.2  掩码：255.255.255.0】 和 【192.168.10.251 掩码：255.255.255.0】 数据同一个网段。</span><br><span class="line"></span><br><span class="line">	示例网段的主机范围：11000000.10101000.00001010. 00000001  ~  11000000.10101000.00001010.  11111110</span><br><span class="line">	                 --------------------------              --------------------------</span><br><span class="line">	                          网络地址                                   网络地址</span><br><span class="line">				           192.168.10.1                 ~           192.168.10.254</span><br><span class="line">                           </span><br><span class="line">【IP: 192.168.8.1  掩码：255.255.240.0】 和 【192.168.11.254 掩码：255.255.240.0】 数据同一个网段。</span><br><span class="line">	子网掩码：255.255.240.0</span><br><span class="line">	示例网段的主机范围：11000000.10101000.000010 00.00000001  ~  11000000.10101000.000010 11.11111110</span><br><span class="line">	                 11111111.11111111.111111 00.00000000</span><br><span class="line">	                 ------------------------                 ------------------------</span><br><span class="line">	                          网络地址                                   网络地址</span><br><span class="line">				           192.168.8.1                 ~           192.168.11.254</span><br><span class="line">				           </span><br><span class="line">【IP: 192.168.96.1  掩码：255.255.240.0】 和 【192.168.99.254  掩码：255.255.240.0】 数据同一个网段。</span><br><span class="line">	示例网段的主机范围：11000000.10101000.011000 00.00000001  ~  11000000.10101000.011000 11.11111110</span><br><span class="line">	         </span><br><span class="line">	                 ------------------------                 ------------------------</span><br><span class="line">	                          网络地址                                   网络地址</span><br><span class="line">				           192.168.96.1                 ~           192.168.99.254    </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207001644433.png" alt="image-20210207001644433"><br><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207135331788.png" alt="image-20210207135331788"></p>
+</li>
+</ul>
+<h4 id="1-2-2-DHCP"><a href="#1-2-2-DHCP" class="headerlink" title="1.2.2 DHCP"></a>1.2.2 DHCP</h4><p>在一个局域网内想要给某台电脑分配IP有两种方式：</p>
+<ul>
+<li><p>手动设置，打开指定菜单栏在里面输入相应的IP信息。</p>
+</li>
+<li><p>自动获取</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- 在电脑端，IP地址获取方式设置为自动。</span><br><span class="line">- 在路由器或三层交换机，开启DHCP服务，并设置IP地址池。（家用路由器上也是基于DHCP服务自动分配的IP）</span><br><span class="line"></span><br><span class="line">这样，电脑只要连接只该网络，DHCP服务就会为它自动分配IP、子网掩码、网关。</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207143152690.png" alt="image-20210207143152690"></p>
+<img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207143340596.png" alt="image-20210207143340596" style="zoom:33%;">
+
+
+
+<h4 id="1-2-3-内网和公网IP"><a href="#1-2-3-内网和公网IP" class="headerlink" title="1.2.3 内网和公网IP"></a>1.2.3 内网和公网IP</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">一般情况下，内网IP都用这些（潜规则）：</span><br><span class="line">	- 10.0.0.0 到 10.255.255.255</span><br><span class="line">	- 172.16.0.0 到172.31.255.255</span><br><span class="line">	- 192.168.0.0 到192.168.255.255</span><br></pre></td></tr></table></figure>
+
+<p>之前我们自己在一个局域网内为电脑分配的IP都称为<code>内网IP</code>，基于内网IP可以在一个局域网内进行相互通信（也需要相关的配置）。</p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207211646642.png" alt="image-20210207211646642"></p>
+<p>如果想要通过互联网进行通信，就必须借助公网IP。例如，右边家庭电脑想访问左边某公司服务器上的部署的网站：</p>
+<ul>
+<li>第一步：左边公司，去运营商申请公网的固定IP（办理专线宽带时运营商会分配至少1个固定的IP地址），其实运营商就是将你拉的这个专线和固定IP创建绑定关系。（假设公网IP：123.206.15.88）</li>
+<li>第二步：配置公网IP与指定服务器的转发规则。</li>
+<li>第二步：右边家庭，如果想要访问某个公司服务器上的网网站，只需要执行指定IP：123.206.15.88，运营商就会根据IP找到与之关联的公司专线，并通过公司路由器、防火墙等设备找到指定的服务器。</li>
+</ul>
+<p>按理说，每个从运营商接入网的用户都可以有一个外网IP，但由于全球用户太多而IP根本就不够分配，所以，运营商网络会进行划分，让多个家庭宽带用户共用一个公网IP（动态，可能每次上网公网IP都不一样）。</p>
+<p>让家庭用户想要通过网络访问访问其他IP时，先发给运营商由运营商向外转发到其他IP。</p>
+<p>注意：外部用户想要访问家庭宽带的IP时，运营商不会把请求转发到我们的电脑。</p>
+<img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221173632272.png" alt="image-20210221173632272" style="zoom:50%;">
+
+
+
+<p>所以，以后如果你想开发一个网站供全球的用户访问，那你就需要做以下几件事：</p>
+<ul>
+<li>拉专线，申请固定公网IP</li>
+<li>买一台服务器（就是性能好的电脑）</li>
+<li>公网IP绑定至此服务器</li>
+<li>将写好的代码放在服务器上并运行起来</li>
+</ul>
+<p>这样就可以搞定了…</p>
+<p><strong>扩展</strong>：IPv4和IPv6</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IPv4，长度为 <span class="number">32</span> 位（<span class="number">4</span> 个字节）， 格式：A.B.C.D</span><br><span class="line">IPv6，长度为 <span class="number">128</span> 位（<span class="number">16</span> 个字节），用<span class="string">&quot;:&quot;</span>分成<span class="number">8</span>段，格式：XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX（每个X是一个<span class="number">16</span>进制数）。</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-2-4-云服务器"><a href="#1-2-4-云服务器" class="headerlink" title="1.2.4 云服务器"></a>1.2.4 云服务器</h4><p>大家可能之前听说过：阿里云、腾讯云、亚马逊aws等之类的平台都在搞云服务器，那是个啥？</p>
+<img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207214828047.png" alt="image-20210207214828047" style="zoom:50%;">
+
+
+
+<p>简单的说：他们造了一个机房（网吧），买了很多很多的服务器（高性能电脑），然后将他们放在机房，然后通电+通网，主要对外去租赁这些服务器资源，让用户不必再自己  拉专线+配置网络+买服务器。</p>
+<p>假设，你想要在腾讯云租一台服务器，就可以根据自己的需求去选择配置，腾讯云会根据配置在他的物理机上虚拟出一个服务器，并进行相应的环境初始化并绑定公网固定IP，这样你就可以快速拥有一台可以被大家访问的服务器了。</p>
+<p>注意：一台性能非常高的物理机虚拟出很多虚拟机，类似于你在自己电脑上通过vmware、parallel等搞出多个虚拟机。</p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207215523168.png" alt="image-20210207215523168"></p>
+<h4 id="1-2-5-端口"><a href="#1-2-5-端口" class="headerlink" title="1.2.5 端口"></a>1.2.5 端口</h4><p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207221334711.png" alt="image-20210207221334711"></p>
+<p>假设，你在腾讯租了一台云服务器（外网IP:123.206.15.88），然后又开发了 2 个网站运行在服务器上。</p>
+<p>那么问题来了，用户在自己的电脑或手机上如何来分别访问同一台服务器上两个程序呢？</p>
+<p>其实，在计算机中有一个 <code>端口</code> 的概念，每个程序想要通过网络进行通讯都必须要指定一个端口，例如：</p>
+<ul>
+<li>网站A：使用8001端口，那么用户在自己电脑上或手机上访问时指定 IP和端口 即可，如： <code>123.206.15.88:8001</code> </li>
+<li>网站B：使用8002端口，那么用户在自己电脑上或手机上访问时指定 IP和端口 即可，如： <code>123.206.15.88:8002</code></li>
+</ul>
+<p>注意：端口的取值范围：0 ~ 65535，很多端口在计算机的内部已被使用，我们平时自定义时尽量选择5000之后的端口。</p>
+<p>示例：访问百度</p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207230929229.png" alt="image-20210207230929229"></p>
+<p>提示：如果在浏览器上只写IP不写端口，则默认是80端口。</p>
+<h4 id="1-2-6-域名"><a href="#1-2-6-域名" class="headerlink" title="1.2.6 域名"></a>1.2.6 域名</h4><p>假设你创业开发了一个网站，用户很难记住你的公网IP：<code>123.206.15.88:80</code>   &#96;&#96;123.206.15.88&#96;。</p>
+<p>所以，域名就诞生了，让域名和IP创建对应关系，用户只需要记住域名就可以了，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">www.baidu.com   --&gt;  110.242.68.3</span><br><span class="line">www.taobao.com  --&gt; 121.18.239.232</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>注意：域名只是和IP创建了对应关系，与端口无关 <code>www.baidu.com:80</code>。</p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207221334711.png" alt="image-20210207221334711"></p>
+<p>在用户在自己的电脑或手机上输入域名去访问时，其实要执行两个步骤：</p>
+<ul>
+<li>根据域名寻找IP。（寻找IP）</li>
+<li>获得IP之后，再通过IP再去访问指定服务器。</li>
+</ul>
+<p>在电脑上属如域名后，寻找IP的过程如下：</p>
+<ul>
+<li><p>第一步：在自己电脑的DNS缓存记录中寻找 域名对应的IP，如果未命中，则执行下一步。</p>
+</li>
+<li><p>第二步：在自己电脑的hosts文件中寻找，如果未命中，则执行下一步。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- mac系统：/etc/hosts 文件中</span><br><span class="line">- win系统：C:\Windows\System32\drivers\etc\hosts 文件中</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 内容示例</span></span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>	localhost</span><br><span class="line"><span class="number">255.255</span><span class="number">.255</span><span class="number">.255</span>	broadcasthost</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> kubernetes.docker.internal</span><br><span class="line"><span class="number">192.168</span><span class="number">.1</span><span class="number">.55</span> www.pythonav.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第三步：在自己电脑上找到DNS配置的地址（本地域名服务器），去这个地址寻找域名对应的IP，如果未命中，则执行下一步。<br><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207233253951.png" alt="image-20210207233253951"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">常见的DNS服务器地址：</span><br><span class="line">	<span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>（<span class="number">114</span> DNS）</span><br><span class="line">    <span class="number">223.5</span><span class="number">.5</span><span class="number">.5</span>（阿里 AliDNS）</span><br><span class="line">    <span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span>（Google DNS，随着Google在中国的没落和国内官方的限制，已经不是太好用了）</span><br><span class="line">    ...</span><br><span class="line">    各大运营商也有相应的DNS服务器...</span><br><span class="line">    </span><br><span class="line">如果你选择的是自动获得DNS，那么就会使用本地运营商的DNS服务器了。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第四步：去根域名服务器中询问（全球共13台根域名服务器，距离中国最近的一台是在日本）</p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208102929953.png" alt="image-20210208102929953"></p>
+</li>
+</ul>
+<p><span style="color:red;"><strong>问题来了</strong></span></p>
+<p>了解域名是怎么回事之后？现在你如果想要让自己的网站通过域名来访问，应该怎么办呢？【目前了解即可】</p>
+<ul>
+<li><p>租一个域名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ICANN，域名的总管理者（美国一个非营利机构），它仅制定域名政策，注册业务它会授权给一些顶级注册商。</span><br><span class="line">顶级注册商，可以对外销售域名，但要受国家 互联网络信息中心的管理。例如：中国万网(阿里云收购），中国新网，新网互联，商务中国，中国频道等。</span><br><span class="line">代理注册商，顶级注册上可以再招一些代理帮助他们卖域名。</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208110607388.png" alt="image-20210208110607388"></p>
+</li>
+<li><p>备案</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">现在国内注册域名后，需要进行备案（提交一些网站、个人或企业 等信息）后才能使用。</span><br><span class="line">注册成功后，可按照引导备案：https://beian.aliyun.com/</span><br><span class="line"></span><br><span class="line">注意：国外的域名无需备案就能使用。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>域名解析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">让域名和IP创建关联关系，并将关系同步到相关：本地域名服务器 和 根域名服务器（含顶级和二级域名服务器）。</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208110829796.png" alt="image-20210208110829796"></p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208110938038.png" alt="image-20210208110938038"></p>
+</li>
+</ul>
+<h2 id="2-网络编程"><a href="#2-网络编程" class="headerlink" title="2. 网络编程"></a>2. 网络编程</h2><p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207221334711.png" alt="image-20210207221334711"></p>
+<p>Python中内置了一个socket模块，可以快速实现网络之间进行传输数据。例如：</p>
+<ul>
+<li><p>服务端，放在左边云服务器中（有固定IP）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.监听本机的IP和端口</span></span><br><span class="line">sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">sock.bind((<span class="string">&#x27;123.206.15.88&#x27;</span>, <span class="number">8001</span>)) <span class="comment"># IP,端口</span></span><br><span class="line">sock.listen(<span class="number">5</span>) <span class="comment"># 支持排队等待5人</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="comment"># 2.等待，有人来连接（阻塞）</span></span><br><span class="line">    conn, addr = sock.accept() <span class="comment"># 等待客户端来连接（阻塞）</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3.等待，连接者发送消息（阻塞）</span></span><br><span class="line">    client_data = conn.recv(<span class="number">1024</span>) <span class="comment"># 等待接收客户端发来数据</span></span><br><span class="line">    <span class="built_in">print</span>(client_data.decode(<span class="string">&#x27;utf-8&#x27;</span>)) <span class="comment"># 字节</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 4.给连接者回复消息</span></span><br><span class="line">    conn.sendall(<span class="string">&quot;hello world&quot;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 5.关闭连接</span></span><br><span class="line">    conn.close()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.停止服务端程序</span></span><br><span class="line">sock.close()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>客户端，放在右边用户电脑上</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 向指定IP发送连接请求</span></span><br><span class="line">client = socket.socket()</span><br><span class="line">client.connect((<span class="string">&#x27;123.206.15.88&#x27;</span>, <span class="number">8001</span>)) <span class="comment"># 向服务端发起连接（阻塞）10s</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 连接成功之后，发送消息</span></span><br><span class="line">client.sendall(<span class="string">&#x27;hello&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 等待，消息的回复（阻塞）</span></span><br><span class="line">reply = client.recv(<span class="number">1024</span>)</span><br><span class="line"><span class="built_in">print</span>(reply)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 关闭连接</span></span><br><span class="line">client.close()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>上述示例需要借助于互联网，你至少需要租一台云服务器才能通信。</p>
+<p>为了节省学习成本，大家可以在自己电脑上模拟【服务端】和【客户端】，等以后项目开发完毕后，再租服务器并部署到服务器上。</p>
+<p>注意：在自己本地运行上述代码时，要监听和连接时的IP地址。</p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210208164809572.png" alt="image-20210208164809572"></p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221190543727.png" alt="image-20210221190543727"></p>
+<p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210221190426551.png" alt="image-20210221190426551"></p>
+<p>当然，你也可以把在自己的局域网内找两台电脑，A作为服务端，B作为客户端，这样两者也可以通信。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">服务端的代码需修改：监听的IP修改为A的IP地址。</span><br><span class="line">客户端的代码需修改：连接的IP修改为A的IP地址（客户端要去找到服务端，并与服务端创建连接）。</span><br></pre></td></tr></table></figure>
+
+
+
+<p>注意事项：</p>
+<ul>
+<li><p>本机：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">服务端IP：127.0.0.1  / 192.168.28.92（局域网IP）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>局域网：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">服务端IP：<span class="number">192.168</span><span class="number">.28</span><span class="number">.92</span>（局域网IP）    </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>互联网</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">服务端IP：<span class="number">123.206</span><span class="number">.15</span><span class="number">.88</span>（外网IP）</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="案例：智障客服"><a href="#案例：智障客服" class="headerlink" title="案例：智障客服"></a>案例：智障客服</h3><ul>
+<li><p>服务端</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.监听本机的IP和端口</span></span><br><span class="line">sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">sock.bind((<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">8001</span>))  <span class="comment"># 127.0.0.1 或 查看自己局域网本地IP地址</span></span><br><span class="line">sock.listen(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="comment"># 2.等待，有人来连接（阻塞）</span></span><br><span class="line">    conn, addr = sock.accept()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;有人来连接了...&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3.连接成功后立即发送</span></span><br><span class="line">    conn.sendall(<span class="string">&quot;欢迎使用xx系统，请输入您想要办理的业务！&quot;</span>.encode(<span class="string">&quot;utf-8&quot;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="comment"># 3.等待接受信息</span></span><br><span class="line">        data = conn.recv(<span class="number">1024</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        data_string = data.decode(<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 4.回复消息</span></span><br><span class="line">        conn.sendall(<span class="string">&quot;你说啥？&quot;</span>.encode(<span class="string">&quot;utf-8&quot;</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;断开连接了&quot;</span>)</span><br><span class="line">    <span class="comment"># 5.关闭与此人的连接</span></span><br><span class="line">    conn.close()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.停止服务端程序</span></span><br><span class="line">sock.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>客户端</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 向指定IP发送连接请求</span></span><br><span class="line">client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">client.connect((<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">8001</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.连接成功后，获取系统登录信息</span></span><br><span class="line">message = client.recv(<span class="number">1024</span>)</span><br><span class="line"><span class="built_in">print</span>(message.decode(<span class="string">&quot;utf-8&quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    content = <span class="built_in">input</span>(<span class="string">&quot;请输入(q/Q退出)：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> content.upper() == <span class="string">&#x27;Q&#x27;</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    client.sendall(content.encode(<span class="string">&quot;utf-8&quot;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3. 等待，消息的回复</span></span><br><span class="line">    reply = client.recv(<span class="number">1024</span>)</span><br><span class="line">    <span class="built_in">print</span>(reply.decode(<span class="string">&quot;utf-8&quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭连接，关闭连接时会向服务端发送空数据。</span></span><br><span class="line">client.close()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="案例：文件上传"><a href="#案例：文件上传" class="headerlink" title="案例：文件上传"></a>案例：文件上传</h3><ul>
+<li><p>服务端</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">sock.bind((<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">8001</span>))  <span class="comment"># 127.0.0.1 或 查看自己局域网本地IP地址</span></span><br><span class="line">sock.listen(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">conn, addr = sock.accept()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 接收文件大小</span></span><br><span class="line">data = conn.recv(<span class="number">1024</span>)</span><br><span class="line">total_file_size = <span class="built_in">int</span>(data.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 接收文件内容</span></span><br><span class="line">file_object = <span class="built_in">open</span>(<span class="string">&#x27;xxx.png&#x27;</span>, mode=<span class="string">&#x27;wb&#x27;</span>)</span><br><span class="line">recv_size = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="comment"># 每次最多接收1024字节</span></span><br><span class="line">    data = conn.recv(<span class="number">1024</span>)</span><br><span class="line">    file_object.write(data)</span><br><span class="line">    file_object.flush()</span><br><span class="line"></span><br><span class="line">    recv_size += <span class="built_in">len</span>(data)</span><br><span class="line">    <span class="comment"># 上传完成</span></span><br><span class="line">    <span class="keyword">if</span> recv_size == total_file_size:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 接收完毕，关闭连接</span></span><br><span class="line">conn.close()</span><br><span class="line">sock.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>客户端</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">client = socket.socket()</span><br><span class="line">client.connect((<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">8001</span>))</span><br><span class="line"></span><br><span class="line">file_path = <span class="built_in">input</span>(<span class="string">&quot;请输入要上传的文件：&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 先发送文件大小</span></span><br><span class="line">file_size = os.stat(file_path).st_size</span><br><span class="line">client.sendall(<span class="built_in">str</span>(file_size).encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;准备...&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;开始上传..&quot;</span>)</span><br><span class="line">file_object = <span class="built_in">open</span>(file_path, mode=<span class="string">&#x27;rb&#x27;</span>)</span><br><span class="line">read_size = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    chunk = file_object.read(<span class="number">1024</span>) <span class="comment"># 每次读取1024字节</span></span><br><span class="line">    client.sendall(chunk)</span><br><span class="line">    read_size += <span class="built_in">len</span>(chunk)</span><br><span class="line">    <span class="keyword">if</span> read_size == file_size:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">client.close()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="3-B-S和C-S架构"><a href="#3-B-S和C-S架构" class="headerlink" title="3. B&#x2F;S和C&#x2F;S架构"></a>3. B&#x2F;S和C&#x2F;S架构</h2><p><img src="/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/image-20210207221334711.png" alt="image-20210207221334711"></p>
+<p>平时在开发或与人沟通时，经常会有人提到b&#x2F;s和c&#x2F;s架构，他们是啥意思呢？</p>
+<ul>
+<li><p>C&#x2F;S架构，是Client和Server的简称。开发这种架构的程序意味着你即需要开发客户端也需要开发服务端。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">例如：你电脑的上QQ、百度网盘、钉钉、QQ音乐 等安装在电脑上的软件。</span><br><span class="line"></span><br><span class="line">服务端：互联网公司会开发一个程序放在他们的服务器上，用于给客户端提供数据支持。</span><br><span class="line">客户端：大家在电脑安装的相关程序，内部会连接服务端进行收发数据并提供 交互和展示的功能。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>B&#x2F;S架构，是Browser和Server的简称。开发这种架构的程序意味着你开发服务端即可，客户端用用户电脑上的浏览器来代替。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">例如：淘宝、京东等网站。</span><br><span class="line"></span><br><span class="line">服务端：互联网公司开发一个网站，放在他们的服务器上。</span><br><span class="line">客户端：不需要开发，用现成的浏览器即可。</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>简而言之，B&#x2F;S架构就是开发网站；C&#x2F;S架构就是开发安装在电脑的软件。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>了解常见设备和网络架构。</li>
+<li>掌握常见网络词汇的意思。</li>
+<li>了解B&#x2F;S和C&#x2F;S架构的区别。</li>
+<li>基于Python的socket模块实现网络编程。</li>
+</ol>
+<h2 id="作业"><a href="#作业" class="headerlink" title="作业"></a>作业</h2><ol>
+<li><p>简述 二层交换机 &amp; 路由器 &amp; 三层交换机 的作用。</p>
+</li>
+<li><p>简述常见词：IP、子网掩码、DHCP、公网IP、端口、域名的作用。</p>
+</li>
+<li><p>实现远程用户认证系统。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">客户端：</span><br><span class="line">	<span class="number">1.</span> 运行程序，连接服务端并获取服务端发送的欢迎使用xx系统信息。</span><br><span class="line">    <span class="number">2.</span> 输入用户名和密码，并将用户名和密码发送到服务端去校验。</span><br><span class="line">    <span class="number">3.</span> 登录失败，重试（Q退出）。</span><br><span class="line">    <span class="number">4.</span> 登录成功，进入系统，提示登录成功</span><br><span class="line">服务端：</span><br><span class="line">	<span class="number">1.</span> 客户端连接上服务端，返回 欢迎使用xx系统信息。</span><br><span class="line">    <span class="number">2.</span> 等待客户端发送用户名和密码进行校验（用户名和密码在文件中）</span><br><span class="line">    <span class="number">3.</span> 登录失败，返回错误信息。</span><br><span class="line">    <span class="number">4.</span> 登录成功，返回成功提示的内容。</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/09/07/python_course-master/day20%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day20/" title="">http://example.com/2024/09/07/python_course-master/day20 网络编程（上）/笔记/day20/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day18%20%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BF%9B%E9%98%B6/%E7%AC%94%E8%AE%B0/day18/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day21%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8B%EF%BC%89/%E7%AC%94%E8%AE%B0/day21/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#day20-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">day20 网络编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%80"><span class="nav-number">1.1.</span> <span class="nav-text">1.必备基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 网络架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-1-%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">1.1.1 交换机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-2-%E8%B7%AF%E7%94%B1%E5%99%A8"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">1.1.2 路由器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-3-%E4%B8%89%E5%B1%82%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">1.1.3 三层交换机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-4-%E5%B0%8F%E5%9E%8B%E4%BC%81%E4%B8%9A%E5%9F%BA%E7%A1%80%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">1.1.4 小型企业基础网络架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-5-%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.1.5.</span> <span class="nav-text">1.1.5 家庭网络架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-6-%E4%BA%92%E8%81%94%E7%BD%91"><span class="nav-number">1.1.1.6.</span> <span class="nav-text">1.1.6 互联网</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E7%BD%91%E7%BB%9C%E6%A0%B8%E5%BF%83%E8%AF%8D%E6%B1%87"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 网络核心词汇</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-%E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81%E5%92%8CIP"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1.2.1 子网掩码和IP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-DHCP"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">1.2.2 DHCP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-3-%E5%86%85%E7%BD%91%E5%92%8C%E5%85%AC%E7%BD%91IP"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">1.2.3 内网和公网IP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-4-%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">1.2.4 云服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-5-%E7%AB%AF%E5%8F%A3"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">1.2.5 端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-6-%E5%9F%9F%E5%90%8D"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">1.2.6 域名</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">2. 网络编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%99%BA%E9%9A%9C%E5%AE%A2%E6%9C%8D"><span class="nav-number">1.2.1.</span> <span class="nav-text">案例：智障客服</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">1.2.2.</span> <span class="nav-text">案例：文件上传</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-B-S%E5%92%8CC-S%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">3. B&#x2F;S和C&#x2F;S架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A"><span class="nav-number">1.5.</span> <span class="nav-text">作业</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="陈永辉"
+      src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+  <p class="site-author-name" itemprop="name">陈永辉</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cyhzuishuai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cyhzuishuai" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2426230801@qq.com" title="E-Mail → 2426230801@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/chenyonghuizui" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;chenyonghuizui" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈永辉</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共126.9k字</span>
+</div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

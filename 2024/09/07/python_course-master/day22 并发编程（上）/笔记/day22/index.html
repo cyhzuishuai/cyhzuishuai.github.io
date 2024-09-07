@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="day22 并发编程（上）  网络编程，了解网络相关的知识点并且要知道几乎所有网络的通信本质上都是通过socket模块实现。例如：网站、网络爬虫。 并发编程，提升代码执行的效率。原来代码执行需要20分钟，学习并发编程后可以加快到1分钟执行完毕。 今日课程目标：初步了解进程和线程并可以基于线程实现并发编程。 今日概要：  初识进程和线程 多线程开发 线程安全 线程锁 死锁 线程池  1. 进程和线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大帅哥">
+<meta property="og:url" content="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/index.html">
+<meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="day22 并发编程（上）  网络编程，了解网络相关的知识点并且要知道几乎所有网络的通信本质上都是通过socket模块实现。例如：网站、网络爬虫。 并发编程，提升代码执行的效率。原来代码执行需要20分钟，学习并发编程后可以加快到1分钟执行完毕。 今日课程目标：初步了解进程和线程并可以基于线程实现并发编程。 今日概要：  初识进程和线程 多线程开发 线程安全 线程锁 死锁 线程池  1. 进程和线程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210224144810148.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210218184651385.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210218185849637.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210218185953326.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210225102151570.png">
+<meta property="article:published_time" content="2024-09-07T13:27:32.562Z">
+<meta property="article:modified_time" content="2024-08-28T10:21:34.800Z">
+<meta property="article:author" content="陈永辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210224144810148.png">
+
+<link rel="canonical" href="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 大帅哥</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大帅哥</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-07 21:27:32" itemprop="dateCreated datePublished" datetime="2024-09-07T21:27:32+08:00">2024-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-28 18:21:34" itemprop="dateModified" datetime="2024-08-28T18:21:34+08:00">2024-08-28</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="day22-并发编程（上）"><a href="#day22-并发编程（上）" class="headerlink" title="day22 并发编程（上）"></a>day22 并发编程（上）</h1><img src="/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210224144810148.png" alt="image-20210224144810148">
+
+<p><strong>网络编程</strong>，了解网络相关的<strong>知识点</strong>并且要知道几乎所有网络的通信本质上都是通过socket模块实现。例如：网站、网络爬虫。</p>
+<p><strong>并发编程</strong>，提升代码执行的效率。原来代码执行需要20分钟，学习并发编程后可以加快到1分钟执行完毕。</p>
+<p>今日课程目标：初步了解进程和线程并可以基于线程实现并发编程。</p>
+<p>今日概要：</p>
+<ul>
+<li>初识进程和线程</li>
+<li>多线程开发</li>
+<li>线程安全</li>
+<li>线程锁</li>
+<li>死锁</li>
+<li>线程池</li>
+</ul>
+<h2 id="1-进程和线程"><a href="#1-进程和线程" class="headerlink" title="1. 进程和线程"></a>1. 进程和线程</h2><p>先来了解下进程和线程。</p>
+<p>类比：</p>
+<ul>
+<li><p>一个<strong>工厂</strong>，至少有一个<strong>车间</strong>，一个车间中至少有一个<strong>工人</strong>，最终是工人在工作。</p>
+</li>
+<li><p>一个<strong>程序</strong>，至少有一个<strong>进程</strong>，一个进程中至少有一个<strong>线程</strong>，最终是线程在工作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">上述串行的代码示例就是一个程序，在使用python xx.py 运行时，内部就创建一个进程（主进程），在进程中创建了一个线程（主线程），由线程逐行运行代码。</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>进程和线程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">线程，是计算机中可以被cpu调度的最小单元(真正在工作）。</span><br><span class="line">进程，是计算机资源分配的最小单元（进程为线程提供资源）。</span><br><span class="line"></span><br><span class="line">一个进程中可以有多个线程,同一个进程中的线程可以共享此进程中的资源。</span><br></pre></td></tr></table></figure>
+
+
+
+<p>以前我们开发的程序中所有的行为都只能通过串行的形式运行，排队逐一执行，前面未完成，后面也无法继续。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">result = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000000</span>):</span><br><span class="line">    result += i</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url_list = [</span><br><span class="line">    (<span class="string">&quot;东北F4模仿秀.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;卡特扣篮.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f3e0000bv52fpn5t6p007e34q1g&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;罗斯mvp.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg&quot;</span>)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"><span class="keyword">for</span> file_name, url <span class="keyword">in</span> url_list:</span><br><span class="line">    res = requests.get(url)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_name, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(res.content)</span><br><span class="line">    <span class="built_in">print</span>(file_name, time.time())</span><br></pre></td></tr></table></figure>
+
+<p>通过 <strong>进程</strong> 和 <strong>线程</strong> 都可以将 <code>串行</code> 的程序变为<code>并发</code>，对于上述示例来说就是同时下载三个视频，这样很短的时间内就可以下载完成。</p>
+<h3 id="1-1-多线程"><a href="#1-1-多线程" class="headerlink" title="1.1 多线程"></a>1.1 多线程</h3><p>基于多线程对上述串行示例进行优化：</p>
+<ul>
+<li>一个<strong>工厂</strong>，创建一个<strong>车间</strong>，这个车间中创建 <strong>3个工人</strong>，并行处理任务。</li>
+<li>一个<strong>程序</strong>，创建一个<strong>进程</strong>，这个进程中创建 <strong>3个线程</strong>，并行处理任务。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url_list = [</span><br><span class="line">    (<span class="string">&quot;东北F4模仿秀.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;卡特扣篮.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f3e0000bv52fpn5t6p007e34q1g&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;罗斯mvp.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg&quot;</span>)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> file_name, url <span class="keyword">in</span> url_list:</span><br><span class="line">    res = requests.get(url)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_name, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(res.content)</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">def func(a1,a2,a3):</span></span><br><span class="line"><span class="string">    pass</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">t = threaing.Thread(target=func,args=(11,22,33))</span></span><br><span class="line"><span class="string">t.start()</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">url_list = [</span><br><span class="line">    (<span class="string">&quot;东北F4模仿秀.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;卡特扣篮.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f3e0000bv52fpn5t6p007e34q1g&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;罗斯mvp.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg&quot;</span>)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">file_name, video_url</span>):</span><br><span class="line">    res = requests.get(video_url)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_name, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(res.content)</span><br><span class="line">    <span class="built_in">print</span>(time.time())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> name, url <span class="keyword">in</span> url_list:</span><br><span class="line">    <span class="comment"># 创建线程，让每个线程都去执行task函数（参数不同）</span></span><br><span class="line">    t = threading.Thread(target=task, args=(name, url))</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-2-多进程"><a href="#1-2-多进程" class="headerlink" title="1.2 多进程"></a>1.2 多进程</h3><p>基于多进程对上述串行示例进行优化：</p>
+<ul>
+<li>一个<strong>工厂</strong>，创建 <strong>三个车间</strong>，每个车间 <strong>一个工人（共3人）</strong>，并行处理任务。</li>
+<li>一个<strong>程序</strong>，创建 <strong>三个进程</strong>，每个进程 <strong>一个线程（共3人）</strong>，并行处理任务。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> multiprocessing</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进程创建之后，在进程中还会创建一个线程。</span></span><br><span class="line"><span class="comment"># t = multiprocessing.Process(target=函数名, args=(name, url))</span></span><br><span class="line"><span class="comment"># t.start()</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">url_list = [</span><br><span class="line">    (<span class="string">&quot;东北F4模仿秀.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;卡特扣篮.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f3e0000bv52fpn5t6p007e34q1g&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;罗斯mvp.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg&quot;</span>)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">file_name, video_url</span>):</span><br><span class="line">    res = requests.get(video_url)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_name, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(res.content)</span><br><span class="line">    <span class="built_in">print</span>(time.time())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(time.time())</span><br><span class="line">    <span class="keyword">for</span> name, url <span class="keyword">in</span> url_list:</span><br><span class="line">        t = multiprocessing.Process(target=task, args=(name, url))</span><br><span class="line">        t.start()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>综上所述，大家会发现 <strong>多进程</strong> 的开销比 <strong>多线程</strong> 的开销大。哪是不是使用多线程要比多进程更好呀？</p>
+<p>接下来，给大家再来介绍一个Python内置的GIL锁的知识，然后再根据 进程 和 线程 各自的特点总结各自适合应用场景。</p>
+<h3 id="1-3-GIL锁"><a href="#1-3-GIL锁" class="headerlink" title="1.3 GIL锁"></a>1.3 GIL锁</h3><p>GIL， 全局解释器锁（Global Interpreter Lock），是CPython解释器特有一个玩意，让一个进程中同一个时刻只能有一个线程可以被CPU调用。</p>
+<p><img src="/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210218184651385.png" alt="image-20210218184651385"></p>
+<p>如果程序想利用 计算机的多核优势，让CPU同时处理一些任务，适合用多进程开发（即使资源开销大）。</p>
+<p><img src="/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210218185849637.png" alt="image-20210218185849637"></p>
+<p>如果程序不利用 计算机的多核优势，适合用多线程开发。</p>
+<p><img src="/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210218185953326.png" alt="image-20210218185953326"></p>
+<p>常见的程序开发中，计算操作需要使用CPU多核优势，IO操作不需要利用CPU的多核优势，所以，就有这一句话：</p>
+<ul>
+<li>计算密集型，用多进程，例如：大量的数据计算【累加计算示例】。</li>
+<li>IO密集型，用多线程，例如：文件读写、网络数据传输【下载抖音视频示例】。</li>
+</ul>
+<p>累加计算示例（计算密集型）：</p>
+<ul>
+<li><p>串行处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">start = time.time()</span><br><span class="line"></span><br><span class="line">result = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000000</span>):</span><br><span class="line">    result += i</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"></span><br><span class="line">end = time.time()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;耗时：&quot;</span>, end - start) <span class="comment"># 耗时： 9.522780179977417</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>多进程处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> multiprocessing</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">start, end, queue</span>):</span><br><span class="line">    result = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(start, end):</span><br><span class="line">        result += i</span><br><span class="line">    queue.put(result)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    queue = multiprocessing.Queue()</span><br><span class="line"></span><br><span class="line">    start_time = time.time()</span><br><span class="line"></span><br><span class="line">    p1 = multiprocessing.Process(target=task, args=(<span class="number">0</span>, <span class="number">50000000</span>, queue))</span><br><span class="line">    p1.start()</span><br><span class="line"></span><br><span class="line">    p2 = multiprocessing.Process(target=task, args=(<span class="number">50000000</span>, <span class="number">100000000</span>, queue))</span><br><span class="line">    p2.start()</span><br><span class="line"></span><br><span class="line">    v1 = queue.get(block=<span class="literal">True</span>)</span><br><span class="line">    v2 = queue.get(block=<span class="literal">True</span>)</span><br><span class="line">    <span class="built_in">print</span>(v1 + v2)</span><br><span class="line"></span><br><span class="line">    end_time = time.time()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;耗时:&quot;</span>, end_time - start_time) <span class="comment"># 耗时: 2.6232550144195557</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>当然，在程序开发中 多线程 和 多进程 是可以结合使用，例如：创建2个进程（建议与CPU个数相同），每个进程中创建3个线程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> multiprocessing</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">thread_task</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">start, end</span>):</span><br><span class="line">    t1 = threading.Thread(target=thread_task)</span><br><span class="line">    t1.start()</span><br><span class="line"></span><br><span class="line">    t2 = threading.Thread(target=thread_task)</span><br><span class="line">    t2.start()</span><br><span class="line"></span><br><span class="line">    t3 = threading.Thread(target=thread_task)</span><br><span class="line">    t3.start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    p1 = multiprocessing.Process(target=task, args=(<span class="number">0</span>, <span class="number">50000000</span>))</span><br><span class="line">    p1.start()</span><br><span class="line"></span><br><span class="line">    p2 = multiprocessing.Process(target=task, args=(<span class="number">50000000</span>, <span class="number">100000000</span>))</span><br><span class="line">    p2.start()</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2-多线程开发"><a href="#2-多线程开发" class="headerlink" title="2. 多线程开发"></a>2. 多线程开发</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">arg</span>):</span><br><span class="line">	<span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个Thread对象（线程），并封装线程被CPU调度时应该执行的任务和相关参数。</span></span><br><span class="line">t = threading.Thread(target=task,args=(<span class="string">&#x27;xxx&#x27;</span>,))</span><br><span class="line"><span class="comment"># 线程准备就绪（等待CPU调度），代码继续向下执行。</span></span><br><span class="line">t.start()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;继续执行...&quot;</span>) <span class="comment"># 主线程执行完所有代码，不结束（等待子线程）</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>线程的常见方法：</p>
+<ul>
+<li><p><code>t.start()</code>，当前线程准备就绪（等待CPU调度，具体时间是由CPU来决定）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">loop = <span class="number">10000000</span></span><br><span class="line">number = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_add</span>(<span class="params">count</span>):</span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(count):</span><br><span class="line">        number += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">t = threading.Thread(target=_add,args=(loop,))</span><br><span class="line">t.start()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(number)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>t.join()</code>，等待当前线程的任务执行完毕后再向下继续执行。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">number = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_add</span>():</span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000000</span>):</span><br><span class="line">        number += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">t = threading.Thread(target=_add)</span><br><span class="line">t.start()</span><br><span class="line"></span><br><span class="line">t.join() <span class="comment"># 主线程等待中...</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(number)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">number = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_add</span>():</span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000000</span>):</span><br><span class="line">        number += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_sub</span>():</span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000000</span>):</span><br><span class="line">        number -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">t1 = threading.Thread(target=_add)</span><br><span class="line">t2 = threading.Thread(target=_sub)</span><br><span class="line">t1.start()</span><br><span class="line">t1.join()  <span class="comment"># t1线程执行完毕,才继续往后走</span></span><br><span class="line">t2.start()</span><br><span class="line">t2.join()  <span class="comment"># t2线程执行完毕,才继续往后走</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(number)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">loop = <span class="number">10000000</span></span><br><span class="line">number = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_add</span>(<span class="params">count</span>):</span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(count):</span><br><span class="line">        number += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_sub</span>(<span class="params">count</span>):</span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(count):</span><br><span class="line">        number -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">t1 = threading.Thread(target=_add, args=(loop,))</span><br><span class="line">t2 = threading.Thread(target=_sub, args=(loop,))</span><br><span class="line">t1.start()</span><br><span class="line">t2.start()</span><br><span class="line"></span><br><span class="line">t1.join()  <span class="comment"># t1线程执行完毕,才继续往后走</span></span><br><span class="line">t2.join()  <span class="comment"># t2线程执行完毕,才继续往后走</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(number)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>t.setDaemon(布尔值)</code> ，守护线程（必须放在start之前）</p>
+<ul>
+<li><code>t.setDaemon(True)</code>，设置为守护线程，主线程执行完毕后，子线程也自动关闭。</li>
+<li><code>t.setDaemon(False)</code>，设置为非守护线程，主线程等待子线程，子线程执行完毕后，主线程才结束。（默认）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">arg</span>):</span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;任务&#x27;</span>)</span><br><span class="line"></span><br><span class="line">t = threading.Thread(target=task, args=(<span class="number">11</span>,))</span><br><span class="line">t.setDaemon(<span class="literal">True</span>) <span class="comment"># True/False</span></span><br><span class="line">t.start()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;END&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>线程名称的设置和获取</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">arg</span>):</span><br><span class="line">    <span class="comment"># 获取当前执行此代码的线程</span></span><br><span class="line">    name = threading.current_thread().getName()</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    t = threading.Thread(target=task, args=(<span class="number">11</span>,))</span><br><span class="line">    t.setName(<span class="string">&#x27;日魔-&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(i))</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>自定义线程类，直接将线程需要做的事写到run方法中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyThread</span>(threading.Thread):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;执行此线程&#x27;</span>, self._args)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">t = MyThread(args=(<span class="number">100</span>,))</span><br><span class="line">t.start()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DouYinThread</span>(threading.Thread):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        file_name, video_url = self._args</span><br><span class="line">        res = requests.get(video_url)</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(file_name, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            f.write(res.content)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">url_list = [</span><br><span class="line">    (<span class="string">&quot;东北F4模仿秀.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;卡特扣篮.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f3e0000bv52fpn5t6p007e34q1g&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;罗斯mvp.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg&quot;</span>)</span><br><span class="line">]</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> url_list:</span><br><span class="line">    t = DouYinThread(args=(item[<span class="number">0</span>], item[<span class="number">1</span>]))</span><br><span class="line">    t.start()</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="3-线程安全"><a href="#3-线程安全" class="headerlink" title="3. 线程安全"></a>3. 线程安全</h2><p>一个进程中可以有多个线程，且线程共享所有进程中的资源。</p>
+<p>多个线程同时去操作一个”东西”，<strong>可能</strong>会存在数据混乱的情况，例如：</p>
+<ul>
+<li><p>示例1</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">loop = <span class="number">10000000</span></span><br><span class="line">number = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_add</span>(<span class="params">count</span>):</span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(count):</span><br><span class="line">        number += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_sub</span>(<span class="params">count</span>):</span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(count):</span><br><span class="line">        number -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">t1 = threading.Thread(target=_add, args=(loop,))</span><br><span class="line">t2 = threading.Thread(target=_sub, args=(loop,))</span><br><span class="line">t1.start()</span><br><span class="line">t2.start()</span><br><span class="line"></span><br><span class="line">t1.join()  <span class="comment"># t1线程执行完毕,才继续往后走</span></span><br><span class="line">t2.join()  <span class="comment"># t2线程执行完毕,才继续往后走</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(number)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">lock_object = threading.RLock()</span><br><span class="line"></span><br><span class="line">loop = <span class="number">10000000</span></span><br><span class="line">number = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_add</span>(<span class="params">count</span>):</span><br><span class="line">    lock_object.acquire() <span class="comment"># 加锁</span></span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(count):</span><br><span class="line">        number += <span class="number">1</span></span><br><span class="line">    lock_object.release() <span class="comment"># 释放锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_sub</span>(<span class="params">count</span>):</span><br><span class="line">    lock_object.acquire() <span class="comment"># 申请锁（等待）</span></span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(count):</span><br><span class="line">        number -= <span class="number">1</span></span><br><span class="line">    lock_object.release() <span class="comment"># 释放锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">t1 = threading.Thread(target=_add, args=(loop,))</span><br><span class="line">t2 = threading.Thread(target=_sub, args=(loop,))</span><br><span class="line">t1.start()</span><br><span class="line">t2.start()</span><br><span class="line"></span><br><span class="line">t1.join()  <span class="comment"># t1线程执行完毕,才继续往后走</span></span><br><span class="line">t2.join()  <span class="comment"># t2线程执行完毕,才继续往后走</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(number)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>示例2：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">num = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    <span class="keyword">global</span> num</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000000</span>):</span><br><span class="line">        num += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(num)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">num = <span class="number">0</span></span><br><span class="line">lock_object = threading.RLock()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    lock_object.acquire()  <span class="comment"># 第1个抵达的线程进入并上锁，其他线程就需要再此等待。</span></span><br><span class="line">    <span class="keyword">global</span> num</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000000</span>):</span><br><span class="line">        num += <span class="number">1</span></span><br><span class="line">    lock_object.release()  <span class="comment"># 线程出去，并解开锁，其他线程就可以进入并执行了</span></span><br><span class="line">    <span class="built_in">print</span>(num)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">num = <span class="number">0</span></span><br><span class="line">lock_object = threading.RLock()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    <span class="keyword">with</span> lock_object: <span class="comment"># 基于上下文管理，内部自动执行 acquire 和 release</span></span><br><span class="line">        <span class="keyword">global</span> num</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000000</span>):</span><br><span class="line">            num += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(num)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>在开发的过程中要注意有些操作默认都是 线程安全的（内部集成了锁的机制），我们在使用的时无需再通过锁再处理，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">data_list = []</span><br><span class="line"></span><br><span class="line">lock_object = threading.RLock()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000000</span>):</span><br><span class="line">        data_list.append(i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">len</span>(data_list))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/image-20210225102151570.png" alt="image-20210225102151570"></p>
+<p>所以，要多注意看一些开发文档中是否标明线程安全。</p>
+<h2 id="4-线程锁"><a href="#4-线程锁" class="headerlink" title="4. 线程锁"></a>4. 线程锁</h2><p>在程序中如果想要自己手动加锁，一般有两种：Lock 和 RLock。</p>
+<ul>
+<li><p>Lock，同步锁。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">num = <span class="number">0</span></span><br><span class="line">lock_object = threading.Lock()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    lock_object.acquire()  <span class="comment"># 第1个抵达的线程进入并上锁，其他线程就需要再此等待。</span></span><br><span class="line">    <span class="keyword">global</span> num</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000000</span>):</span><br><span class="line">        num += <span class="number">1</span></span><br><span class="line">    lock_object.release()  <span class="comment"># 线程出去，并解开锁，其他线程就可以进入并执行了</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(num)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>RLock，递归锁。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">num = <span class="number">0</span></span><br><span class="line">lock_object = threading.RLock()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    lock_object.acquire()  <span class="comment"># 第1个抵达的线程进入并上锁，其他线程就需要再此等待。</span></span><br><span class="line">    <span class="keyword">global</span> num</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000000</span>):</span><br><span class="line">        num += <span class="number">1</span></span><br><span class="line">    lock_object.release()  <span class="comment"># 线程出去，并解开锁，其他线程就可以进入并执行了</span></span><br><span class="line">    <span class="built_in">print</span>(num)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>RLock支持多次申请锁和多次释放；Lock不支持。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">lock_object = threading.RLock()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    lock_object.acquire()</span><br><span class="line">    lock_object.acquire()</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">123</span>)</span><br><span class="line">    lock_object.release()</span><br><span class="line">    lock_object.release()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line">lock = threading.RLock()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 程序员A开发了一个函数，函数可以被其他开发者调用，内部需要基于锁保证数据安全。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">	<span class="keyword">with</span> lock:</span><br><span class="line">		<span class="keyword">pass</span></span><br><span class="line">        </span><br><span class="line"><span class="comment"># 程序员B开发了一个函数，可以直接调用这个函数。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;其他功能&quot;</span>)</span><br><span class="line">    func() <span class="comment"># 调用程序员A写的func函数，内部用到了锁。</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;其他功能&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 程序员C开发了一个函数，自己需要加锁，同时也需要调用func函数。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process</span>():</span><br><span class="line">    <span class="keyword">with</span> lock:</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&quot;其他功能&quot;</span>)</span><br><span class="line">        func() <span class="comment"># ----------------&gt; 此时就会出现多次锁的情况，只有RLock支持（Lock不支持）。</span></span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&quot;其他功能&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-死锁"><a href="#5-死锁" class="headerlink" title="5.死锁"></a>5.死锁</h2><p>死锁，由于竞争资源或者由于彼此通信而造成的一种阻塞的现象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">num = <span class="number">0</span></span><br><span class="line">lock_object = threading.Lock()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    lock_object.acquire()  <span class="comment"># 第1个抵达的线程进入并上锁，其他线程就需要再此等待。</span></span><br><span class="line">    lock_object.acquire()  <span class="comment"># 第1个抵达的线程进入并上锁，其他线程就需要再此等待。</span></span><br><span class="line">    <span class="keyword">global</span> num</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000000</span>):</span><br><span class="line">        num += <span class="number">1</span></span><br><span class="line">    lock_object.release()  <span class="comment"># 线程出去，并解开锁，其他线程就可以进入并执行了</span></span><br><span class="line">    lock_object.release()  <span class="comment"># 线程出去，并解开锁，其他线程就可以进入并执行了</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(num)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time </span><br><span class="line"></span><br><span class="line">lock_1 = threading.Lock()</span><br><span class="line">lock_2 = threading.Lock()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task1</span>():</span><br><span class="line">    lock_1.acquire()</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    lock_2.acquire()</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">11</span>)</span><br><span class="line">    lock_2.release()</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">111</span>)</span><br><span class="line">    lock_1.release()</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">1111</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task2</span>():</span><br><span class="line">    lock_2.acquire()</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    lock_1.acquire()</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">22</span>)</span><br><span class="line">    lock_1.release()</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">222</span>)</span><br><span class="line">    lock_2.release()</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">2222</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">t1 = threading.Thread(target=task1)</span><br><span class="line">t1.start()</span><br><span class="line"></span><br><span class="line">t2 = threading.Thread(target=task2)</span><br><span class="line">t2.start()</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="6-线程池"><a href="#6-线程池" class="headerlink" title="6.线程池"></a>6.线程池</h2><p>Python3中官方才正式提供线程池。</p>
+<p>线程不是开的越多越好，开的多了可能会导致系统的性能更低了，例如：如下的代码是不推荐在项目开发中编写。</p>
+<p><strong>不建议</strong>：无限制的创建线程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">video_url</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">url_list = [<span class="string">&quot;www.xxxx-&#123;&#125;.com&quot;</span>.<span class="built_in">format</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30000</span>)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> url <span class="keyword">in</span> url_list:</span><br><span class="line">    t = threading.Thread(target=task, args=(url,))</span><br><span class="line">    t.start()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这种每次都创建一个线程去操作，创建任务的太多，线程就会特别多，可能效率反倒降低了。</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>建议</strong>：使用线程池</p>
+<p>示例1：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor</span><br><span class="line"></span><br><span class="line"><span class="comment"># pool = ThreadPoolExecutor(100)</span></span><br><span class="line"><span class="comment"># pool.submit(函数名,参数1，参数2，参数...)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">video_url,num</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始执行任务&quot;</span>, video_url)</span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建线程池，最多维护10个线程。</span></span><br><span class="line">pool = ThreadPoolExecutor(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">url_list = [<span class="string">&quot;www.xxxx-&#123;&#125;.com&quot;</span>.<span class="built_in">format</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> url <span class="keyword">in</span> url_list:</span><br><span class="line">    <span class="comment"># 在线程池中提交一个任务，线程池中如果有空闲线程，则分配一个线程去执行，执行完毕后再将线程交还给线程池；如果没有空闲线程，则等待。</span></span><br><span class="line">    pool.submit(task, url,<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;END&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>示例2：等待线程池的任务执行完毕。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">video_url</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始执行任务&quot;</span>, video_url)</span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建线程池，最多维护10个线程。</span></span><br><span class="line">pool = ThreadPoolExecutor(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">url_list = [<span class="string">&quot;www.xxxx-&#123;&#125;.com&quot;</span>.<span class="built_in">format</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>)]</span><br><span class="line"><span class="keyword">for</span> url <span class="keyword">in</span> url_list:</span><br><span class="line">    <span class="comment"># 在线程池中提交一个任务，线程池中如果有空闲线程，则分配一个线程去执行，执行完毕后再将线程交还给线程池；如果没有空闲线程，则等待。</span></span><br><span class="line">    pool.submit(task, url)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;执行中...&quot;</span>)</span><br><span class="line">pool.shutdown(<span class="literal">True</span>)  <span class="comment"># 等待线程池中的任务执行完毕后，在继续执行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;继续往下走&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>示例3：任务执行完任务，再干点其他事。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor, Future</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">video_url</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始执行任务&quot;</span>, video_url)</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">return</span> random.randint(<span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">done</span>(<span class="params">response</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;任务执行后的返回值&quot;</span>, response.result())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建线程池，最多维护10个线程。</span></span><br><span class="line">pool = ThreadPoolExecutor(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">url_list = [<span class="string">&quot;www.xxxx-&#123;&#125;.com&quot;</span>.<span class="built_in">format</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">15</span>)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> url <span class="keyword">in</span> url_list:</span><br><span class="line">    <span class="comment"># 在线程池中提交一个任务，线程池中如果有空闲线程，则分配一个线程去执行，执行完毕后再将线程交还给线程池；如果没有空闲线程，则等待。</span></span><br><span class="line">    future = pool.submit(task, url)</span><br><span class="line">    future.add_done_callback(done) <span class="comment"># 是子主线程执行</span></span><br><span class="line">    </span><br><span class="line"><span class="comment"># 可以做分工，例如：task专门下载，done专门将下载的数据写入本地文件。</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>示例4：最终统一获取结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor,Future</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">video_url</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始执行任务&quot;</span>, video_url)</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">return</span> random.randint(<span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建线程池，最多维护10个线程。</span></span><br><span class="line">pool = ThreadPoolExecutor(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">future_list = []</span><br><span class="line"></span><br><span class="line">url_list = [<span class="string">&quot;www.xxxx-&#123;&#125;.com&quot;</span>.<span class="built_in">format</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">15</span>)]</span><br><span class="line"><span class="keyword">for</span> url <span class="keyword">in</span> url_list:</span><br><span class="line">    <span class="comment"># 在线程池中提交一个任务，线程池中如果有空闲线程，则分配一个线程去执行，执行完毕后再将线程交还给线程池；如果没有空闲线程，则等待。</span></span><br><span class="line">    future = pool.submit(task, url)</span><br><span class="line">    future_list.append(future)</span><br><span class="line">    </span><br><span class="line">pool.shutdown(<span class="literal">True</span>)</span><br><span class="line"><span class="keyword">for</span> fu <span class="keyword">in</span> future_list:</span><br><span class="line">    <span class="built_in">print</span>(fu.result())</span><br></pre></td></tr></table></figure>
+
+
+
+<p>案例：基于线程池下载豆瓣图片。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">26044585,Hush,https://hbimg.huabanimg.com/51d46dc32abe7ac7f83b94c67bb88cacc46869954f478-aP4Q3V</span><br><span class="line">19318369,柒十一,https://hbimg.huabanimg.com/703fdb063bdc37b11033ef794f9b3a7adfa01fd21a6d1-wTFbnO</span><br><span class="line">15529690,Law344,https://hbimg.huabanimg.com/b438d8c61ed2abf50ca94e00f257ca7a223e3b364b471-xrzoQd</span><br><span class="line">18311394,Jennah·,https://hbimg.huabanimg.com/4edba1ed6a71797f52355aa1de5af961b85bf824cb71-px1nZz</span><br><span class="line">18009711,可洛爱画画,https://hbimg.huabanimg.com/03331ef39b5c7687f5cc47dbcbafd974403c962ae88ce-Co8AUI</span><br><span class="line">30574436,花姑凉~,https://hbimg.huabanimg.com/2f5b657edb9497ff8c41132e18000edb082d158c2404-8rYHbw</span><br><span class="line">17740339,小巫師,https://hbimg.huabanimg.com/dbc6fd49f1915545cc42c1a1492a418dbaebd2c21bb9-9aDqgl</span><br><span class="line">18741964,桐末tonmo,https://hbimg.huabanimg.com/b60cee303f62aaa592292f45a1ed8d5be9873b2ed5c-gAJehO</span><br><span class="line">30535005,TANGZHIQI,https://hbimg.huabanimg.com/bbd08ee168d54665bf9b07899a5c4a4d6bc1eb8af77a4-8Gz3K1</span><br><span class="line">31078743,你的老杨,https://hbimg.huabanimg.com/c46fbc3c9a01db37b8e786cbd7174bbd475e4cda220f4-F1u7MX</span><br><span class="line">25519376,尺尺寸,https://hbimg.huabanimg.com/ee29ee198efb98f970e3dc2b24c40d89bfb6f911126b6-KGvKes</span><br><span class="line">21113978,C-CLong,https://hbimg.huabanimg.com/7fa6b2a0d570e67246b34840a87d57c16a875dba9100-SXsSeY</span><br><span class="line">24674102,szaa,https://hbimg.huabanimg.com/0716687b0df93e8c3a8e0925b6d2e4135449cd27597c4-gWdv24</span><br><span class="line">30508507,爱起床的小灰灰,https://hbimg.huabanimg.com/4eafdbfa21b2f300a7becd8863f948e5e92ef789b5a5-1ozTKq</span><br><span class="line">12593664,yokozen,https://hbimg.huabanimg.com/cd07bbaf052b752ed5c287602404ea719d7dd8161321b-cJtHss</span><br><span class="line">16899164,一阵疯,https://hbimg.huabanimg.com/0940b557b28892658c3bcaf52f5ba8dc8402100e130b2-G966Uz</span><br><span class="line">847937,卩丬My㊊伴er彎,https://hbimg.huabanimg.com/e2d6bb5bc8498c6f607492a8f96164aa2366b104e7a-kWaH68</span><br><span class="line">31010628,慢慢即漫漫,https://hbimg.huabanimg.com/c4fb6718907a22f202e8dd14d52f0c369685e59cfea7-82FdsK</span><br><span class="line">13438168,海贼玩跑跑,https://hbimg.huabanimg.com/1edae3ce6fe0f6e95b67b4f8b57c4cebf19c501b397e-BXwiW6</span><br><span class="line">28593155,源稚生,https://hbimg.huabanimg.com/626cfd89ca4c10e6f875f3dfe1005331e4c0fd7fd429-9SeJeQ</span><br><span class="line">28201821,合伙哼哼,https://hbimg.huabanimg.com/f59d4780531aa1892b80e0ec94d4ec78dcba08ff18c416-769X6a</span><br><span class="line">28255146,漫步AAA,https://hbimg.huabanimg.com/3c034c520594e38353a039d7e7a5fd5e74fb53eb1086-KnpLaL</span><br><span class="line">30537613,配䦹,https://hbimg.huabanimg.com/efd81d22c1b1a2de77a0e0d8e853282b83b6bbc590fd-y3d4GJ</span><br><span class="line">22665880,日后必火,https://hbimg.huabanimg.com/69f0f959979a4fada9e9e55f565989544be88164d2b-INWbaF</span><br><span class="line">16748980,keer521521,https://hbimg.huabanimg.com/654953460733026a7ef6e101404055627ad51784a95c-B6OFs4</span><br><span class="line">30536510,“西辞”,https://hbimg.huabanimg.com/61cfffca6b2507bf51a507e8319d68a8b8c3a96968f-6IvMSk</span><br><span class="line">30986577,艺成背锅王,https://hbimg.huabanimg.com/c381ecc43d6c69758a86a30ebf72976906ae6c53291f9-9zroHF</span><br><span class="line">26409800,CsysADk7,https://hbimg.huabanimg.com/bf1d22092c2070d68ade012c588f2e410caaab1f58051-ahlgLm</span><br><span class="line">30469116,18啊全阿,https://hbimg.huabanimg.com/654953460733026a7ef6e101404055627ad51784a95c-B6OFs4</span><br><span class="line">17473505,椿の花,https://hbimg.huabanimg.com/0e38d810e5a24f91ebb251fd3aaaed8bb37655b14844c-pgNJBP</span><br><span class="line">19165177,っ思忆゜♪,https://hbimg.huabanimg.com/4815ea0e4905d0f3bb82a654b481811dadbfe5ce2673-vMVr0B</span><br><span class="line">16059616,格林熊丶,https://hbimg.huabanimg.com/8760a2b08d87e6ed4b7a9715b1a668176dbf84fec5b-jx14tZ</span><br><span class="line">30734152,sCWVkJDG,https://hbimg.huabanimg.com/f31a5305d1b8717bbfb897723f267d316e58e7b7dc40-GD3e22</span><br><span class="line">24019677,虚无本心,https://hbimg.huabanimg.com/6fdfa9834abe362e978b517275b06e7f0d5926aa650-N1xCXE</span><br><span class="line">16670283,Y-雨后天空,https://hbimg.huabanimg.com/a3bbb0045b536fc27a6d2effa64a0d43f9f5193c177f-I2vHaI</span><br><span class="line">21512483,汤姆2,https://hbimg.huabanimg.com/98cc50a61a7cc9b49a8af754ffb26bd15764a82f1133-AkiU7D</span><br><span class="line">16441049,笑潇啸逍小鱼,https://hbimg.huabanimg.com/ae8a70cd85aff3a8587ff6578d5cf7620f3691df13e46-lmrIi9</span><br><span class="line">24795603,⁢⁢⁢⁢⁢v,https://hbimg.huabanimg.com/a7183cc3a933aa129d7b3230bf1378fd8f5857846cc5-3tDtx3</span><br><span class="line">29819152,妮玛士珍多,https://hbimg.huabanimg.com/ca4ecb573bf1ff0415c7a873d64470dedc465ea1213c6-RAkArS</span><br><span class="line">19101282,陈勇敢❤,https://hbimg.huabanimg.com/ab6d04ebaff3176e3570139a65155856871241b58bc6-Qklj2E</span><br><span class="line">28337572,爱意随风散,https://hbimg.huabanimg.com/117ad8b6eeda57a562ac6ab2861111a793ca3d1d5543-SjWlk2</span><br><span class="line">17342758,幸运instant,https://hbimg.huabanimg.com/72b5f9042ec297ae57b83431123bc1c066cca90fa23-3MoJNj</span><br><span class="line">18483372,Beau染,https://hbimg.huabanimg.com/077115cb622b1ff3907ec6932e1b575393d5aae720487-d1cdT9</span><br><span class="line">22127102,栽花的小蜻蜓,https://hbimg.huabanimg.com/6c3cbf9f27e17898083186fc51985e43269018cc1e1df-QfOIBG</span><br><span class="line">13802024,LoveHsu,https://hbimg.huabanimg.com/f720a15f8b49b86a7c1ee4951263a8dbecfe3e43d2d-GPEauV</span><br><span class="line">22558931,白驹过隙丶梨花泪う,https://hbimg.huabanimg.com/e49e1341dfe5144da5c71bd15f1052ef07ba7a0e1296b-jfyfDJ</span><br><span class="line">11762339,cojoy,https://hbimg.huabanimg.com/5b27f876d5d391e7c4889bc5e8ba214419eb72b56822-83gYmB</span><br><span class="line">30711623,雪碧学长呀,https://hbimg.huabanimg.com/2c288a1535048b05537ba523b3fc9eacc1e81273212d1-nr8M4t</span><br><span class="line">18906718,西霸王,https://hbimg.huabanimg.com/7b02ad5e01bd8c0a29817e362814666a7800831c154a6-AvBDaG</span><br><span class="line">31037856,邵阳的小哥哥,https://hbimg.huabanimg.com/654953460733026a7ef6e101404055627ad51784a95c-B6OFs4</span><br><span class="line">26830711,稳健谭,https://hbimg.huabanimg.com/51547ade3f0aef134e8d268cfd4ad61110925aefec8a-NKPEYX</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">download</span>(<span class="params">file_name, image_url</span>):</span><br><span class="line">    res = requests.get(</span><br><span class="line">        url=image_url,</span><br><span class="line">        headers=&#123;</span><br><span class="line">            <span class="string">&quot;User-Agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line">    <span class="comment"># 检查images目录是否存在？不存在，则创建images目录</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">&quot;images&quot;</span>):</span><br><span class="line">        <span class="comment"># 创建images目录</span></span><br><span class="line">        os.makedirs(<span class="string">&quot;images&quot;</span>)</span><br><span class="line">    file_path = os.path.join(<span class="string">&quot;images&quot;</span>, file_name)</span><br><span class="line">    <span class="comment"># 2.将图片的内容写入到文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> img_object:</span><br><span class="line">        img_object.write(res.content)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建线程池，最多维护10个线程。</span></span><br><span class="line">pool = ThreadPoolExecutor(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;mv.csv&quot;</span>, mode=<span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file_object:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> file_object:</span><br><span class="line">        nid, name, url = line.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line">        file_name = <span class="string">&quot;&#123;&#125;.png&quot;</span>.<span class="built_in">format</span>(name)</span><br><span class="line">        pool.submit(download, file_name, url)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">download</span>(<span class="params">image_url</span>):</span><br><span class="line">    res = requests.get(</span><br><span class="line">        url=image_url,</span><br><span class="line">        headers=&#123;</span><br><span class="line">            <span class="string">&quot;User-Agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">outer</span>(<span class="params">file_name</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">save</span>(<span class="params">response</span>):</span><br><span class="line">        res = response.result()</span><br><span class="line">        <span class="comment"># 写入本地</span></span><br><span class="line">        <span class="comment"># # 检查images目录是否存在？不存在，则创建images目录</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">&quot;images&quot;</span>):</span><br><span class="line">            <span class="comment"># 创建images目录</span></span><br><span class="line">            os.makedirs(<span class="string">&quot;images&quot;</span>)</span><br><span class="line"></span><br><span class="line">        file_path = os.path.join(<span class="string">&quot;images&quot;</span>, file_name)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># # 2.将图片的内容写入到文件</span></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(file_path, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> img_object:</span><br><span class="line">            img_object.write(res.content)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> save</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建线程池，最多维护10个线程。</span></span><br><span class="line">pool = ThreadPoolExecutor(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;mv.csv&quot;</span>, mode=<span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file_object:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> file_object:</span><br><span class="line">        nid, name, url = line.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line">        file_name = <span class="string">&quot;&#123;&#125;.png&quot;</span>.<span class="built_in">format</span>(name)</span><br><span class="line">        fur = pool.submit(download, url)</span><br><span class="line">        fur.add_done_callback(outer(file_name))</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h2 id="7-单例模式（扩展）"><a href="#7-单例模式（扩展）" class="headerlink" title="7.单例模式（扩展）"></a>7.单例模式（扩展）</h2><p>面向对象 + 多线程相关的一个面试题（以后项目和源码中会用到）。</p>
+<p>之前写一个类，每次执行 <code>类()</code> 都会实例化一个类的对象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Foo</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">obj1 = Foo()</span><br><span class="line"></span><br><span class="line">obj2 = Foo()</span><br><span class="line"><span class="built_in">print</span>(obj1,obj2)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>以后开发会遇到单例模式，每次实例化类的对象时，都是最开始创建的那个对象，不再重复创建对象。</p>
+<ul>
+<li><p>简单的实现单例模式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    instance = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="comment"># 返回空对象</span></span><br><span class="line">        <span class="keyword">if</span> cls.instance:</span><br><span class="line">            <span class="keyword">return</span> cls.instance</span><br><span class="line">        cls.instance = <span class="built_in">object</span>.__new__(cls)</span><br><span class="line">        <span class="keyword">return</span> cls.instance</span><br><span class="line"></span><br><span class="line">obj1 = Singleton(<span class="string">&#x27;alex&#x27;</span>)</span><br><span class="line">obj2 = Singleton(<span class="string">&#x27;SB&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(obj1,obj2)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>多线程执行单例模式，有BUG</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    instance = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls.instance:</span><br><span class="line">            <span class="keyword">return</span> cls.instance</span><br><span class="line">        time.sleep(<span class="number">0.1</span>)</span><br><span class="line">        cls.instance = <span class="built_in">object</span>.__new__(cls)</span><br><span class="line">        <span class="keyword">return</span> cls.instance</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    obj = Singleton(<span class="string">&#x27;x&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(obj)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>加锁解决BUG</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    instance = <span class="literal">None</span></span><br><span class="line">    lock = threading.RLock()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">with</span> cls.lock:</span><br><span class="line">            <span class="keyword">if</span> cls.instance:</span><br><span class="line">                <span class="keyword">return</span> cls.instance</span><br><span class="line">            time.sleep(<span class="number">0.1</span>)</span><br><span class="line">            cls.instance = <span class="built_in">object</span>.__new__(cls)</span><br><span class="line">        <span class="keyword">return</span> cls.instance</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    obj = Singleton(<span class="string">&#x27;x&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(obj)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>加判断，提升性能</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    instance = <span class="literal">None</span></span><br><span class="line">    lock = threading.RLock()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> cls.instance:</span><br><span class="line">            <span class="keyword">return</span> cls.instance</span><br><span class="line">        <span class="keyword">with</span> cls.lock:</span><br><span class="line">            <span class="keyword">if</span> cls.instance:</span><br><span class="line">                <span class="keyword">return</span> cls.instance</span><br><span class="line">            time.sleep(<span class="number">0.1</span>)</span><br><span class="line">            cls.instance = <span class="built_in">object</span>.__new__(cls)</span><br><span class="line">        <span class="keyword">return</span> cls.instance</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    obj = Singleton(<span class="string">&#x27;x&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(obj)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    t = threading.Thread(target=task)</span><br><span class="line">    t.start()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行1000行代码</span></span><br><span class="line"></span><br><span class="line">data = Singleton(<span class="string">&#x27;asdfasdf&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(data)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>进程和线程的区别和应用场景。</li>
+<li>什么是GIL锁</li>
+<li>多线程和线程池的使用。</li>
+<li>线程安全 &amp; 线程锁 &amp; 死锁</li>
+<li>单例模式</li>
+</ol>
+<h2 id="作业"><a href="#作业" class="headerlink" title="作业"></a>作业</h2><ol>
+<li><p>简述进程和线程的区别以及应用场景。</p>
+</li>
+<li><p>什么是GIL锁</p>
+</li>
+<li><p>手写单例模式</p>
+</li>
+<li><p>程序从flag a执行到falg b的时间大致是多少秒？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_wait</span>():</span><br><span class="line">	time.sleep(<span class="number">60</span>)</span><br><span class="line"><span class="comment"># flag a</span></span><br><span class="line">t = threading.Thread(target=_wait)</span><br><span class="line">t.setDaemon(<span class="literal">False</span>)</span><br><span class="line">t.start()</span><br><span class="line"><span class="comment"># flag b</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>程序从flag a执行到falg b的时间大致是多少秒？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_wait</span>():</span><br><span class="line">	time.sleep(<span class="number">60</span>)</span><br><span class="line"><span class="comment"># flag a</span></span><br><span class="line">t = threading.Thread(target=_wait)</span><br><span class="line">t.setDaemon(<span class="literal">True</span>)</span><br><span class="line">t.start()</span><br><span class="line"><span class="comment"># flag b</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>程序从flag a执行到falg b的时间大致是多少秒？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_wait</span>():</span><br><span class="line">	time.sleep(<span class="number">60</span>)</span><br><span class="line"><span class="comment"># flag a</span></span><br><span class="line">t = threading.Thread(target=_wait)</span><br><span class="line">t.start()</span><br><span class="line">t.join()</span><br><span class="line"><span class="comment"># flag b</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>读程序，请确认执行到最后number是否一定为0</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line">loop = <span class="built_in">int</span>(<span class="number">1E7</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_add</span>(<span class="params">loop = <span class="number">1</span></span>):</span><br><span class="line">	<span class="keyword">global</span> number</span><br><span class="line">	<span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(loop):</span><br><span class="line">		number += <span class="number">1</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_sub</span>(<span class="params">loop = <span class="number">1</span></span>):</span><br><span class="line">	<span class="keyword">global</span> number</span><br><span class="line">	<span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(loop):</span><br><span class="line">		number -= <span class="number">1</span></span><br><span class="line">number = <span class="number">0</span></span><br><span class="line">ta = threading.Thread(target=_add,args=(loop,))</span><br><span class="line">ts = threading.Thread(target=_sub,args=(loop,))</span><br><span class="line">ta.start()</span><br><span class="line">ta.join()</span><br><span class="line">ts.start()</span><br><span class="line">ts.join()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>读程序，请确认执行到最后number是否一定为0</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line">loop = <span class="built_in">int</span>(<span class="number">1E7</span>)</span><br><span class="line">number = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_add</span>(<span class="params">loop = <span class="number">1</span></span>):</span><br><span class="line">	<span class="keyword">global</span> number</span><br><span class="line">	<span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(loop):</span><br><span class="line">		number += <span class="number">1</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_sub</span>(<span class="params">loop = <span class="number">1</span></span>):</span><br><span class="line">	<span class="keyword">global</span> number</span><br><span class="line">	<span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(loop):</span><br><span class="line">		number -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line">ta = threading.Thread(target=_add,args=(loop,))</span><br><span class="line">ts = threading.Thread(target=_sub,args=(loop,))</span><br><span class="line">ta.start()</span><br><span class="line">ts.start()</span><br><span class="line">ta.join()</span><br><span class="line">ts.join()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>data.txt 文件中共有 10000 条数据，请为每 100行 数据创建一个线程，并在线程中把当前100条数据的num列相加并打印。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">subscription_id,erotic,num</span><br><span class="line">ASDFOKASDJF423KASDFJASDF,5,1</span><br><span class="line">FSD23R23SFSDF4DFGDFGDFGDF,5,99</span><br><span class="line">ASDDSFGWERTCERT44GFGDSFG,5,2</span><br><span class="line">FFFFFFSDSVFG5RTFGDDFFFFA,5,11</span><br><span class="line">ASDFASDF3234XCVWEGDFGSAF,5,1</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/09/07/python_course-master/day22%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89/%E7%AC%94%E8%AE%B0/day22/" title="">http://example.com/2024/09/07/python_course-master/day22 并发编程（上）/笔记/day22/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day21%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8B%EF%BC%89/%E7%AC%94%E8%AE%B0/day21/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day23%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8B%EF%BC%89/%E7%AC%94%E8%AE%B0/day23%20(copy)/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#day22-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%88%E4%B8%8A%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">day22 并发编程（上）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1. 进程和线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 多线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%A4%9A%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 多进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-GIL%E9%94%81"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 GIL锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%80%E5%8F%91"><span class="nav-number">1.2.</span> <span class="nav-text">2. 多线程开发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="nav-number">1.3.</span> <span class="nav-text">3. 线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%BA%BF%E7%A8%8B%E9%94%81"><span class="nav-number">1.4.</span> <span class="nav-text">4. 线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%AD%BB%E9%94%81"><span class="nav-number">1.5.</span> <span class="nav-text">5.死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">1.6.</span> <span class="nav-text">6.线程池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88%E6%89%A9%E5%B1%95%EF%BC%89"><span class="nav-number">1.7.</span> <span class="nav-text">7.单例模式（扩展）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.8.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A"><span class="nav-number">1.9.</span> <span class="nav-text">作业</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="陈永辉"
+      src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+  <p class="site-author-name" itemprop="name">陈永辉</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cyhzuishuai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cyhzuishuai" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2426230801@qq.com" title="E-Mail → 2426230801@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/chenyonghuizui" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;chenyonghuizui" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈永辉</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共126.9k字</span>
+</div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="day12 函数高级 课程目标：掌握函数嵌套、闭包、装饰器等高级知识点。 今日概要：  函数的嵌套 闭包 装饰器  上述内容均属于函数部分必备知识，以后开发时直接和间接都会使用，请务必理解（重在理解，不要去死记硬背）。 1. 函数嵌套Python中以函数为作用域，在作用域中定义的相关数据只能被当前作用域或子作用域使用。 1234567NAME &#x3D; &quot;武沛齐&quot;print(NAME">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大帅哥">
+<meta property="og:url" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/index.html">
+<meta property="og:site_name" content="大帅哥">
+<meta property="og:description" content="day12 函数高级 课程目标：掌握函数嵌套、闭包、装饰器等高级知识点。 今日概要：  函数的嵌套 闭包 装饰器  上述内容均属于函数部分必备知识，以后开发时直接和间接都会使用，请务必理解（重在理解，不要去死记硬背）。 1. 函数嵌套Python中以函数为作用域，在作用域中定义的相关数据只能被当前作用域或子作用域使用。 1234567NAME &#x3D; &quot;武沛齐&quot;print(NAME">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201228153850400.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229131739455.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229132237241.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229132648896.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229140559322.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229165929911.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229171258454.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229181719550.png">
+<meta property="og:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229185549102.png">
+<meta property="article:published_time" content="2024-09-07T13:27:30.111Z">
+<meta property="article:modified_time" content="2024-08-28T10:21:24.604Z">
+<meta property="article:author" content="陈永辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201228153850400.png">
+
+<link rel="canonical" href="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 大帅哥</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大帅哥</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+      <meta itemprop="name" content="陈永辉">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大帅哥">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-07 21:27:30" itemprop="dateCreated datePublished" datetime="2024-09-07T21:27:30+08:00">2024-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-28 18:21:24" itemprop="dateModified" datetime="2024-08-28T18:21:24+08:00">2024-08-28</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="day12-函数高级"><a href="#day12-函数高级" class="headerlink" title="day12 函数高级"></a>day12 函数高级</h1><p><img src="/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201228153850400.png" alt="image-20201228153850400"></p>
+<p>课程目标：掌握函数嵌套、闭包、装饰器等高级知识点。</p>
+<p>今日概要：</p>
+<ul>
+<li>函数的嵌套</li>
+<li>闭包</li>
+<li>装饰器</li>
+</ul>
+<p>上述内容均属于函数部分必备知识，以后开发时直接和间接都会使用，请务必理解（重在理解，不要去死记硬背）。</p>
+<h2 id="1-函数嵌套"><a href="#1-函数嵌套" class="headerlink" title="1. 函数嵌套"></a>1. 函数嵌套</h2><p>Python中以函数为作用域，在作用域中定义的相关数据只能被当前作用域或子作用域使用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">NAME = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"><span class="built_in">print</span>(NAME)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(NAME)</span><br><span class="line"></span><br><span class="line">func()</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-1-函数在作用域中"><a href="#1-1-函数在作用域中" class="headerlink" title="1.1 函数在作用域中"></a>1.1 函数在作用域中</h3><p>其实，函数也是定义在作用域中的数据，在执行函数时候，也同样遵循：优先在自己作用域中寻找，没有则向上一接作用域寻找，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 在全局作用域定义了函数func</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;你好&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 2. 在全局作用域找到func函数并执行。</span></span><br><span class="line">func()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.在全局作用域定义了execute函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">execute</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    <span class="comment"># 优先在当前函数作用域找func函数，没有则向上级作用域中寻找。</span></span><br><span class="line">    func()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;结束&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.在全局作用域执行execute函数</span></span><br><span class="line">execute()</span><br></pre></td></tr></table></figure>
+
+<p>此处，有一个易错点：作用域中的值在被调用时到底是啥？</p>
+<ul>
+<li><p>情景1</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;你好&quot;</span>)</span><br><span class="line">    </span><br><span class="line">func()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">execute</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    func()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;结束&quot;</span>)</span><br><span class="line">    </span><br><span class="line">execute()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">666</span>)</span><br><span class="line">    </span><br><span class="line">func()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>情景2</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;你好&quot;</span>)</span><br><span class="line">    </span><br><span class="line">func()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">execute</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;开始&quot;</span>)</span><br><span class="line">    func()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;结束&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">666</span>)</span><br><span class="line"></span><br><span class="line">func()</span><br><span class="line">execute()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="1-2-函数定义的位置"><a href="#1-2-函数定义的位置" class="headerlink" title="1.2 函数定义的位置"></a>1.2 函数定义的位置</h3><p>上述示例中的函数均定义在全局作用域，其实函数也可以定义在局部作用域，这样函数被局部作用域和其子作用于中调用（函数的嵌套）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;沙河高晓松&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">handler</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;昌平吴彦祖&quot;</span>)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;朝阳大妈&quot;</span>)</span><br><span class="line">	inner()</span><br><span class="line">    func()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;海淀网友&quot;</span>)</span><br><span class="line"></span><br><span class="line">handler()</span><br></pre></td></tr></table></figure>
+
+<p>到现在你会发现，只要理解数据定义时所存在的作用域，并根据从上到下代码执行过程进行分析，再怎么嵌套都可以搞定。</p>
+<p>现在的你可能有疑问：为什么要这么嵌套定义？把函数都定义在全局不好吗？</p>
+<p>其实，大多数情况下我们都会将函数定义在全局，不会嵌套着定义函数。不过，当我们定义一个函数去实现某功能，想要将内部功能拆分成N个函数，又担心这个N个函数放在全局会与其他函数名冲突时（尤其多人协同开发）可以选择使用函数的嵌套。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f1</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f2</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">	f1()</span><br><span class="line">    f2()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f1</span>():</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f2</span>():</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">	f1()</span><br><span class="line">    f2()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">生成图片验证码的示例代码，需要提前安装pillow模块（Python中操作图片中一个第三方模块）</span></span><br><span class="line"><span class="string">	pip3 install pillow</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw, ImageFont</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_image_code</span>(<span class="params">img_file_path, text=<span class="literal">None</span>, size=(<span class="params"><span class="number">120</span>, <span class="number">30</span></span>), mode=<span class="string">&quot;RGB&quot;</span>, bg_color=(<span class="params"><span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span></span>)</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot; 生成一个图片验证码 &quot;&quot;&quot;</span></span><br><span class="line">    _letter_cases = <span class="string">&quot;abcdefghjkmnpqrstuvwxy&quot;</span>  <span class="comment"># 小写字母，去除可能干扰的i，l，o，z</span></span><br><span class="line">    _upper_cases = _letter_cases.upper()  <span class="comment"># 大写字母</span></span><br><span class="line">    _numbers = <span class="string">&#x27;&#x27;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>, <span class="built_in">range</span>(<span class="number">3</span>, <span class="number">10</span>)))  <span class="comment"># 数字</span></span><br><span class="line">    chars = <span class="string">&#x27;&#x27;</span>.join((_letter_cases, _upper_cases, _numbers))</span><br><span class="line"></span><br><span class="line">    width, height = size  <span class="comment"># 宽高</span></span><br><span class="line">    <span class="comment"># 创建图形</span></span><br><span class="line">    img = Image.new(mode, size, bg_color)</span><br><span class="line">    draw = ImageDraw.Draw(img)  <span class="comment"># 创建画笔</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_chars</span>():</span><br><span class="line">        <span class="string">&quot;&quot;&quot;生成给定长度的字符串，返回列表格式&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> random.sample(chars, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_lines</span>():</span><br><span class="line">        <span class="string">&quot;&quot;&quot;绘制干扰线&quot;&quot;&quot;</span></span><br><span class="line">        line_num = random.randint(*(<span class="number">1</span>, <span class="number">2</span>))  <span class="comment"># 干扰线条数</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(line_num):</span><br><span class="line">            <span class="comment"># 起始点</span></span><br><span class="line">            begin = (random.randint(<span class="number">0</span>, size[<span class="number">0</span>]), random.randint(<span class="number">0</span>, size[<span class="number">1</span>]))</span><br><span class="line">            <span class="comment"># 结束点</span></span><br><span class="line">            end = (random.randint(<span class="number">0</span>, size[<span class="number">0</span>]), random.randint(<span class="number">0</span>, size[<span class="number">1</span>]))</span><br><span class="line">            draw.line([begin, end], fill=(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_points</span>():</span><br><span class="line">        <span class="string">&quot;&quot;&quot;绘制干扰点&quot;&quot;&quot;</span></span><br><span class="line">        chance = <span class="built_in">min</span>(<span class="number">100</span>, <span class="built_in">max</span>(<span class="number">0</span>, <span class="built_in">int</span>(<span class="number">2</span>)))  <span class="comment"># 大小限制在[0, 100]</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> <span class="built_in">range</span>(width):</span><br><span class="line">            <span class="keyword">for</span> h <span class="keyword">in</span> <span class="built_in">range</span>(height):</span><br><span class="line">                tmp = random.randint(<span class="number">0</span>, <span class="number">100</span>)</span><br><span class="line">                <span class="keyword">if</span> tmp &gt; <span class="number">100</span> - chance:</span><br><span class="line">                    draw.point((w, h), fill=(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_code</span>():</span><br><span class="line">        <span class="string">&quot;&quot;&quot;绘制验证码字符&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> text:</span><br><span class="line">            code_string = text</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            char_list = get_chars()</span><br><span class="line">            code_string = <span class="string">&#x27;&#x27;</span>.join(char_list)  <span class="comment"># 每个字符前后以空格隔开</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Win系统字体</span></span><br><span class="line">        <span class="comment"># font = ImageFont.truetype(r&quot;C:\Windows\Fonts\SEGOEPR.TTF&quot;, size=24)</span></span><br><span class="line">        <span class="comment"># Mac系统字体</span></span><br><span class="line">        <span class="comment"># font = ImageFont.truetype(&quot;/System/Library/Fonts/SFNSRounded.ttf&quot;, size=24)</span></span><br><span class="line">        <span class="comment"># 项目字体文件</span></span><br><span class="line">        font = ImageFont.truetype(<span class="string">&quot;MSYH.TTC&quot;</span>, size=<span class="number">15</span>)</span><br><span class="line">        draw.text([<span class="number">0</span>, <span class="number">0</span>], code_string, <span class="string">&quot;red&quot;</span>, font=font)</span><br><span class="line">        <span class="keyword">return</span> code_string</span><br><span class="line"></span><br><span class="line">    create_lines()</span><br><span class="line">    create_points()</span><br><span class="line">    code = create_code()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将图片写入到文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(img_file_path, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> img_object:</span><br><span class="line">        img.save(img_object)</span><br><span class="line">    <span class="keyword">return</span> code</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">code = create_image_code(<span class="string">&quot;a2.png&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(code)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-3-嵌套引发的作用域问题"><a href="#1-3-嵌套引发的作用域问题" class="headerlink" title="1.3 嵌套引发的作用域问题"></a>1.3 嵌套引发的作用域问题</h3><p>基于内存和执行过程分析作用域。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line">    name = <span class="string">&quot;alex&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">	inner()</span><br><span class="line">    </span><br><span class="line">run()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229131739455.png" alt="image-20201229131739455"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line">    name = <span class="string">&quot;alex&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">	<span class="keyword">return</span> inner</span><br><span class="line">    </span><br><span class="line">v1 = run()</span><br><span class="line">v1()</span><br><span class="line"></span><br><span class="line">v2 = run()</span><br><span class="line">v2()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229132237241.png" alt="image-20201229132237241"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line">    name = <span class="string">&quot;alex&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">	<span class="keyword">return</span> [inner,inner,inner]</span><br><span class="line">    </span><br><span class="line">func_list = run()</span><br><span class="line">func_list[<span class="number">2</span>]()</span><br><span class="line">func_list[<span class="number">1</span>]()</span><br><span class="line"></span><br><span class="line">funcs = run()</span><br><span class="line">funcs[<span class="number">2</span>]()</span><br><span class="line">funcs[<span class="number">1</span>]()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229132648896.png" alt="image-20201229132648896"></p>
+<p>三句话搞定作用域：</p>
+<ul>
+<li>优先在自己的作用域找，自己没有就去上级作用域。</li>
+<li>在作用域中寻找值时，要确保此次此刻值是什么。</li>
+<li>分析函数的执行，并确定函数<code>作用域链</code>。（函数嵌套）</li>
+</ul>
+<h3 id="练习题"><a href="#练习题" class="headerlink" title="练习题"></a>练习题</h3><ol>
+<li><p>分析代码，写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&#x27;武沛齐&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">    res = inner()</span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">v = func()</span><br><span class="line"><span class="built_in">print</span>(v)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 武沛齐</span></span><br><span class="line"><span class="comment"># None</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分析代码，写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&#x27;武沛齐&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;alex&quot;</span></span><br><span class="line">    res = inner()</span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">v = func()</span><br><span class="line"><span class="built_in">print</span>(v)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 武沛齐</span></span><br><span class="line"><span class="comment"># alex</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分析代码，写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&#x27;root&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;admin&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">v = func()</span><br><span class="line">result = v()</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"></span><br><span class="line"><span class="comment"># root</span></span><br><span class="line"><span class="comment"># admin</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分析代码，写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    name = <span class="string">&#x27;武沛齐&#x27;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;路飞&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">v11 = func()</span><br><span class="line">data = v11()</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">v2 = func()()</span><br><span class="line"><span class="built_in">print</span>(v2)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分析代码，写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">name</span>):</span><br><span class="line">    <span class="comment"># name=&quot;alex&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;luffy&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">v1 = func(<span class="string">&#x27;武沛齐&#x27;</span>)()</span><br><span class="line"><span class="built_in">print</span>(v1)</span><br><span class="line"></span><br><span class="line">v2 = func(<span class="string">&#x27;alex&#x27;</span>)()</span><br><span class="line"><span class="built_in">print</span>(v2)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229140559322.png" alt="image-20201229140559322"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">name</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;luffy&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">v1 = func(<span class="string">&#x27;武沛齐&#x27;</span>)</span><br><span class="line">v2 = func(<span class="string">&#x27;alex&#x27;</span>)</span><br><span class="line">v1()</span><br><span class="line">v2()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229165929911.png" alt="image-20201229165929911"></p>
+</li>
+<li><p>分析代码，写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">name=<span class="literal">None</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> name:</span><br><span class="line">        name= <span class="string">&#x27;武沛齐&#x27;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;root&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">v1 = func()()</span><br><span class="line">v2 = func(<span class="string">&#x27;alex&#x27;</span>)()</span><br><span class="line"><span class="built_in">print</span>(v1,v2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 武沛齐</span></span><br><span class="line"><span class="comment"># alex</span></span><br><span class="line"><span class="comment"># root root</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229171258454.png" alt="image-20201229171258454"></p>
+</li>
+</ol>
+<h2 id="2-闭包"><a href="#2-闭包" class="headerlink" title="2.闭包"></a>2.闭包</h2><p>闭包，简而言之就是将数据封装在一个包（区域）中，使用时再去里面取。（本质上 闭包是基于函数嵌套搞出来一个中特殊嵌套）</p>
+<ul>
+<li><p>闭包应用场景1：封装数据防止污染全局。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f1</span>():</span><br><span class="line">    <span class="built_in">print</span>(name, age)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f2</span>():</span><br><span class="line">	<span class="built_in">print</span>(name, age)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f3</span>():</span><br><span class="line">	<span class="built_in">print</span>(name, age)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f4</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">age</span>):</span><br><span class="line">    name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f1</span>():</span><br><span class="line">        <span class="built_in">print</span>(name, age)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f2</span>():</span><br><span class="line">        <span class="built_in">print</span>(name, age)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f3</span>():</span><br><span class="line">        <span class="built_in">print</span>(name, age)</span><br><span class="line"></span><br><span class="line">    f1()</span><br><span class="line">    f2()</span><br><span class="line">    f3()</span><br><span class="line"></span><br><span class="line">func(<span class="number">123</span>)</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>闭包应用场景2：封装数据封到一个包里，使用时在取。<br><img src="/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229181719550.png" alt="image-20201229181719550"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">arg</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(arg)</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">v1 = task(<span class="number">11</span>)</span><br><span class="line">v2 = task(<span class="number">22</span>)</span><br><span class="line">v3 = task(<span class="number">33</span>)</span><br><span class="line">v1()</span><br><span class="line">v2()</span><br><span class="line">v3()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">arg</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(arg)</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">inner_func_list = []</span><br><span class="line"><span class="keyword">for</span> val <span class="keyword">in</span> [<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>]:</span><br><span class="line">    inner_func_list.append( task(val) )</span><br><span class="line">    </span><br><span class="line">inner_func_list[<span class="number">0</span>]() <span class="comment"># 11</span></span><br><span class="line">inner_func_list[<span class="number">1</span>]() <span class="comment"># 22</span></span><br><span class="line">inner_func_list[<span class="number">2</span>]() <span class="comment"># 33</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot; 基于多线程去下载视频 &quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">from</span> concurrent.futures.thread <span class="keyword">import</span> ThreadPoolExecutor</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">download_video</span>(<span class="params">url</span>):</span><br><span class="line">    res = requests.get(</span><br><span class="line">        url=url,</span><br><span class="line">        headers=&#123;</span><br><span class="line">            <span class="string">&quot;user-agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 FS&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> res.content</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">outer</span>(<span class="params">file_name</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write_file</span>(<span class="params">response</span>):</span><br><span class="line">        content = response.result()</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(file_name, mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> file_object:</span><br><span class="line">            file_object.write(content)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> write_file</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">POOL = ThreadPoolExecutor(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">video_dict = [</span><br><span class="line">    (<span class="string">&quot;东北F4模仿秀.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;卡特扣篮.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f3e0000bv52fpn5t6p007e34q1g&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;罗斯mvp.mp4&quot;</span>, <span class="string">&quot;https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg&quot;</span>)</span><br><span class="line">]</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> video_dict:</span><br><span class="line">    future = POOL.submit(download_video, url=item[<span class="number">1</span>])</span><br><span class="line">    future.add_done_callback(outer(item[<span class="number">0</span>]))</span><br><span class="line"></span><br><span class="line">POOL.shutdown()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/image-20201229185549102.png" alt="image-20201229185549102"></p>
+</li>
+</ul>
+<h2 id="3-装饰器"><a href="#3-装饰器" class="headerlink" title="3.装饰器"></a>3.装饰器</h2><p>现在给你一个函数，在不修改函数源码的前提下，实现在函数执行前和执行后分别输入 “before” 和 “after”。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>,<span class="number">44</span>) </span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">    </span><br><span class="line">result = func()</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-1-第一回合"><a href="#3-1-第一回合" class="headerlink" title="3.1 第一回合"></a>3.1 第一回合</h3><p>你的实现思路：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;before&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>,<span class="number">44</span>) </span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;after&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">    </span><br><span class="line">result = func()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我的实现思路：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">outer</span>(<span class="params">origin</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;inner&#x27;</span>)</span><br><span class="line">        origin()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;after&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">func = outer(func)</span><br><span class="line">result = func()</span><br></pre></td></tr></table></figure>
+
+<p>处理返回值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">outer</span>(<span class="params">origin</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;inner&#x27;</span>)</span><br><span class="line">        res = origin()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;after&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">func = outer(func)</span><br><span class="line">result = func()</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-2-第二回合"><a href="#3-2-第二回合" class="headerlink" title="3.2 第二回合"></a>3.2 第二回合</h3><p>在Python中有个一个特殊的语法糖：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">outer</span>(<span class="params">origin</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;inner&#x27;</span>)</span><br><span class="line">        res = origin()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;after&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@outer</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">func()</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-3-第三回合"><a href="#3-3-第三回合" class="headerlink" title="3.3 第三回合"></a>3.3 第三回合</h3><p>请在这3个函数执行前和执行后分别输入 “before” 和 “after”</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func1函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func2</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func2函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func3</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func3函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">    </span><br><span class="line">func1()</span><br><span class="line">func2()</span><br><span class="line">func3()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>你的实现思路：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;before&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func1函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;after&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func2</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;before&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func2函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;after&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func3</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;before&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func3函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;after&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line">    </span><br><span class="line">func1()</span><br><span class="line">func2()</span><br><span class="line">func3()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我的实现思路：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">outer</span>(<span class="params">origin</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>():</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;before 110&quot;</span>)</span><br><span class="line">        res = origin()  <span class="comment"># 调用原来的func函数</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;after&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@outer</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func1函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@outer</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func2</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func2函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@outer</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func3</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func3函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">func1()</span><br><span class="line">func2()</span><br><span class="line">func3()</span><br></pre></td></tr></table></figure>
+
+<p>装饰器，在不修改原函数内容的前提下，通过@函数可以实现在函数前后自定义执行一些功能（批量操作会更有意义）。</p>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>优化以支持多个参数的情况。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">outer</span>(<span class="params">origin</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;before 110&quot;</span>)</span><br><span class="line">        res = origin(*args, **kwargs)  <span class="comment"># 调用原来的func函数</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;after&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@outer  </span><span class="comment"># func1 = outer(func1)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>(<span class="params">a1</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func1函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@outer  </span><span class="comment"># func2 = outer(func2)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func2</span>(<span class="params">a1, a2</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func2函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@outer  </span><span class="comment"># func3 = outer(func3)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func3</span>(<span class="params">a1</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我是func3函数&quot;</span>)</span><br><span class="line">    value = (<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">func1(<span class="number">1</span>)</span><br><span class="line">func2(<span class="number">11</span>, a2=<span class="number">22</span>)</span><br><span class="line">func3(<span class="number">999</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>其中，我的那种写法就称为装饰器。</p>
+<ul>
+<li><p>实现原理：基于@语法和函数闭包，将原函数封装在闭包中，然后将函数赋值为一个新的函数（内层函数），执行函数时再在内层函数中执行闭包中的原函数。</p>
+</li>
+<li><p>实现效果：可以在不改变原函数内部代码 和 调用方式的前提下，实现在函数执行和执行扩展功能。</p>
+</li>
+<li><p>适用场景：多个函数系统统一在 执行前后自定义一些功能。</p>
+</li>
+<li><p>装饰器示例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">outer</span>(<span class="params">origin</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">		<span class="comment"># 执行前</span></span><br><span class="line">        res = origin(*args, **kwargs)  <span class="comment"># 调用原来的func函数</span></span><br><span class="line">        <span class="comment"># 执行后</span></span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@outer</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">func()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="伪应用场景"><a href="#伪应用场景" class="headerlink" title="伪应用场景"></a>伪应用场景</h3><p>在以后编写一个网站时，如果项目共有100个页面，其中99个是需要登录成功之后才有权限访问，就可以基于装饰器来实现。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install flask</span><br></pre></td></tr></table></figure>
+
+<p>基于第三方模块Flask（框架）快速写一个网站：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;首页&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">info</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;用户中心&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">order</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;订单中心&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">login</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;登录页面&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.add_url_rule(<span class="string">&quot;/index/&quot;</span>, view_func=index)</span><br><span class="line">app.add_url_rule(<span class="string">&quot;/info/&quot;</span>, view_func=info)</span><br><span class="line">app.add_url_rule(<span class="string">&quot;/login/&quot;</span>, view_func=login)</span><br><span class="line"></span><br><span class="line">app.run()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>基于装饰器实现的伪代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">auth</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="comment"># 在此处，判断如果用户是否已经登录，已登录则继续往下，未登录则自动跳转到登录页面。</span></span><br><span class="line">        <span class="keyword">return</span> func(*args, **kwargs)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@auth</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;首页&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@auth</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">info</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;用户中心&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@auth</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">order</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;订单中心&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">login</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;登录页面&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.add_url_rule(<span class="string">&quot;/index/&quot;</span>, view_func=index, endpoint=<span class="string">&#x27;index&#x27;</span>)</span><br><span class="line">app.add_url_rule(<span class="string">&quot;/info/&quot;</span>, view_func=info, endpoint=<span class="string">&#x27;info&#x27;</span>)</span><br><span class="line">app.add_url_rule(<span class="string">&quot;/order/&quot;</span>, view_func=order, endpoint=<span class="string">&#x27;order&#x27;</span>)</span><br><span class="line">app.add_url_rule(<span class="string">&quot;/login/&quot;</span>, view_func=login, endpoint=<span class="string">&#x27;login&#x27;</span>)</span><br><span class="line"></span><br><span class="line">app.run()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="重要补充：functools"><a href="#重要补充：functools" class="headerlink" title="重要补充：functools"></a>重要补充：functools</h3><p>你会发现装饰器实际上就是将原函数更改为其他的函数，然后再此函数中再去调用原函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">handler</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">handler()</span><br><span class="line"><span class="built_in">print</span>(handler.__name__) <span class="comment"># handler</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">auth</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">return</span> func(*args, **kwargs)</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"><span class="meta">@auth</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">handler</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">handler()</span><br><span class="line"><span class="built_in">print</span>(handler.__name__) <span class="comment"># inner</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">auth</span>(<span class="params">func</span>):</span><br><span class="line"><span class="meta">    @functools.wraps(<span class="params">func</span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">return</span> func(*args, **kwargs)</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"><span class="meta">@auth</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">handler</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">handler()</span><br><span class="line"><span class="built_in">print</span>(handler.__name__)  <span class="comment"># handler</span></span><br></pre></td></tr></table></figure>
+
+<p>其实，一般情况下大家不用functools也可以实现装饰器的基本功能，但后期在项目开发时，不加functools会出错（内部会读取<code>__name__</code>，且<code>__name__</code>重名的话就报错），所以在此大家就要规范起来自己的写法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">auth</span>(<span class="params">func</span>):</span><br><span class="line"><span class="meta">    @functools.wraps(<span class="params">func</span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;巴巴里吧&quot;&quot;&quot;</span></span><br><span class="line">        res = func(*args, **kwargs)  <span class="comment"># 执行原函数</span></span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inner</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li><p>函数可以定义在全局、也可以定义另外一个函数中（函数的嵌套）</p>
+</li>
+<li><p>学会分析函数执行的步骤（内存中作用域的管理）</p>
+</li>
+<li><p>闭包，基于函数的嵌套，可以将数据封装到一个包中，以后再去调用。</p>
+</li>
+<li><p>装饰器</p>
+<ul>
+<li><p>实现原理：基于@语法和函数闭包，将原函数封装在闭包中，然后将函数赋值为一个新的函数（内层函数），执行函数时再在内层函数中执行闭包中的原函数。</p>
+</li>
+<li><p>实现效果：可以在不改变原函数内部代码 和 调用方式的前提下，实现在函数执行和执行扩展功能。</p>
+</li>
+<li><p>适用场景：多个函数系统统一在 执行前后自定义一些功能。</p>
+</li>
+<li><p>装饰器示例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">auth</span>(<span class="params">func</span>):</span><br><span class="line"><span class="meta">    @functools.wraps(<span class="params">func</span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;巴巴里吧&quot;&quot;&quot;</span></span><br><span class="line">        res = func(*args, **kwargs)  <span class="comment"># 执行原函数</span></span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inner</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ol>
+<h2 id="作业"><a href="#作业" class="headerlink" title="作业"></a>作业</h2><ol>
+<li><p>请为以下所有函数编写一个装饰器，添加上装饰器后可以实现：执行func时，先执行func函数内部代码，再输出 “after”</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">a1</span>):</span><br><span class="line">    <span class="keyword">return</span> a1 + <span class="string">&quot;傻叉&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">base</span>(<span class="params">a1,a2</span>):</span><br><span class="line">    <span class="keyword">return</span> a1 + a2 + <span class="string">&#x27;傻缺&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>(<span class="params">a1,a2,a3,a4</span>):</span><br><span class="line">    <span class="keyword">return</span> a1 + a2 + a3 + a4 + <span class="string">&#x27;傻蛋&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请为以下所有函数编写一个装饰器，添加上装饰器后可以实现：将被装饰的函数执行5次，讲每次执行函数的结果按照顺序放到列表中，最终返回列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="keyword">return</span> random.randint(<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">result = func() <span class="comment"># 内部自动执行5次，并将每次执行的结果追加到列表最终返回给result</span></span><br><span class="line"><span class="built_in">print</span>(result) </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请为以下函数编写一个装饰器，添加上装饰器后可以实现： 检查文件所在路径（文件件）是否存在，如果不存在自动创建文件夹（保证写入文件不报错）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">write_user_info</span>(<span class="params">path</span>):</span><br><span class="line">    file_obj = <span class="built_in">open</span>(path, mode=<span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    file_obj.write(<span class="string">&quot;武沛齐&quot;</span>)</span><br><span class="line">    file_obj.close()</span><br><span class="line"></span><br><span class="line">write_user_info(<span class="string">&#x27;/usr/bin/xxx/xxx.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分析代码写结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_data</span>():</span><br><span class="line">    scores = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">val</span>):</span><br><span class="line">        scores.append(val)</span><br><span class="line">        <span class="built_in">print</span>(scores)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">func = get_data()</span><br><span class="line"></span><br><span class="line">func(<span class="number">10</span>)</span><br><span class="line">func(<span class="number">20</span>)</span><br><span class="line">func(<span class="number">30</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>看代码写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>():</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    name = <span class="string">&quot;root&quot;</span></span><br><span class="line">    foo()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">func()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>看代码写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;武沛齐&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    name = <span class="string">&quot;root&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">foo</span>():</span><br><span class="line">        <span class="built_in">print</span>(name)</span><br><span class="line"></span><br><span class="line">    foo()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">func()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>看代码写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">val</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">a1, a2</span>):</span><br><span class="line">        <span class="keyword">return</span> a1 + a2 + val</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">data_list = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    data_list.append(  func(i)   )</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(data_list)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>看代码写结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">val</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">a1, a2</span>):</span><br><span class="line">        <span class="keyword">return</span> a1 + a2 + val</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">data_list = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    data_list.append(func(i))</span><br><span class="line"></span><br><span class="line">v1 = data_list[<span class="number">0</span>](<span class="number">11</span>,<span class="number">22</span>)</span><br><span class="line">v2 = data_list[<span class="number">2</span>](<span class="number">33</span>,<span class="number">11</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(v1)</span><br><span class="line"><span class="built_in">print</span>(v2)</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>陈永辉
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/09/07/python_course-master/day12%20%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7/%E7%AC%94%E8%AE%B0/day12/" title="">http://example.com/2024/09/07/python_course-master/day12 函数高级/笔记/day12/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day11%20%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6/%E7%AC%94%E8%AE%B0/day11/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/09/07/python_course-master/day13%20%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0%E5%92%8C%E7%94%9F%E6%88%90%E5%99%A8%E5%8F%8A%E6%8E%A8%E5%AF%BC%E5%BC%8F/%E7%AC%94%E8%AE%B0/day13/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#day12-%E5%87%BD%E6%95%B0%E9%AB%98%E7%BA%A7"><span class="nav-number">1.</span> <span class="nav-text">day12 函数高级</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%87%BD%E6%95%B0%E5%B5%8C%E5%A5%97"><span class="nav-number">1.1.</span> <span class="nav-text">1. 函数嵌套</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%87%BD%E6%95%B0%E5%9C%A8%E4%BD%9C%E7%94%A8%E5%9F%9F%E4%B8%AD"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 函数在作用域中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%87%BD%E6%95%B0%E5%AE%9A%E4%B9%89%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 函数定义的位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%B5%8C%E5%A5%97%E5%BC%95%E5%8F%91%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 嵌套引发的作用域问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0%E9%A2%98"><span class="nav-number">1.1.4.</span> <span class="nav-text">练习题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%97%AD%E5%8C%85"><span class="nav-number">1.2.</span> <span class="nav-text">2.闭包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="nav-number">1.3.</span> <span class="nav-text">3.装饰器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%AC%AC%E4%B8%80%E5%9B%9E%E5%90%88"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 第一回合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E7%AC%AC%E4%BA%8C%E5%9B%9E%E5%90%88"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 第二回合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E7%AC%AC%E4%B8%89%E5%9B%9E%E5%90%88"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 第三回合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">1.3.4.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%AA%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.3.5.</span> <span class="nav-text">伪应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E8%A1%A5%E5%85%85%EF%BC%9Afunctools"><span class="nav-number">1.3.6.</span> <span class="nav-text">重要补充：functools</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A"><span class="nav-number">1.5.</span> <span class="nav-text">作业</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="陈永辉"
+      src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F4%2Ffiles%2F2022%2F01%2Fnft-bored-ape-yacht-club-floor-price-100-eth-1.jpg?cbr=1&q=90">
+  <p class="site-author-name" itemprop="name">陈永辉</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cyhzuishuai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cyhzuishuai" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/2426230801@qq.com" title="E-Mail → 2426230801@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/chenyonghuizui" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;chenyonghuizui" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈永辉</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共126.9k字</span>
+</div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
